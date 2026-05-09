@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>FlightManager 2026</title>
+<style>
+
+
+.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0}.leaflet-container{overflow:hidden}.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow{-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-user-drag:none}.leaflet-tile::selection{background:0 0}.leaflet-safari .leaflet-tile{image-rendering:crisp-edges}.leaflet-safari .leaflet-zoom-hide{visibility:hidden}.leaflet-animate-css{display:none}.leaflet-fade-anim .leaflet-popup{opacity:0;-webkit-transition:opacity .2s linear;-moz-transition:opacity .2s linear;transition:opacity .2s linear}.leaflet-fade-anim .leaflet-map-pane .leaflet-popup{opacity:1}.leaflet-zoom-animated{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0}.leaflet-zoom-anim .leaflet-zoom-animated{will-change:transform}.leaflet-zoom-anim .leaflet-zoom-animated{-webkit-transition:-webkit-transform .25s cubic-bezier(0,0,.25,1);-moz-transition:-moz-transform .25s cubic-bezier(0,0,.25,1);transition:transform .25s cubic-bezier(0,0,.25,1)}.leaflet-zoom-anim .leaflet-tile,.leaflet-pan-anim .leaflet-tile{-webkit-transition:none;-moz-transition:none;transition:none}.leaflet-zoom-anim .leaflet-zoom-animated.leaflet-zoom-hide{visibility:hidden}.leaflet-interactive{cursor:pointer}.leaflet-grab{cursor:-webkit-grab;cursor:-moz-grab;cursor:grab}.leaflet-crosshair,.leaflet-crosshair .leaflet-interactive{cursor:crosshair}.leaflet-popup-pane,.leaflet-control{cursor:auto}.leaflet-dragging .leaflet-grab,.leaflet-dragging .leaflet-grab .leaflet-interactive,.leaflet-dragging .leaflet-marker-draggable{cursor:move;cursor:-webkit-grabbing;cursor:-moz-grabbing;cursor:grabbing}.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-image-layer,.leaflet-pane>svg path,.leaflet-tile-container{pointer-events:none}.leaflet-marker-icon.leaflet-interactive,.leaflet-image-layer.leaflet-interactive,.leaflet-pane>svg path.leaflet-interactive,svg.leaflet-image-layer.leaflet-interactive path{pointer-events:visiblePainted;pointer-events:auto}.leaflet-container{-webkit-tap-highlight-color:transparent;background:#fff;outline-offset:1px}.leaflet-container a{color:#0078a8}.leaflet-zoom-box{border:2px dotted #38f;background:rgba(255,255,255,.5)}.leaflet-container{font-family:Helvetica Neue,Arial,Helvetica,sans-serif;font-size:.75rem;font-size:1.0666666667vw;line-height:1.5}.leaflet-bar{box-shadow:0 1px 5px rgba(0,0,0,.65);border-radius:4px}.leaflet-bar a{background-color:#fff;border-bottom:1px solid #ccc;width:26px;height:26px;line-height:26px;display:block;text-align:center;text-decoration:none;color:black}.leaflet-bar a,.leaflet-control-layers-toggle{background-position:50% 50%;background-repeat:no-repeat;display:block}.leaflet-bar a:hover,.leaflet-bar a:focus{background-color:#f4f4f4}.leaflet-bar a:first-child{border-top-left-radius:4px;border-top-right-radius:4px}.leaflet-bar a:last-child{border-bottom-left-radius:4px;border-bottom-right-radius:4px;border-bottom:none}.leaflet-bar a.leaflet-disabled{cursor:default;background-color:#f4f4f4;color:#bbb}.leaflet-touch .leaflet-bar a{width:30px;height:30px;line-height:30px}.leaflet-touch .leaflet-bar a:first-child{border-top-left-radius:2px;border-top-right-radius:2px}.leaflet-touch .leaflet-bar a:last-child{border-bottom-left-radius:2px;border-bottom-right-radius:2px}.leaflet-control-zoom-in,.leaflet-control-zoom-out{font:bold 18px 'Lucida Console',Monaco,monospace;text-indent:1px}.leaflet-touch .leaflet-control-zoom-in{font-size:22px}.leaflet-touch .leaflet-control-zoom-out{font-size:20px}.leaflet-control-layers{box-shadow:0 1px 5px rgba(0,0,0,.4);background:#fff;border-radius:5px}.leaflet-control-layers-toggle{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAQAAAADQ4RFAAACf0lEQVR4AY1UM3gkARTe2BgbtXTk7l1bW+3u2tp+1K6t27p0bRTvbduNVSRpqpqomwQdEkMEEivqoN/0JztzTGJEoA9v5p0/8t6bNwWAEAzBFMwIVAZlT+3EB5HSiqePTJB2eoyY7AwrSl2cPPUFJdEKVNHKGQQvkZmIEQBfmD1A9IZqjOypP9dQs8G+b6S4eDXoTgWdOZc8Hb2aFhRF5hpMwAVmYRGXyQEAQFXVXKlKlaqoqqqXSlWVqiRJFMkYx1y9YWZEBIwnMhSIiIhIfwAAAAAAAAAAAAAAAPhINIRL+JzkulADiKBid1VLbFIJvxX4hroJhLUSuvXJ1K4KpEMqvYHm+8c+WNWdBCiXVFJEaZEpI+gMQGIAKXIEgLKjRqQCEAFGVBEjuqfGEgAAmJYCEAEAY2sEjQBjSwGNAGPzAI3AXsQFJAAAAAAAIAAAAAAAIBoAAACAgAAAQQAAoCoKoKMKiKPK7KCKHqKMHqKEIqIMVqIMbqIMfqIObqJEAAAAAAAQAAAAAAEAAHAACAAQBgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAABAADgAAQAAAAAAAAAAAAAAoioKoKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACqoqiqKqoqsKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACqoqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==);width:36px;height:36px}.leaflet-retina .leaflet-control-layers-toggle{background-size:26px 26px}.leaflet-touch .leaflet-control-layers-toggle{width:44px;height:44px}.leaflet-control-layers .leaflet-control-layers-list,.leaflet-control-layers-expanded .leaflet-control-layers-toggle{display:none}.leaflet-control-layers-expanded .leaflet-control-layers-list{display:block;position:relative}.leaflet-control-layers-expanded{padding:6px 10px 6px 6px;color:#333;background:#fff}.leaflet-control-layers-scrollbar{overflow-y:scroll;overflow-x:hidden;padding-right:5px}.leaflet-control-layers-selector{margin-top:2px;position:relative;top:1px}.leaflet-control-layers label{display:block;font-size:1.08333em}.leaflet-control-layers-separator{height:0;border-top:1px solid #ddd;margin:5px -10px 5px -6px}.leaflet-default-icon-path{background-image:url(data:image/png;base64,...)}.leaflet-container .leaflet-control-attribution{background:#fff;background:rgba(255,255,255,.8);margin:0}.leaflet-control-attribution,.leaflet-control-scale-line{padding:0 5px;color:#333;font-size:.75rem}.leaflet-control-attribution a{text-decoration:none}.leaflet-control-attribution a:hover,.leaflet-control-attribution a:focus{text-decoration:underline}.leaflet-attribution-flag{display:inline!important;vertical-align:baseline!important;width:.75em;height:.5em}.leaflet-left .leaflet-control-scale{margin-left:5px}.leaflet-bottom .leaflet-control-scale{margin-bottom:5px}.leaflet-control-scale-line{border:2px solid #777;border-top:none;line-height:1.1;padding:2px 5px 1px;white-space:nowrap;-moz-box-sizing:border-box;box-sizing:border-box;background:#fff;background:rgba(255,255,255,.5)}.leaflet-control-scale-line:not(:first-child){border-top:2px solid #777;border-bottom:none;margin-top:-2px}.leaflet-control-scale-line:not(:first-child):not(:last-child){border-bottom:2px solid #777}.leaflet-touch .leaflet-control-attribution,.leaflet-touch .leaflet-control-layers,.leaflet-touch .leaflet-bar{box-shadow:none}.leaflet-touch .leaflet-control-layers,.leaflet-touch .leaflet-bar{border:2px solid rgba(0,0,0,.2);background-clip:padding-box}.leaflet-popup{position:absolute;text-align:center;margin-bottom:20px}.leaflet-popup-content-wrapper{padding:1px;text-align:left;border-radius:12px}.leaflet-popup-content{margin:13px 24px 13px 20px;line-height:1.3;font-size:1.08333em}.leaflet-popup-content p{margin:1.3em 0}.leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-left:-20px;overflow:hidden;pointer-events:none}.leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#fff;color:#333;box-shadow:0 3px 14px rgba(0,0,0,.4)}.leaflet-container a.leaflet-popup-close-button{position:absolute;top:0;right:0;border:none;text-align:center;width:24px;height:24px;font:16px/24px Tahoma,Verdana,sans-serif;color:#757575;text-decoration:none;background:0 0}.leaflet-container a.leaflet-popup-close-button:hover,.leaflet-container a.leaflet-popup-close-button:focus{color:#585858}.leaflet-popup-scrolled{overflow:auto}.leaflet-oldie .leaflet-popup-content-wrapper{-ms-zoom:1}.leaflet-oldie .leaflet-popup-tip{width:24px;-ms-filter:"progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";filter:progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)}.leaflet-oldie .leaflet-popup-tip-container{margin-top:-1px}.leaflet-oldie .leaflet-control-zoom,.leaflet-oldie .leaflet-control-layers,.leaflet-oldie .leaflet-popup-content-wrapper,.leaflet-oldie .leaflet-popup-tip{border:1px solid #999}.leaflet-div-icon{background:#fff;border:1px solid #666}.leaflet-tooltip{position:absolute;padding:6px;background-color:#fff;border:1px solid #fff;border-radius:3px;color:#222;white-space:nowrap;-webkit-user-select:none;-moz-user-select:none;user-select:none;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,.4)}.leaflet-tooltip.leaflet-interactive{cursor:pointer;pointer-events:auto}.leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{position:absolute;pointer-events:none;border:6px solid transparent;background:0 0;content:""}.leaflet-tooltip-bottom:before{top:0;left:50%;margin-left:-6px;margin-top:-12px;border-bottom-color:#fff}.leaflet-tooltip-top:before{bottom:0;left:50%;margin-left:-6px;margin-bottom:-12px;border-top-color:#fff}.leaflet-tooltip-left:before{top:50%;right:0;margin-top:-6px;margin-right:-12px;border-left-color:#fff}.leaflet-tooltip-right:before{top:50%;left:0;margin-top:-6px;margin-left:-12px;border-right-color:#fff}.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-shadow-pane{z-index:500}.leaflet-marker-pane{z-index:600}.leaflet-tooltip-pane{z-index:650}.leaflet-popup-pane{z-index:700}.leaflet-map-pane canvas{z-index:100}.leaflet-map-pane svg{z-index:200}.leaflet-vml-shape{width:1px;height:1px}.lvml{behavior:url(#default#VML);display:inline-block;position:absolute}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a141f;}
+#map{position:fixed;top:0;left:0;right:0;bottom:0;z-index:1;background:#0a141f;}
+#hud{position:fixed;top:0;left:0;right:0;z-index:50;height:52px;background:rgba(10,20,35,0.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,212,255,0.15);padding:8px 12px;display:flex;align-items:center;}
+#msg{position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-80px);z-index:500;background:rgba(10,20,35,0.95);border:1px solid rgba(0,212,255,0.3);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:600;color:#e0f0ff;transition:transform .3s;pointer-events:none;max-width:90vw;text-align:center;}
+
+/* FM2026 - Main Styles */
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a141f;font-family:Arial,sans-serif;}
+
+#map{position:fixed;top:0;left:0;right:0;bottom:0;z-index:1;background:#0a141f;}
+
+#hud{
+  position:fixed;top:0;left:0;right:0;z-index:50;height:52px;
+  background:rgba(10,20,35,0.92);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(0,212,255,0.15);
+  padding:8px 12px;display:flex;align-items:center;
+}
+
+#msg{
+  position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-80px);
+  z-index:500;background:rgba(10,20,35,0.95);
+  border:1px solid rgba(0,212,255,0.3);border-radius:12px;
+  padding:10px 18px;font-size:13px;font-weight:600;color:#e0f0ff;
+  transition:transform .3s;pointer-events:none;
+  max-width:90vw;text-align:center;
+}
+
+#panel{
+  position:fixed;left:0;right:0;bottom:62px;height:55vh;
+  background:#0a141f;
+  border-top:1px solid rgba(0,212,255,0.25);
+  border-radius:16px 16px 0 0;
+  z-index:90;transform:translateY(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;
+}
+
+#panel-body{overflow-y:auto;padding:12px 14px;flex:1;}
+
+#modal{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,0.75);
+  display:none;align-items:center;justify-content:center;
+}
+#modal-body{
+  background:#0a141f;border:1px solid rgba(0,212,255,0.3);
+  border-radius:16px;padding:22px;
+  width:92vw;max-width:400px;max-height:80vh;
+  overflow-y:auto;color:#e0f0ff;
+}
+
+#navbar{
+  position:fixed;bottom:0;left:0;right:0;height:62px;
+  background:rgba(10,20,35,0.97);
+  border-top:1px solid rgba(0,212,255,0.2);
+  display:flex;align-items:stretch;z-index:100;
+}
+#navbar button{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;
+  background:none;border:none;cursor:pointer;
+  border-top:2.5px solid transparent;
+  color:#4a6070;font-family:Arial,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+  transition:color .2s,border-color .2s;
+}
+#navbar button.active-tab{color:#00d4ff;border-top-color:#00d4ff;}
+#navbar button span{font-size:9px;font-weight:700;letter-spacing:1px;}
+
+.hud-btn{
+  width:36px;height:36px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:9px;display:flex;
+  align-items:center;justify-content:center;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:background .15s;
+}
+.hud-btn:hover{background:rgba(255,255,255,0.1);}
+
+.flight-path{stroke-dasharray:10,8;animation:dash 20s linear infinite;}
+@keyframes dash{to{stroke-dashoffset:-500;}}
+
+/* Panel tabs */
+.sub-tab-btn{
+  padding:6px 14px;background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);border-radius:8px;
+  font-size:11px;font-weight:700;color:#5580a0;
+  cursor:pointer;font-family:Arial,sans-serif;
+  transition:all .15s;
+}
+.sub-tab-btn.active{background:rgba(0,212,255,0.15);color:#00d4ff;border-color:rgba(0,212,255,0.3);}
+
+/* Cards */
+.card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;padding:12px;margin-bottom:8px;
+}
+.card:active{background:rgba(255,255,255,0.07);}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.3);border-radius:2px;}
+
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="msg"></div>
+
+<div id="hud">
+  <div style="display:flex;align-items:center;gap:14px;">
+    <div>
+      <div style="font-size:8px;color:#4a7099;letter-spacing:1px;">SALDO</div>
+      <div id="hud-cash" style="font-size:15px;font-weight:900;color:#00e676;">$500,000</div>
+    </div>
+    <div style="width:1px;height:26px;background:rgba(255,255,255,0.08);"></div>
+    <div>
+      <div style="font-size:8px;color:#4a7099;letter-spacing:1px;">PKT</div>
+      <div id="hud-pts" style="font-size:15px;font-weight:900;color:#f5a623;">0</div>
+    </div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);text-align:center;">
+    <div id="hud-lv" style="font-size:22px;font-weight:900;color:#fff;line-height:1;">1</div>
+    <div style="width:60px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;margin:3px auto 2px;">
+      <div id="hud-lv-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#00d4ff,#a78bfa);border-radius:2px;transition:width .5s;"></div>
+    </div>
+    <div id="hud-lv-next" style="font-size:8px;color:#4a7099;">0/10</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
+    <button class="hud-btn" onclick="hudAction('account')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a0b8cc" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </button>
+    <button class="hud-btn" onclick="hudAction('shop')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a0b8cc" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    </button>
+    <button class="hud-btn" onclick="hudAction('msg')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a0b8cc" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<div id="panel">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;">
+    <div id="panel-title" style="font-size:11px;font-weight:700;color:#00d4ff;letter-spacing:2px;"></div>
+    <button onclick="closePanel()" style="background:none;border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#5580a0;font-size:13px;padding:3px 9px;cursor:pointer;">X</button>
+  </div>
+  <div id="panel-body"></div>
+</div>
+
+<div id="modal" onclick="this.style.display='none'">
+  <div id="modal-body" onclick="event.stopPropagation()"></div>
+</div>
+
+<div id="navbar">
+  <button onclick="tabClick('lotnisko')" id="tab-lotnisko">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>LOTNISKO</span>
+  </button>
+  <button onclick="tabClick('trasy')" id="tab-trasy">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    <span>TRASY</span>
+  </button>
+  <button onclick="tabClick('flota')" id="tab-flota">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+    <span>FLOTA</span>
+  </button>
+  <button onclick="tabClick('bonus')" id="tab-bonus">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    <span>BONUS</span>
+  </button>
+  <button onclick="tabClick('personel')" id="tab-personel">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>PERSONEL</span>
+  </button>
+</div>
+
+<script src="leaflet.js"></script>
+<script src="cities.js"></script>
+<script src="icons.js"></script>
+<script src="airports.js"></script>
+<script src="aircraft.js"></script>
+<script src="game.js"></script>
+<script src="map.js"></script>
+<script src="flight.js"></script>
+<script src="panels.js"></script>
+<script src="hud.js"></script>
+<script src="trasy.js"></script>
+<script src="flota.js"></script>
+<script src="lotnisko.js"></script>
+<script src="personel.js"></script>
+<script src="sklep.js"></script>
+<script src="setup.js"></script>
+<script src="boot.js"></script>
+</body>
+</html>
