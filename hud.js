@@ -11,6 +11,8 @@ function hudAction(type) {
     +'<button onclick="saveSettings()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Zapisz</button>'
       +'<button onclick="resetGame()" style="width:100%;padding:12px;background:transparent;border:1px solid #e63946;border-radius:8px;color:#e63946;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-top:10px;">Resetuj gre</button>';
     document.getElementById('modal').style.display='flex';
+  } else if(type==='account') {
+    if(typeof openAccount==='function') openAccount(); else showMsg('Konto - wkrotce!');
   } else if(type==='shop') {
     if(typeof openShop==='function') openShop(); else showMsg('Sklep - wkrotce!');
   } else if(type==='msg') {
