@@ -20,13 +20,12 @@ function renderSetupList() {
       +c.name+'<span style="font-size:10px;color:#5580a0;margin-left:8px;">'+c.voiv+' &bull; '+c.airport+'</span></div>';
   }
   if(!out) out='<div style="padding:14px;color:#5580a0;font-family:Arial,sans-serif;">Brak wynikow</div>';
-  document.getElementById('slist').innerHTML=out;
+  var sl=document.getElementById('slist'); if(sl) sl.innerHTML=out;
 }
 
 function setupPick(j) {
   _setupPicked=_setupFiltered[j]; if(!_setupPicked) return;
-  document.getElementById('spicked').textContent=_setupPicked.name+' - '+_setupPicked.airport;
-  document.getElementById('spicked').style.display='block';
+  var sp=document.getElementById('spicked'); if(sp){sp.textContent=_setupPicked.name+' - '+_setupPicked.airport;sp.style.display='block';}
   var btn=document.getElementById('sbtn'); btn.disabled=false; btn.style.opacity='1';
   renderSetupList();
 }
@@ -50,4 +49,3 @@ function setupGo() {
     showMsg('Baza w '+c.name+' gotowa!');
   }, 50);
 }
-
