@@ -77,15 +77,17 @@ function departSingle(el) {
 function departAll() {
   // Reset landed aircraft to ground first
   G.fleet.forEach(function(a){
-    if(a.status==='landed') { a.status='ground'; a.routeId=null; }
+    if(a.status==='landed' || a.status==='ground') {
+      a.status='ground'; a.routeId=null;
+    }
   });
 
   var departed=0;
   G.routes.forEach(function(r) {
-    // Find free aircraft (ground, no route)
+    // Find free aircraft (ground status)
     var free=null;
     G.fleet.forEach(function(a){
-      if(a.status==='ground' && !a.routeId && !free) free=a;
+      if(a.status==='ground' && !free) free=a;
     });
     if(free) {
       free.status='flying'; free.routeId=r.id;
