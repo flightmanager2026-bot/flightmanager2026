@@ -73,3 +73,58 @@ function calcDist(la1,ln1,la2,ln2) {
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
+
+/* -- RUNWAY QUEUE SYSTEM -- */
+var _runwayQueue = [];    // routes waiting to depart
+var _runwayActive = 0;    // currently departing count
+var _runwayTimer = null;
+
+function getRunwayCount() {
+  var ap = G.homeAirport;
+  if(!ap || !ap.upgrades) return 1;
+  return ap.upgrades.runways || 1;
+}
+
+function queueDeparture(route) {
+  _runwayQueue.push(route);
+  processRunwayQueue();
+}
+
+function processRunwayQueue() {
+  if(_runwayTimer) return;
+  _runwayTimer = setInterval(function() {
+    var maxRunways = getRunwayCount();
+    var departed = 0;
+    while(_runwayQueue.length > 0 && departed < maxRunways) {
+      var route = _runwayQueue.shift();
+      startFlight(route);
+      departed++;
+    }
+    if(_runwayQueue.length === 0) {
+      clearInterval(_runwayTimer);
+      _runwayTimer = null;
+    }
+    // Update trasy panel if open
+    var body = document.getElementById('panel-body');
+    var title = document.getElementById('panel-title');
+    if(title && title.textContent === 'TRASY' && body) renderTrasy(body);
+  }, 5000);
+}
+
+function departAll() {
+  var free = G.routes.filter(function(r){
+    return !r.flying && !r.active;
+  });
+  if(!free.length){ showMsg('Brak gotowych tras!'); return; }
+  _runwayQueue = [];
+  free.forEach(function(r){ _runwayQueue.push(r); });
+  processRunwayQueue();
+  var runways = getRunwayCount();
+  showMsg(free.length+' lotow w kolejce ('+runways+' pas'+(runways>1?'y':'')+')')
+}
+
+function departSingle(route) {
+  if(route.flying || route.active){ showMsg('Samolot juz w locie!'); return; }
+  queueDeparture(route);
+  showMsg('Dodano do kolejki startowej');
+}
