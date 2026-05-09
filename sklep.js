@@ -143,7 +143,56 @@ function buyAircraft(model) {
 }
 
 function shopMsg(el) { closeModal(); showMsg(el&&el.dataset&&el.dataset.m?el.dataset.m:'Wkrotce!'); }
-function shopWatchAd() { G.points+=50; save(); updateHUD(); closeModal(); showMsg('+50 punktow!'); }
+function shopWatchAd() {
+  // Jesli masz kod AdSense/AdMob wklej go tutaj
+  // np. googletag.pubads().addEventListener('rewardedSlotReady', ...)
+  
+  // Na razie symulacja reklamy
+  closeModal();
+  showRewardedAd(function() {
+    // Callback po obejrzeniu reklamy
+    G.points += 50;
+    G.cash += 5000;
+    save();
+    updateHUD();
+    showMsg('+50 PKT i +$5,000 za reklame!');
+  });
+}
+
+function showRewardedAd(callback) {
+  window._adCallback = callback;
+  var container = document.getElementById('ad-container');
+  if(!container) { callback(); return; }
+  
+  // Show ad container
+  container.style.display = 'flex';
+  
+  var timeLeft = 5;
+  var timerEl = document.getElementById('ad-timer-txt');
+  var closeBtn = document.getElementById('ad-close-btn');
+  if(timerEl) timerEl.textContent = 'Zamknij za ' + timeLeft + 's';
+  if(closeBtn) { closeBtn.disabled = true; closeBtn.style.background='#333'; closeBtn.style.color='#888'; closeBtn.style.cursor='not-allowed'; }
+  
+  var timer = setInterval(function() {
+    timeLeft--;
+    if(timerEl) timerEl.textContent = timeLeft > 0 ? 'Zamknij za '+timeLeft+'s' : 'Mozesz zamknac!';
+    if(timeLeft <= 0) {
+      clearInterval(timer);
+      if(closeBtn) {
+        closeBtn.disabled = false;
+        closeBtn.style.background = 'linear-gradient(135deg,#1a56db,#00d4ff)';
+        closeBtn.style.color = '#fff';
+        closeBtn.style.cursor = 'pointer';
+      }
+    }
+  }, 1000);
+}
+
+function closeAd() {
+  var container = document.getElementById('ad-container');
+  if(container) container.style.display = 'none';
+  if(window._adCallback) { window._adCallback(); window._adCallback = null; }
+}
 
 function openSlotShop() {
   var slots = [];
