@@ -75,18 +75,24 @@ function departSingle(el) {
 }
 
 function departAll() {
+  // Reset landed aircraft to ground first
+  G.fleet.forEach(function(a){
+    if(a.status==='landed') { a.status='ground'; a.routeId=null; }
+  });
+
   var departed=0;
   G.routes.forEach(function(r) {
-    var ac=G.fleet.filter(function(a){return a.routeId===r.id;})[0];
-    if(!ac||ac.status==='ground') {
-      var free=null; G.fleet.forEach(function(a){if(a.status==='ground'&&!free)free=a;});
-      if(free) {
-        free.status='flying'; free.routeId=r.id;
-        r.startTime=Date.now(); r.duration=5000; r.acId=free.id;
-        if(!r.fromLat&&G.homeAirport){r.fromLat=G.homeAirport.lat;r.fromLng=G.homeAirport.lng;}
-        removeFlightLayer(r.id); drawFlightLayer(r);
-        departed++;
-      }
+    // Find free aircraft (ground, no route)
+    var free=null;
+    G.fleet.forEach(function(a){
+      if(a.status==='ground' && !a.routeId && !free) free=a;
+    });
+    if(free) {
+      free.status='flying'; free.routeId=r.id;
+      r.startTime=Date.now(); r.duration=5000; r.acId=free.id;
+      if(!r.fromLat&&G.homeAirport){r.fromLat=G.homeAirport.lat;r.fromLng=G.homeAirport.lng;}
+      removeFlightLayer(r.id); drawFlightLayer(r);
+      departed++;
     }
   });
   if(departed>0){save();showMsg('Odlecelo '+departed+' samolotow!');}
