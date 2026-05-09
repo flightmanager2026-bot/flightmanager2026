@@ -32,6 +32,9 @@ function buildWkrotce(name) {
 }
 
 function getAcSvg(model) {
+  if(model === 'Airbus A321neo' && typeof ICONS !== 'undefined' && ICONS.aircraft_a321neo) {
+    return '<img src="'+ICONS.aircraft_a321neo+'" style="width:200px;height:80px;object-fit:contain;background:#000;border-radius:6px;">';
+  }
   var color=G.airline.color||'#e63946';
   if(model.indexOf('787')>=0||model.indexOf('777')>=0) {
     return '<svg viewBox="0 0 200 60" width="200" height="60"><ellipse cx="100" cy="32" rx="85" ry="12" fill="'+color+'"/><path d="M15 32 Q3 30 1 32 Q3 34 15 32Z" fill="'+color+'"/><path d="M175 32 L188 23 L188 32 L192 32 L188 41 L188 32Z" fill="'+color+'"/><path d="M85 32 L55 55 L115 47 Z" fill="'+color+'" opacity="0.9"/><path d="M85 32 L55 9 L115 17 Z" fill="'+color+'" opacity="0.65"/><ellipse cx="70" cy="51" rx="12" ry="5" fill="#555"/><ellipse cx="100" cy="49" rx="11" ry="5" fill="#555"/><g fill="rgba(255,255,255,0.65)"><rect x="35" y="28" width="6" height="5" rx="1"/><rect x="45" y="28" width="6" height="5" rx="1"/><rect x="55" y="28" width="6" height="5" rx="1"/><rect x="65" y="28" width="6" height="5" rx="1"/><rect x="75" y="28" width="6" height="5" rx="1"/><rect x="85" y="28" width="6" height="5" rx="1"/><rect x="95" y="28" width="6" height="5" rx="1"/><rect x="105" y="28" width="6" height="5" rx="1"/><rect x="115" y="28" width="6" height="5" rx="1"/><rect x="125" y="28" width="6" height="5" rx="1"/><rect x="135" y="28" width="6" height="5" rx="1"/></g></svg>';
@@ -304,4 +307,3 @@ function applyFuelUpg(el) { var acId=el&&el.dataset?el.dataset.id:el;
   G.cash-=50000; ac.fuelUpgrade=true; save(); updateHUD();
   openModAc(acId); showMsg('Ulepszenie zainstalowane!');
 }
-
