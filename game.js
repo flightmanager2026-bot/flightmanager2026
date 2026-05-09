@@ -78,3 +78,14 @@ function updateHUD() {
 }
 
 
+
+var _nT;
+function showMsg(msg) {
+  var n=document.getElementById('msg'); if(!n) return;
+  n.textContent=msg; n.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(_nT); _nT=setTimeout(function(){n.style.transform='translateX(-50%) translateY(-80px)';},3000);
+}
+
+function closeModal() {
+  var m=document.getElementById('modal'); if(m) m.style.display='none';
+}
