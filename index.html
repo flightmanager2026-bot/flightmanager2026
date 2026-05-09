@@ -145,7 +145,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a141f;font-family:
     <div id="hud-lv-next" style="font-size:8px;color:#4a7099;">0/10</div>
   </div>
   <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
-    <button class="hud-btn" onclick="hudAction('account')">
+    <button class="hud-btn" onclick="if(typeof openAccount==='function')openAccount();else if(typeof hudAction==='function')hudAction('account');">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a0b8cc" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </button>
     <button class="hud-btn" onclick="hudAction('shop')">
