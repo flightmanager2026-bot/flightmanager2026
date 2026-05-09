@@ -112,4 +112,3 @@ function BS(c){return 'width:100%;padding:10px;background:'+c+';border:none;bord
 function upgradeHome(){var ap=G.homeAirport;if(!ap)return;var cost=(ap.level||1)*50000;if(G.cash<cost){showMsg('Za malo gotowki!');return;}G.cash-=cost;ap.level=(ap.level||1)+1;save();updateHUD();showMsg('Baza ulepszona!');document.getElementById('modal').style.display='none';}
 function doAddRouteFromMap(icao){document.getElementById('modal').style.display='none';showMsg('Dodaj trase w zakladce Flota!');}
 function openRoute(){}
-
