@@ -12,7 +12,7 @@ function hudAction(type) {
       +'<button onclick="resetGame()" style="width:100%;padding:12px;background:transparent;border:1px solid #e63946;border-radius:8px;color:#e63946;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-top:10px;">Resetuj gre</button>';
     document.getElementById('modal').style.display='flex';
   } else if(type==='shop') {
-    openShop();
+    if(typeof openShop==='function') openShop(); else showMsg('Sklep - wkrotce!');
   } else if(type==='msg') {
     showMsg('Brak nowych wiadomosci');
   }
@@ -66,4 +66,3 @@ function buySlotShop(el) { var icao=el&&el.dataset?el.dataset.icao:el;
   save(); renderMarkers(); updateHUD(); document.getElementById('modal').style.display='none';
   showMsg('Slot '+icao+' ('+db.city+') kupiony!');
 }
-
