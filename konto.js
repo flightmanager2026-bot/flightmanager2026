@@ -157,7 +157,7 @@ function changeMapStyle(idx) {
   LMAP.eachLayer(function(layer) {
     if(layer._url) LMAP.removeLayer(layer);
   });
-  L.tileLayer(style.url, {maxZoom:19, subdomains:['a','b','c','d']}).addTo(LMAP);
+  L.tileLayer(style.url, {maxZoom:19, subdomains:['a','b','c']}).addTo(LMAP);
   var player = getPlayer();
   if(player) { player.mapStyle = style.name; savePlayer(player); }
   closeModal();
