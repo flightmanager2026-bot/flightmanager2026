@@ -1,3 +1,15 @@
+if(typeof showMsg === 'undefined') {
+  var _nT;
+  function showMsg(msg) {
+    var n=document.getElementById('msg'); if(!n) return;
+    n.textContent=msg; n.style.transform='translateX(-50%) translateY(0)';
+    clearTimeout(_nT); _nT=setTimeout(function(){n.style.transform='translateX(-50%) translateY(-80px)';},3000);
+  }
+}
+
+function closeModal(){ document.getElementById('modal').style.display='none'; }
+
+
 function openBuyPassenger() {
   var img = (typeof ICONS !== 'undefined' && ICONS.aircraft_a321neo)
     ? '<img src="'+ICONS.aircraft_a321neo+'" style="width:100%;max-height:140px;object-fit:contain;background:#000;border-radius:8px;margin-bottom:12px;">'
@@ -10,7 +22,7 @@ function openBuyPassenger() {
     + '<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;"><span style="color:#5580a0;">Cena:</span><span style="color:#e0f0ff;font-weight:700;">$120,000,000</span></div>'
     + '<div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px;"><span style="color:#5580a0;">Maks. zasieg:</span><span style="color:#e0f0ff;">7,400 km</span></div>'
     + '<button onclick="buyA321neo()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Kup za $120,000,000</button>'
-    + '<button onclick="document.getElementById('modal').style.display='none'" style="width:100%;padding:10px;background:none;border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#5580a0;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-top:8px;">Anuluj</button>';
+    + '<button onclick="closeModal()" style="width:100%;padding:10px;background:none;border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#5580a0;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-top:8px;">Anuluj</button>';
   document.getElementById('modal').style.display='flex';
 }
 
