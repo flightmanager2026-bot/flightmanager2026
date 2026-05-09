@@ -89,3 +89,8 @@ function showMsg(msg) {
 function closeModal() {
   var m=document.getElementById('modal'); if(m) m.style.display='none';
 }
+
+function openShop() {
+  document.getElementById('modal-body').innerHTML = '<div style="padding:20px;color:#5580a0;text-align:center;">Ladowanie sklepu...</div>';
+  document.getElementById('modal').style.display = 'flex';
+}
