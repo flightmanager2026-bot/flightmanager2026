@@ -4,7 +4,10 @@ function renderTrasy(body) {
     body.innerHTML='<div style="padding:20px;color:#5580a0;text-align:center;">Brak tras. Dodaj trase w Flocie.</div>';
     return;
   }
-  var available=G.fleet.filter(function(a){return a.status==='ground';});
+  var available=G.routes.filter(function(r){
+    var ac=null; G.fleet.forEach(function(a){if(a.id===r.acId)ac=a;});
+    return !r.startTime || (ac && ac.status==='landed');
+  });
   var out='<div style="margin-bottom:12px;">'
     +'<button onclick="departAll()" '
     +(available.length===0
@@ -91,4 +94,3 @@ function departAll() {
   var body=document.getElementById('panel-body');
   if(body) renderTrasy(body);
 }
-
