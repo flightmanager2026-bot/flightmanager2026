@@ -33,7 +33,7 @@ function renderFlotaMain(body) {
     var imgSrc = null;
     planes.forEach(function(ac){ if(!imgSrc && AC_IMAGES[ac.model]) imgSrc = AC_IMAGES[ac.model]; });
 
-    out += '<div data-brand="'+brand+'" onclick="openBrandFleet(this.getAttribute(\'data-brand\'))" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;">'
+    out += '<div data-brand="'+brand+'" onclick="openBrandFleetByEl(this)" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;">'
       + (imgSrc ? '<img src="'+imgSrc+'" style="width:100px;height:50px;object-fit:contain;background:#000;border-radius:8px;flex-shrink:0;">' : '<div style="width:100px;height:50px;background:#0d1b2a;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;">&#9992;</div>')
       + '<div style="flex:1;">'
       + '<div style="font-size:15px;font-weight:700;color:#e0f0ff;margin-bottom:4px;">'+brand+'</div>'
