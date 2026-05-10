@@ -35,14 +35,15 @@ function updateFlightPositions() {
     if(t>=1) {
       ac.status='landed';
       // Calculate real revenue now
-      if(typeof calcRouteRevenue === 'function') {
-        route.revenue = calcRouteRevenue(route, ac);
-      } else if(!route.revenue) {
-        // Fallback: simple calc
-        var mins = route.durationMin || 40;
-        var seats = (ac.config ? (ac.config.eco||0)+(ac.config.biz||0) : (ac.seats||150));
-        route.revenue = Math.round(seats * mins * 1.5);
-      }
+      // Always recalculate revenue
+      var mins = route.durationMin || 40;
+      var ecoSeats = ac.config ? (ac.config.eco||0) : (ac.seats||150);
+      var bizSeats = ac.config ? (ac.config.biz||0) : 0;
+      var ratePerMin = (80 + Math.random()*20) / 60; // 1.33-1.67 zł/min
+      route.revenue = Math.round(
+        ecoSeats * mins * ratePerMin +
+        bizSeats * mins * ratePerMin * 2.5
+      );
       G.cash+=route.revenue;
       G.totalFlights=(G.totalFlights||0)+1;
       checkLevelUp(); save();
