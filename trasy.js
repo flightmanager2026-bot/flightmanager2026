@@ -68,7 +68,13 @@ function departSingle(el) {
     var free=null; G.fleet.forEach(function(a){if(a.status==='ground'&&!free)free=a;});
     if(!free){showMsg('Brak wolnych samolotow!');return;}
     free.status='flying'; free.routeId=r.id;
-    r.startTime=Date.now(); r.duration=5000; r.acId=free.id;
+    r.startTime=Date.now(); r.acId=free.id;
+    if(!r.durationMin&&r.fromLat&&r.toLat&&typeof calcDistance==='function'){
+      var d=Math.round(calcDistance(r.fromLat,r.fromLng,r.toLat,r.toLng));
+      var sp=(typeof AC_SPEEDS!=='undefined'&&AC_SPEEDS[free.model])?AC_SPEEDS[free.model]:800;
+      r.durationMin=Math.round(d/sp*60)+20; r.distKm=d;
+    }
+    r.duration=(r.durationMin||40)*60000;
     if(!r.fromLat&&G.homeAirport){r.fromLat=G.homeAirport.lat;r.fromLng=G.homeAirport.lng;}
     removeFlightLayer(r.id); drawFlightLayer(r);
     save(); showMsg('Odlecial '+free.model+'!');
@@ -94,7 +100,13 @@ function departAll() {
     });
     if(free) {
       free.status='flying'; free.routeId=r.id;
-      r.startTime=Date.now(); r.duration=5000; r.acId=free.id;
+      r.startTime=Date.now(); r.acId=free.id;
+    if(!r.durationMin&&r.fromLat&&r.toLat&&typeof calcDistance==='function'){
+      var d=Math.round(calcDistance(r.fromLat,r.fromLng,r.toLat,r.toLng));
+      var sp=(typeof AC_SPEEDS!=='undefined'&&AC_SPEEDS[free.model])?AC_SPEEDS[free.model]:800;
+      r.durationMin=Math.round(d/sp*60)+20; r.distKm=d;
+    }
+    r.duration=(r.durationMin||40)*60000;
       if(!r.fromLat&&G.homeAirport){r.fromLat=G.homeAirport.lat;r.fromLng=G.homeAirport.lng;}
       removeFlightLayer(r.id); drawFlightLayer(r);
       departed++;
