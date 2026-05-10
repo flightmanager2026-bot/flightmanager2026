@@ -74,27 +74,32 @@ function checkRange(model, distKm) {
 /* Oblicz zarobek z trasy */
 function calcRouteRevenue(route, ac) {
   if(!ac) return 0;
-  var dist = getRouteDist(route);
-  var minutes = calcFlightTime(dist, ac.model);
-  var hours = minutes / 60;
 
-  var cfg = ac.config || AC_SEATS[ac.model] || {eco:100, biz:0};
-  
-  // Cena za godzine na pasazera (losowa w przedziale - gracz nie zna)
-  var ecoRate  = 80  + Math.random()*20;  // 80-100 zł/h
-  var bizRate  = ecoRate * 2.5;           // 200-250 zł/h
-  var premRate = ecoRate * 1.7;           // 136-170 zł/h
-  var firstRate= ecoRate * 4;             // 320-400 zł/h
+  // Get flight duration in minutes
+  var minutes = route.durationMin || 0;
+  if(!minutes && route.duration) minutes = route.duration / 60000;
+  if(!minutes) minutes = 40; // fallback
 
-  // Wspolczynnik wypelnienia (loadFactor) - zalezy od ceny biletu
-  var price = route.ticketPrice || 0;
-  var loadFactor = calcLoadFactor(price, dist, minutes);
+  // Rate per passenger per minute (80-100 zł/h = 1.33-1.67 zł/min)
+  var ratePerMin = (80 + Math.random() * 20) / 60;
 
+  // Seat config
+  var cfg = ac.config || AC_SEATS[ac.model] || {eco: ac.seats||150, biz:0};
+  var ecoSeats  = cfg.eco   || 0;
+  var bizSeats  = cfg.biz   || 0;
+  var premSeats = cfg.prem  || 0;
+  var firstSeats= cfg.first || 0;
+
+  // Load factor based on ticket price
+  var ecoLF  = calcLoadFactor(route.ticketPriceEco || 0, route.distKm || 500, minutes);
+  var bizLF  = calcLoadFactor(route.ticketPriceBiz || 0, route.distKm || 500, minutes) * 0.85;
+
+  // Revenue
   var revenue = 0;
-  revenue += (cfg.eco   || 0) * ecoRate   * hours * loadFactor;
-  revenue += (cfg.biz   || 0) * bizRate   * hours * (loadFactor * 0.8); // biznes trudniej wypelnic
-  revenue += (cfg.prem  || 0) * premRate  * hours * (loadFactor * 0.9);
-  revenue += (cfg.first || 0) * firstRate * hours * (loadFactor * 0.7);
+  revenue += ecoSeats   * minutes * ratePerMin * 1.0  * ecoLF;
+  revenue += bizSeats   * minutes * ratePerMin * 2.5  * bizLF;
+  revenue += premSeats  * minutes * ratePerMin * 1.7  * ecoLF;
+  revenue += firstSeats * minutes * ratePerMin * 4.0  * bizLF;
 
   return Math.round(revenue);
 }
