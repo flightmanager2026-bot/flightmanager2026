@@ -34,6 +34,15 @@ function updateFlightPositions() {
     }
     if(t>=1) {
       ac.status='landed';
+      // Calculate real revenue now
+      if(typeof calcRouteRevenue === 'function') {
+        route.revenue = calcRouteRevenue(route, ac);
+      } else if(!route.revenue) {
+        // Fallback: simple calc
+        var mins = route.durationMin || 40;
+        var seats = (ac.config ? (ac.config.eco||0)+(ac.config.biz||0) : (ac.seats||150));
+        route.revenue = Math.round(seats * mins * 1.5);
+      }
       G.cash+=route.revenue;
       G.totalFlights=(G.totalFlights||0)+1;
       checkLevelUp(); save();
