@@ -28,9 +28,13 @@ function renderTrasy(body) {
       sideBtn='<div style="flex-shrink:0;padding:8px 10px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);border-radius:8px;font-size:11px;color:#00e676;font-weight:700;text-align:center;min-width:44px;">'+eta+'</div>';
     } else {
       var canGo=available.length>0||landed;
-      sideBtn='<button onclick="departSingle(this)" data-rid="'+r.id+'" '
+      sideBtn='<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">'
+        +'<button onclick="departSingle(this)" data-rid="'+r.id+'" '
         +(!canGo?'disabled ':'')
-        +'style="flex-shrink:0;padding:8px 12px;background:'+(canGo?'linear-gradient(135deg,#1a56db,#00d4ff)':'rgba(26,86,219,0.2)')+';border:none;border-radius:8px;color:'+(canGo?'#fff':'#5580a0')+';font-size:11px;font-weight:700;font-family:Arial,sans-serif;cursor:'+(canGo?'pointer':'not-allowed')+';white-space:nowrap;">&#9992; Odlec</button>';
+        +'style="padding:8px 12px;background:'+(canGo?'linear-gradient(135deg,#1a56db,#00d4ff)':'rgba(26,86,219,0.2)')+';border:none;border-radius:8px;color:'+(canGo?'#fff':'#5580a0')+';font-size:11px;font-weight:700;font-family:Arial,sans-serif;cursor:'+(canGo?'pointer':'not-allowed')+';white-space:nowrap;">&#9992; Odlec</button>';
+      window['_cr_'+r.id] = r.id;
+      sideBtn += '<button onclick="cancelRoute(window[\'_cr_'+r.id+'\'])" style="padding:6px 10px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;color:#e63946;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;white-space:nowrap;">&#10005; Anuluj</button>';
+      sideBtn += '</div>';
     }
     out+='<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:12px;margin-bottom:8px;">'
       +'<div style="display:flex;align-items:center;gap:10px;">'
@@ -100,5 +104,20 @@ function departAll() {
   if(departed>0){save();showMsg('Odlecelo '+departed+' samolotow!');}
   else showMsg('Brak wolnych samolotow!');
   var body=document.getElementById('panel-body');
+  if(body) renderTrasy(body);
+}
+
+
+function cancelRoute(rid) {
+  if(!confirm('Na pewno anulowac te trase?')) return;
+  // Free up aircraft
+  G.fleet.forEach(function(a){ if(a.routeId===rid){ a.routeId=null; a.status='ground'; } });
+  // Remove route
+  G.routes = G.routes.filter(function(r){ return r.id!==rid; });
+  // Remove flight layer
+  removeFlightLayer(rid);
+  save();
+  showMsg('Trasa anulowana');
+  var body = document.getElementById('panel-body');
   if(body) renderTrasy(body);
 }
