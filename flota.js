@@ -32,8 +32,13 @@ function buildWkrotce(name) {
 }
 
 function getAcSvg(model) {
-  if(model === 'Airbus A321neo' && typeof ICONS !== 'undefined' && ICONS.aircraft_a321neo) {
-    return '<img src="'+ICONS.aircraft_a321neo+'" style="width:200px;height:80px;object-fit:contain;background:#000;border-radius:6px;">';
+  var AC_IMAGES = {
+    'Boeing 737-800': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',
+    'Airbus A321neo': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A321_Neo.png',
+    'Airbus A380-800': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png'
+  };
+  if(AC_IMAGES[model]) {
+    return '<img src="'+AC_IMAGES[model]+'" style="width:200px;height:80px;object-fit:contain;background:#000;border-radius:6px;">';
   }
   var color=G.airline.color||'#e63946';
   if(model.indexOf('787')>=0||model.indexOf('777')>=0) {
