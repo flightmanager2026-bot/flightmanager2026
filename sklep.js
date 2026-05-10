@@ -1,3 +1,5 @@
+function openManufacturerByName(el){ openManufacturer(el.getAttribute("data-brand")); }
+
 if(typeof showMsg === 'undefined') {
   var _nT;
   function showMsg(msg) {
