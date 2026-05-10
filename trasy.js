@@ -32,8 +32,7 @@ function renderTrasy(body) {
         +'<button onclick="departSingle(this)" data-rid="'+r.id+'" '
         +(!canGo?'disabled ':'')
         +'style="padding:8px 12px;background:'+(canGo?'linear-gradient(135deg,#1a56db,#00d4ff)':'rgba(26,86,219,0.2)')+';border:none;border-radius:8px;color:'+(canGo?'#fff':'#5580a0')+';font-size:11px;font-weight:700;font-family:Arial,sans-serif;cursor:'+(canGo?'pointer':'not-allowed')+';white-space:nowrap;">&#9992; Odlec</button>';
-      window['_cr_'+r.id] = r.id;
-      sideBtn += '<button onclick="cancelRoute(window[\'_cr_'+r.id+'\'])" style="padding:6px 10px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;color:#e63946;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;white-space:nowrap;">&#10005; Anuluj</button>';
+      sideBtn += '<button onclick="cancelRouteById(this)" data-id="'+r.id+'" style="padding:6px 10px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;color:#e63946;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;white-space:nowrap;">&#10005; Anuluj</button>';
       sideBtn += '</div>';
     }
     out+='<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:12px;margin-bottom:8px;">'
@@ -107,6 +106,11 @@ function departAll() {
   if(body) renderTrasy(body);
 }
 
+
+function cancelRouteById(el) {
+  var rid = el && el.dataset ? el.dataset.id : null;
+  if(rid) cancelRoute(rid);
+}
 
 function cancelRoute(rid) {
   if(!confirm('Na pewno anulowac te trase?')) return;
