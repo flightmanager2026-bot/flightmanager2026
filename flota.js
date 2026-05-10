@@ -131,47 +131,56 @@ function openAddRoute(acId) {
   G.slots.forEach(function(s){owned[s]=true;});
   if(G.homeAirport) owned[G.homeAirport.icao] = true;
 
-  var opts = ADB.map(function(ap){
-    var has = owned[ap.icao];
-    return '<option value="'+ap.icao+'">'+ap.icao+' - '+ap.city+' ('+ap.country+')'+(has?'':' [brak slotu]')+'</option>';
-  }).join('');
-
-  var cfg = ac.config || (typeof AC_SEATS !== 'undefined' ? AC_SEATS[ac.model] : null) || {eco:100,biz:0,total:100};
-  var hasBiz = cfg.biz > 0;
+  var cfg = ac.config || {eco: ac.seats||150, biz:0, total: ac.seats||150};
   var hasEco = cfg.eco > 0;
+  var hasBiz = cfg.biz > 0;
+
+  var opts = '<option value="">-- Wybierz lotnisko --</option>';
+  ADB.forEach(function(ap){
+    if(G.homeAirport && ap.icao === G.homeAirport.icao) return;
+    var hasSlot = owned[ap.icao];
+    opts += '<option value="'+ap.icao+'"'+(hasSlot?'':' style="color:#5580a0;"')+'>'+ap.icao+' - '+ap.city+(hasSlot?'':' [brak slotu]')+'</option>';
+  });
 
   document.getElementById('modal-body').innerHTML =
     '<div style="font-size:15px;font-weight:700;color:#00d4ff;margin-bottom:12px;">Nowa trasa - '+ac.model+'</div>'
-    +'<div style="font-size:11px;color:#5580a0;margin-bottom:4px;">LOTNISKO DOCELOWE</div>'
-    +'<select id="route-dest" onchange="updateRouteInfo(this.dataset.acid)" data-acid=""  style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:13px;font-family:Arial,sans-serif;margin-bottom:12px;outline:none;">'
-    +'<option value="">-- Wybierz lotnisko --</option>'+opts+'</select>'
 
-    // Route info panel
-    +'<div id="route-info" style="display:none;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:12px;margin-bottom:12px;"></div>'
+    // Destination select
+    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-bottom:6px;">LOTNISKO DOCELOWE</div>'
+    +'<select id="route-dest" style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:13px;font-family:Arial,sans-serif;margin-bottom:8px;outline:none;box-sizing:border-box;">'
+    +opts+'</select>'
 
-    // Ticket price
-    +'<div id="route-price-box" style="display:none;margin-top:4px;">'
-    +'<div style="font-size:11px;color:#5580a0;letter-spacing:1px;margin-bottom:6px;">CENA BILETU</div>'
-    +'<div style="display:flex;gap:8px;margin-bottom:8px;">'
+    // Route info (updated on change)
+    +'<div id="route-info" style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:10px;margin-bottom:12px;font-size:12px;color:#5580a0;">Wybierz lotnisko aby zobaczyc informacje o trasie</div>'
+
+    // Ticket prices - always visible
+    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-bottom:6px;">CENA BILETU (zł/pasażer)</div>'
+    +'<div style="display:flex;gap:8px;margin-bottom:6px;">'
     +'<div style="flex:1;">'
-    +'<div style="font-size:10px;color:'+(hasEco?'#5580a0':'#2a3a4a')+';margin-bottom:4px;">EKONOMIA</div>'
-    +'<div style="display:flex;align-items:center;gap:4px;">'
-    +'<input id="price-eco" type="number" min="0" max="9999" value="'+(hasEco?'0':'')+(hasEco?'':'')+'" '+(hasEco?'':'disabled ')
-    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,'+(hasEco?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasEco?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;" placeholder="'+(hasEco?'zł/os':'Brak eko')+'"></div>'
+    +'<div style="font-size:10px;color:'+(hasEco?'#a0b8cc':'#2a3a4a')+';margin-bottom:4px;">EKONOMIA</div>'
+    +'<input id="price-eco" type="number" min="0" max="9999" value="0" '+(hasEco?'':'disabled ')
+    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,'+(hasEco?'0.3':'0.08')+');border-radius:6px;padding:8px;color:'+(hasEco?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;" placeholder="'+(hasEco?'np. 250':'Brak')+'"></div>'
     +'</div>'
     +'<div style="flex:1;">'
-    +'<div style="font-size:10px;color:'+(hasBiz?'#5580a0':'#2a3a4a')+';margin-bottom:4px;">BIZNES</div>'
-    +'<input id="price-biz" type="number" min="0" max="99999" value="" '+(hasBiz?'':'disabled ')
-    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,'+(hasBiz?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasBiz?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;" placeholder="'+(hasBiz?'zł/os':'Brak biz')+'">'
+    +'<div style="font-size:10px;color:'+(hasBiz?'#a0b8cc':'#2a3a4a')+';margin-bottom:4px;">BIZNES</div>'
+    +'<input id="price-biz" type="number" min="0" max="99999" value="0" '+(hasBiz?'':'disabled ')
+    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,'+(hasBiz?'0.3':'0.08')+');border-radius:6px;padding:8px;color:'+(hasBiz?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;" placeholder="'+(hasBiz?'np. 800':'Brak')+'"></div>'
     +'</div></div>'
-    +'<div id="price-hint" style="font-size:11px;color:#5580a0;margin-bottom:12px;"></div>'
-    +'</div>'
+    +'<div id="price-hint" style="font-size:11px;color:#5580a0;margin-bottom:14px;">Wybierz lotnisko aby zobaczyc sugerowana cene</div>'
 
-    '<button onclick="confirmRouteGlobal()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:9px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Dodaj trase</button>'
-    +'<button onclick="closeModal()" style="width:100%;padding:10px;background:none;border:1px solid rgba(255,255,255,0.1);border-radius:9px;color:#5580a0;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-top:6px;">Anuluj</button>';
+    // Buttons
+    +'<button onclick="confirmRouteGlobal()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:9px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-bottom:6px;">Dodaj trase</button>'
+    +'<button onclick="closeModal()" style="width:100%;padding:10px;background:none;border:1px solid rgba(255,255,255,0.1);border-radius:9px;color:#5580a0;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Anuluj</button>';
 
   document.getElementById('modal').style.display = 'flex';
+
+  // Attach onchange after render
+  setTimeout(function(){
+    var sel = document.getElementById('route-dest');
+    if(sel) sel.onchange = function(){ updateRouteInfo(_pendingAcId); };
+  }, 50);
 }
+
 
 function updateRouteInfo(acId) {
   var ac = G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
