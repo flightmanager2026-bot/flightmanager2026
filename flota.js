@@ -2,20 +2,112 @@
 var _flotaTab='samoloty';
 
 function renderFlotaMain(body) {
-  var subtabs=[{id:'samoloty',label:'Flota'},{id:'konserwacja',label:'Konserwacja'},{id:'naprawy',label:'Naprawy'},{id:'modyfikacje',label:'Modyfikacje'}];
-  var tabs='<div style="display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px;">';
-  subtabs.forEach(function(t){
-    var active=_flotaTab===t.id;
-    tabs+='<button onclick="setFlotaTab(this)" data-tab="'+t.id+'" style="flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;border:1px solid;'
-      +(active?'background:#00d4ff;border-color:#00d4ff;color:#0a141f;':'background:transparent;border-color:#1e3a5f;color:#5580a0;')+'">'+t.label+'</button>';
+  if(!G.fleet.length) {
+    body.innerHTML='<div style="padding:20px;color:#5580a0;text-align:center;">Brak samolotow. Kup w Sklepie.</div>';
+    return;
+  }
+
+  // Group by manufacturer
+  var manufacturers = {};
+  G.fleet.forEach(function(ac) {
+    var brand = ac.model.split(' ')[0]; // Boeing, Airbus, ATR
+    if(!manufacturers[brand]) manufacturers[brand] = [];
+    manufacturers[brand].push(ac);
   });
-  tabs+='</div>';
-  var content='';
-  if(_flotaTab==='samoloty') content=buildFlotaList();
-  else if(_flotaTab==='modyfikacje') content=buildModyfikacje();
-  else content=buildWkrotce(_flotaTab);
-  body.innerHTML=tabs+content;
+
+  var AC_IMAGES = {
+    'Boeing 737-800': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',
+    'Airbus A321neo': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A321_Neo.png',
+    'Airbus A380-800': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png'
+  };
+
+  var out = '';
+  Object.keys(manufacturers).forEach(function(brand) {
+    var planes = manufacturers[brand];
+    var flying = planes.filter(function(a){return a.status==='flying';}).length;
+    var ground = planes.filter(function(a){return a.status==='ground'||a.status==='landed';}).length;
+
+    // Get first image for this brand
+    var imgSrc = null;
+    planes.forEach(function(ac){ if(!imgSrc && AC_IMAGES[ac.model]) imgSrc = AC_IMAGES[ac.model]; });
+
+    out += '<div data-brand="'+brand+'" onclick="openBrandFleet(this.getAttribute(\'data-brand\'))" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;">'
+      + (imgSrc ? '<img src="'+imgSrc+'" style="width:100px;height:50px;object-fit:contain;background:#000;border-radius:8px;flex-shrink:0;">' : '<div style="width:100px;height:50px;background:#0d1b2a;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;">&#9992;</div>')
+      + '<div style="flex:1;">'
+      + '<div style="font-size:15px;font-weight:700;color:#e0f0ff;margin-bottom:4px;">'+brand+'</div>'
+      + '<div style="font-size:11px;color:#5580a0;">'+planes.length+' samolot'+(planes.length>1?'y':'')+'</div>'
+      + '<div style="display:flex;gap:8px;margin-top:4px;">'
+      + (flying?'<span style="font-size:10px;color:#00e676;font-weight:700;">&#9992; '+flying+' w locie</span>':'')
+      + (ground?'<span style="font-size:10px;color:#5580a0;">&#9634; '+ground+' na ziemi</span>':'')
+      + '</div>'
+      + '</div>'
+      + '<div style="color:#5580a0;font-size:20px;">&#8250;</div>'
+      + '</div>';
+  });
+
+  body.innerHTML = out;
 }
+
+function openBrandFleet(brand) {
+  var body = document.getElementById('panel-body');
+  if(!body) return;
+
+  var AC_IMAGES = {
+    'Boeing 737-800': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',
+    'Airbus A321neo': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A321_Neo.png',
+    'Airbus A380-800': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png'
+  };
+
+  var planes = G.fleet.filter(function(ac){ return ac.model.split(' ')[0] === brand; });
+
+  var out = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07);">'
+    +'<button onclick="goBackToFlota()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;line-height:1;">&#8592;</button>'
+    +'<div style="font-size:14px;font-weight:700;color:#00d4ff;letter-spacing:1px;">'+brand.toUpperCase()+'</div>'
+    +'</div>';
+
+  // Group by model
+  var models = {};
+  planes.forEach(function(ac){
+    if(!models[ac.model]) models[ac.model]=[];
+    models[ac.model].push(ac);
+  });
+
+  Object.keys(models).forEach(function(model) {
+    var list = models[model];
+    var imgSrc = AC_IMAGES[model];
+    var inFlight = list.filter(function(a){return a.status==='flying';}).length;
+    var onGround = list.filter(function(a){return a.status!=='flying';}).length;
+
+    out += '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:12px;margin-bottom:8px;">';
+    if(imgSrc) out += '<img src="'+imgSrc+'" style="width:100%;max-height:100px;object-fit:contain;background:#000;border-radius:8px;margin-bottom:10px;">';
+    out += '<div style="font-size:14px;font-weight:700;color:#e0f0ff;margin-bottom:6px;">'+model+' <span style="font-size:11px;color:#5580a0;">×'+list.length+'</span></div>';
+    out += '<div style="display:flex;gap:8px;margin-bottom:10px;">';
+    if(inFlight) out += '<span style="font-size:11px;color:#00e676;font-weight:700;">&#9992; '+inFlight+' w locie</span>';
+    if(onGround) out += '<span style="font-size:11px;color:#5580a0;">&#9634; '+onGround+' na ziemi</span>';
+    out += '</div>';
+
+    // Individual aircraft
+    list.forEach(function(ac) {
+      var route = null; G.routes.forEach(function(r){if(r.id===ac.routeId)route=r;});
+      var cfg = ac.config || {eco:ac.seats||150, biz:0};
+      out += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:8px 10px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">'
+        +'<div>'
+        +'<div style="font-size:12px;font-weight:700;color:#e0f0ff;">'+ac.reg+'</div>'
+        +'<div style="font-size:10px;color:#5580a0;">Eko:'+cfg.eco+' Biz:'+(cfg.biz||0)+(route?' &bull; '+route.from+'&#8594;'+route.to:'')+'</div>'
+        +'</div>'
+        +'<div style="display:flex;gap:6px;">'
+        +'<button data-id="'+ac.id+'" onclick="openModAc(this.dataset.id)" style="padding:5px 10px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);border-radius:6px;color:#00d4ff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Konfiguruj</button>'
+        +'<button data-id="'+ac.id+'" onclick="openAddRoute(this.dataset.id)" style="padding:5px 10px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:6px;color:#fff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">+ Trasa</button>'
+        +'</div>'
+        +'</div>';
+    });
+
+    out += '</div>';
+  });
+
+  body.innerHTML = out;
+}
+
 
 function setFlotaTab(el) { var tab=el.dataset?el.dataset.tab:el;
   _flotaTab=tab;
@@ -468,3 +560,5 @@ function applyFuelUpg(el) { var acId=el&&el.dataset?el.dataset.id:el;
 
 
 function confirmRouteGlobal() { confirmAddRoute(_pendingAcId); }
+
+function goBackToFlota(){ var b=document.getElementById('panel-body'); if(b) renderFlotaMain(b); }
