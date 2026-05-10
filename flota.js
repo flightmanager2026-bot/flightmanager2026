@@ -1,3 +1,5 @@
+function openBrandFleetByEl(el){ openBrandFleet(el.getAttribute("data-brand")); }
+
 /* -- FLOTA -- */
 var _flotaTab='samoloty';
 
