@@ -1,3 +1,21 @@
+function showSetupScreen() {
+  var el=document.createElement('div');
+  el.id='setupScreen';
+  el.style.cssText='position:fixed;inset:0;z-index:400;background:rgba(5,10,20,0.98);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;font-family:Arial,sans-serif;';
+  el.innerHTML='<div style="font-size:36px;font-weight:900;color:#00d4ff;letter-spacing:5px;margin-bottom:0;">FLIGHT</div>'
+    +'<div style="font-size:36px;font-weight:900;color:#fff;letter-spacing:5px;margin-bottom:24px;">MANAGER 2026</div>'
+    +'<div style="width:100%;max-width:420px;background:rgba(255,255,255,0.04);border:1px solid rgba(0,212,255,0.2);border-radius:16px;padding:24px;">'
+    +'<div style="font-size:11px;color:#5580a0;letter-spacing:2px;margin-bottom:12px;">WYBIERZ MIASTO BAZY</div>'
+    +'<input id="sq" type="text" placeholder="Szukaj miasta..." oninput="setupFilter()" style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:12px;color:#fff;font-size:15px;font-family:Arial,sans-serif;margin-bottom:10px;outline:none;box-sizing:border-box;">'
+    +'<div id="slist" style="max-height:260px;overflow-y:auto;border-radius:8px;border:1px solid rgba(255,255,255,0.08);margin-bottom:10px;"></div>'
+    +'<div id="spicked" style="display:none;margin-bottom:10px;padding:10px;background:rgba(0,212,255,0.1);border-radius:8px;font-size:13px;color:#00d4ff;font-weight:700;"></div>'
+    +'<button id="sbtn" onclick="setupGo()" disabled style="width:100%;padding:14px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:16px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;opacity:0.5;">Rozpocznij</button>'
+    +'</div>';
+  document.body.appendChild(el);
+  _setupFiltered=POLISH_CITIES.slice();
+  renderSetupList();
+  setTimeout(function(){var sq=document.getElementById('sq');if(sq)sq.focus();},100);
+}
 /* -- SETUP -- */
 var _setupFiltered=[], _setupPicked=null;
 
