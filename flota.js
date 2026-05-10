@@ -309,11 +309,21 @@ function startFlight(acId) {
     destAp=G.airports.filter(function(a){return a.icao===destIcao;})[0];
   }
   if(!destAp) return;
-  var rev=Math.round(ac.seats*0.82*price);
+  // Calculate real flight time
+  var distKm = 500;
+  if(typeof calcDistance==='function') {
+    distKm = Math.round(calcDistance(G.homeAirport.lat,G.homeAirport.lng,destAp.lat,destAp.lng));
+  }
+  var speed = (typeof AC_SPEEDS!=='undefined'&&AC_SPEEDS[ac.model]) ? AC_SPEEDS[ac.model] : 800;
+  var durationMin = Math.round(distKm/speed*60) + 20;
+  // 1 real second = 1 game minute
+  var durationMs = durationMin * 60000;
+
   var rid='rt_'+Date.now();
   var route={id:rid,acId:acId,from:G.homeAirport.icao,to:destIcao,
     fromLat:G.homeAirport.lat,fromLng:G.homeAirport.lng,toLat:destAp.lat,toLng:destAp.lng,
-    startTime:Date.now(),duration:5000,revenue:rev,price:price};
+    startTime:Date.now(),duration:durationMs,durationMin:durationMin,distKm:distKm,
+    revenue:0,price:price,ticketPriceEco:price};
   G.routes.push(route); ac.status='flying'; ac.routeId=rid;
   document.getElementById('modal').style.display='none';
   save(); drawFlightLayer(route); updateHUD();
