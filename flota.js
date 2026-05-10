@@ -150,7 +150,7 @@ function openAddRoute(acId) {
     +'<div id="route-info" style="display:none;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:12px;margin-bottom:12px;"></div>'
 
     // Ticket price
-    +'<div id="route-price-box" style="display:none;">'
+    +'<div id="route-price-box" style="display:none;margin-top:4px;">'
     +'<div style="font-size:11px;color:#5580a0;letter-spacing:1px;margin-bottom:6px;">CENA BILETU</div>'
     +'<div style="display:flex;gap:8px;margin-bottom:8px;">'
     +'<div style="flex:1;">'
@@ -180,8 +180,20 @@ function updateRouteInfo(acId) {
   var toIcao = dest.value;
   var fromIcao = G.homeAirport ? G.homeAirport.icao : '';
 
-  var info = getRouteInfo(fromIcao, toIcao, ac.model);
-  if(!info) return;
+  // Build info manually if flight_calc not loaded
+  var info = null;
+  if(typeof getRouteInfo === 'function') {
+    info = getRouteInfo(fromIcao, toIcao, ac.model);
+  }
+  if(!info) {
+    // Fallback - basic info without distance calc
+    var toAp = null; ADB.forEach(function(a){if(a.icao===toIcao)toAp=a;});
+    var fromAp = null; ADB.forEach(function(a){if(a.icao===fromIcao)fromAp=a;});
+    if(!toAp||!fromAp) return;
+    var dist = 500; // default
+    if(typeof calcDistance==='function') dist=Math.round(calcDistance(fromAp.lat,fromAp.lng,toAp.lat,toAp.lng));
+    info = {dist:dist, minutes:Math.round(dist/800*60)+20, timeStr:Math.round(dist/800)+'h', inRange:true, range:99999, fromAp:fromAp, toAp:toAp};
+  }
 
   var infoBox = document.getElementById('route-info');
   var priceBox = document.getElementById('route-price-box');
