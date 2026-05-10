@@ -60,41 +60,67 @@ var AIRCRAFT_CATALOG = {
 };
 
 function openShop() {
-  function row(label,sub,action,dm) {
-    return '<div onclick="'+action+'"'+(dm?' data-m="'+dm+'"':'')+' style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">'
+  function sec(title, rows) {
+    return '<div style="margin-bottom:16px;"><div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.07);padding-bottom:6px;">'+title+'</div>'+rows+'</div>';
+  }
+  function row(label, sub, onclick) {
+    return '<div onclick="'+onclick+'" style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">'
       +'<div><div style="font-size:13px;font-weight:600;color:#e0f0ff;">'+label+'</div>'
       +(sub?'<div style="font-size:11px;color:#5580a0;margin-top:2px;">'+sub+'</div>':'')+'</div>'
       +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5580a0" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
       +'</div>';
   }
-  function sec(title,rows) {
-    return '<div style="margin-bottom:16px;"><div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.07);padding-bottom:6px;">'+title+'</div>'+rows.join('')+'</div>';
-  }
+
   document.getElementById('modal-body').innerHTML =
     '<div style="font-size:15px;font-weight:700;color:#00d4ff;margin-bottom:16px;">SKLEP</div>'
-    + sec('KUP SAMOLOT', [
-        row('Airbus', 'A320neo, A321neo, A380...', 'openManufacturer(\'Airbus\')'),
-        row('Boeing', '737, 787, 777...', 'openManufacturer(\'Boeing\')'),
-        row('ATR', 'Turbosmiglowce regionalne', 'openManufacturer(\'ATR\')')
-      ])
-    + sec('LEASING', [
-        row('Pasazerski', 'Nizsza oplata poczatkowa', 'shopMsg(this)', 'Leasing - wkrotce!'),
-        row('Cargo', 'Leasing towarowy', 'shopMsg(this)', 'Leasing cargo - wkrotce!')
-      ])
-    + sec('KUP UZYWANY', [
-        row('Pasazerski', 'Tansze, wieksze ryzyko', 'shopMsg(this)', 'Uzywane - wkrotce!'),
-        row('Cargo', 'Uzywane towarowe', 'shopMsg(this)', 'Uzywane cargo - wkrotce!')
-      ])
-    + sec('KUP SLOT', [
+    + sec('KUP SAMOLOT',
+        row('Nowy', 'Airbus, Boeing, ATR...', 'openNewAircraftShop()')
+        + row('Uzywany', 'Tansze, wieksze ryzyko', 'shopMsg2("Uzywane - wkrotce!")')
+        + row('Leasing', 'Nizsza oplata poczatkowa', 'shopMsg2("Leasing - wkrotce!")')
+      )
+    + sec('KUP SLOT',
         row('Slot na lotnisku', 'Dodaj lotnisko docelowe', 'openSlotShop()')
-      ])
+      )
+    + sec('PREMIUM',
+        row('Doladuj konto', 'Zakup waluty premium', 'shopMsg2("Premium - wkrotce!")')
+      )
     + '<div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:12px;margin-top:4px;">'
     + '<div onclick="shopWatchAd()" style="background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:12px;padding:13px;cursor:pointer;">'
-    + '<div style="font-size:13px;font-weight:700;color:#f5a623;">Obejrzyj reklame</div>'
-    + '<div style="font-size:11px;color:#a07040;margin-top:2px;">+50 punktow za reklame</div>'
+    + '<div style="font-size:13px;font-weight:700;color:#f5a623;">&#128253; Obejrzyj reklame</div>'
+    + '<div style="font-size:11px;color:#a07040;margin-top:2px;">+50 punktow i +$5,000</div>'
     + '</div></div>';
+
   document.getElementById('modal').style.display='flex';
 }
+
+function shopMsg2(msg) { showMsg(msg); }
+
+function openNewAircraftShop() {
+  var brands = Object.keys(AIRCRAFT_CATALOG);
+  var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
+    +'<button onclick="openShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;">&#8592;</button>'
+    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">Nowy samolot</div></div>';
+
+  brands.forEach(function(brand) {
+    var planes = AIRCRAFT_CATALOG[brand];
+    // Get first image
+    var imgSrc = null;
+    planes.forEach(function(p){ if(!imgSrc && p.img) imgSrc = p.img; });
+
+    html += '<div data-brand="'+brand+'" onclick="openManufacturer(this.getAttribute(\"data-brand\"))" '
+      +'style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);margin-bottom:8px;cursor:pointer;">'
+      +(imgSrc?'<img src="'+imgSrc+'" style="width:80px;height:44px;object-fit:contain;background:#000;border-radius:6px;flex-shrink:0;">':'<div style="width:80px;height:44px;background:#0d1b2a;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;">&#9992;</div>')
+      +'<div style="flex:1;">'
+      +'<div style="font-size:14px;font-weight:700;color:#e0f0ff;">'+brand+'</div>'
+      +'<div style="font-size:11px;color:#5580a0;">'+planes.length+' modeli</div>'
+      +'</div>'
+      +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5580a0" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
+      +'</div>';
+  });
+
+  document.getElementById('modal-body').innerHTML = html;
+}
+
 
 function openManufacturer(brand) {
   var aircraft = AIRCRAFT_CATALOG[brand] || [];
@@ -222,7 +248,7 @@ function openSlotShop() {
     slots.push(ap);
   });
   var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
-    +'<button onclick="openShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:20px;">&#8592;</button>'
+    +'<button onclick="openNewAircraftShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:20px;">&#8592;</button>'
     +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">KUP SLOT</div></div>';
   if(!slots.length) {
     html += '<div style="padding:20px;text-align:center;color:#5580a0;">Brak dostepnych lotnisk</div>';
