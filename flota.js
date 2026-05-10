@@ -426,7 +426,7 @@ function startFlight(acId) {
   G.routes.push(route); ac.status='flying'; ac.routeId=rid;
   document.getElementById('modal').style.display='none';
   save(); drawFlightLayer(route); updateHUD();
-  showMsg('Odlecial! Przychod: $'+rev.toLocaleString());
+  showMsg('Odlecial '+ac.model+'!');
 }
 
 /* -- MODYFIKACJE -- */
