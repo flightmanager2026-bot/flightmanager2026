@@ -123,36 +123,152 @@ function doReturn(el) {
 var _pendingAcId=null;
 
 function openAddRoute(acId) {
-  var ac=G.fleet.filter(function(a){return a.id===acId;})[0];
+  var ac = G.fleet.filter(function(a){return a.id===acId;})[0];
   if(!ac) return;
-  _pendingAcId=acId;
-  var owned={}; G.slots.forEach(function(s){owned[s]=true;}); if(G.homeAirport) owned[G.homeAirport.icao]=true;
-  var opts=ADB.map(function(ap){
-    var has=owned[ap.icao];
-    return '<option value="'+ap.icao+'">'+ap.icao+' - '+ap.city+' ('+ap.country+')'+(has?'':' [slot $'+ap.cost.toLocaleString()+']')+'</option>';
+  _pendingAcId = acId;
+
+  var owned = {};
+  G.slots.forEach(function(s){owned[s]=true;});
+  if(G.homeAirport) owned[G.homeAirport.icao] = true;
+
+  var opts = ADB.map(function(ap){
+    var has = owned[ap.icao];
+    return '<option value="'+ap.icao+'">'+ap.icao+' - '+ap.city+' ('+ap.country+')'+(has?'':' [brak slotu]')+'</option>';
   }).join('');
-  document.getElementById('modal-body').innerHTML=
-    '<div style="font-size:14px;font-weight:700;color:#00d4ff;margin-bottom:14px;">NOWA TRASA - '+ac.model+'</div>'
-    +'<div style="font-size:11px;color:#5580a0;margin-bottom:5px;">LOTNISKO DOCELOWE</div>'
-    +'<select id="dest-select" onchange="updateSlotInfo()" style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:13px;font-family:Arial,sans-serif;margin-bottom:8px;">'+opts+'</select>'
-    +'<div id="slot-info" style="font-size:11px;color:#f5a623;margin-bottom:10px;min-height:16px;"></div>'
-    +'<div style="font-size:11px;color:#5580a0;margin-bottom:5px;">CENA BILETU (PLN)</div>'
-    +'<input id="ticket-price" type="number" value="350" min="50" max="5000" style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:14px;font-family:Arial,sans-serif;margin-bottom:16px;-webkit-appearance:none;">'
-    +'<button onclick="doStartFlight()" style="width:100%;padding:13px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:8px;color:#fff;font-size:15px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">&#9992; ODLEC</button>';
-  document.getElementById('modal').style.display='flex';
-  updateSlotInfo();
+
+  var cfg = ac.config || (typeof AC_SEATS !== 'undefined' ? AC_SEATS[ac.model] : null) || {eco:100,biz:0,total:100};
+  var hasBiz = cfg.biz > 0;
+  var hasEco = cfg.eco > 0;
+
+  document.getElementById('modal-body').innerHTML =
+    '<div style="font-size:15px;font-weight:700;color:#00d4ff;margin-bottom:12px;">Nowa trasa - '+ac.model+'</div>'
+    +'<div style="font-size:11px;color:#5580a0;margin-bottom:4px;">LOTNISKO DOCELOWE</div>'
+    +'<select id="route-dest" onchange="updateRouteInfo(this.dataset.acid)" data-acid=""  style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:13px;font-family:Arial,sans-serif;margin-bottom:12px;outline:none;">'
+    +'<option value="">-- Wybierz lotnisko --</option>'+opts+'</select>'
+
+    // Route info panel
+    +'<div id="route-info" style="display:none;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:12px;margin-bottom:12px;"></div>'
+
+    // Ticket price
+    +'<div id="route-price-box" style="display:none;">'
+    +'<div style="font-size:11px;color:#5580a0;letter-spacing:1px;margin-bottom:6px;">CENA BILETU</div>'
+    +'<div style="display:flex;gap:8px;margin-bottom:8px;">'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:10px;color:'+(hasEco?'#5580a0':'#2a3a4a')+';margin-bottom:4px;">EKONOMIA</div>'
+    +'<div style="display:flex;align-items:center;gap:4px;">'
+    +'<input id="price-eco" type="number" min="0" max="9999" value="'+(hasEco?'0':'')+(hasEco?'':'')+'" '+(hasEco?'':'disabled ')
+    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,'+(hasEco?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasEco?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;" placeholder="'+(hasEco?'zł/os':'Brak eko')+'"></div>'
+    +'</div>'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:10px;color:'+(hasBiz?'#5580a0':'#2a3a4a')+';margin-bottom:4px;">BIZNES</div>'
+    +'<input id="price-biz" type="number" min="0" max="99999" value="" '+(hasBiz?'':'disabled ')
+    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,'+(hasBiz?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasBiz?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;" placeholder="'+(hasBiz?'zł/os':'Brak biz')+'">'
+    +'</div></div>'
+    +'<div id="price-hint" style="font-size:11px;color:#5580a0;margin-bottom:12px;"></div>'
+    +'</div>'
+
+    '<button onclick="confirmRouteGlobal()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:9px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Dodaj trase</button>'
+    +'<button onclick="closeModal()" style="width:100%;padding:10px;background:none;border:1px solid rgba(255,255,255,0.1);border-radius:9px;color:#5580a0;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-top:6px;">Anuluj</button>';
+
+  document.getElementById('modal').style.display = 'flex';
 }
 
-function updateSlotInfo() {
-  var sel=document.getElementById('dest-select'); if(!sel) return;
-  var owned={}; G.slots.forEach(function(s){owned[s]=true;}); if(G.homeAirport) owned[G.homeAirport.icao]=true;
-  var info=document.getElementById('slot-info'); if(!info) return;
-  if(!owned[sel.value]) {
-    var db=ADB.filter(function(a){return a.icao===sel.value;})[0];
-    info.textContent='Brak slotu - zostanie kupiony ($'+(db?db.cost.toLocaleString():'?')+')';
-    info.style.color='#f5a623';
-  } else { info.textContent='Masz slot'; info.style.color='#00e676'; }
+function updateRouteInfo(acId) {
+  var ac = G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
+  var dest = document.getElementById('route-dest');
+  if(!dest || !dest.value) return;
+  var toIcao = dest.value;
+  var fromIcao = G.homeAirport ? G.homeAirport.icao : '';
+
+  var info = getRouteInfo(fromIcao, toIcao, ac.model);
+  if(!info) return;
+
+  var infoBox = document.getElementById('route-info');
+  var priceBox = document.getElementById('route-price-box');
+  var hint = document.getElementById('price-hint');
+
+  if(!info.inRange) {
+    infoBox.style.display = 'block';
+    infoBox.innerHTML = '<div style="color:#e63946;font-weight:700;font-size:13px;">&#9888; Zbyt duzy dystans!</div>'
+      +'<div style="font-size:12px;color:#5580a0;margin-top:4px;">Dystans: '+info.dist+' km &bull; Zasieg '+ac.model+': '+info.range+' km</div>';
+    if(priceBox) priceBox.style.display = 'none';
+    return;
+  }
+
+  infoBox.style.display = 'block';
+  infoBox.innerHTML =
+    '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">'
+    +'<span style="color:#5580a0;">Dystans:</span><span style="color:#e0f0ff;font-weight:700;">'+info.dist+' km</span></div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">'
+    +'<span style="color:#5580a0;">Czas lotu:</span><span style="color:#00d4ff;font-weight:700;">'+info.timeStr+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:12px;">'
+    +'<span style="color:#5580a0;">Lotnisko:</span><span style="color:#e0f0ff;">'+info.fromAp.city+' &#8594; '+info.toAp.city+'</span></div>';
+
+  if(priceBox) priceBox.style.display = 'block';
+
+  // Show suggested min price
+  var hours = info.minutes / 60;
+  var minPrice = Math.round(80 * hours);
+  if(hint) hint.textContent = 'Sugerowana minimalna cena: '+minPrice+' zł/os ('+info.timeStr+' × 80zł)';
+
+  // Set default price
+  var ecoIn = document.getElementById('price-eco');
+  var bizIn = document.getElementById('price-biz');
+  if(ecoIn && !ecoIn.disabled) ecoIn.value = minPrice;
+  if(bizIn && !bizIn.disabled) bizIn.value = Math.round(minPrice * 2.5);
 }
+
+function confirmAddRoute(acId) {
+  var ac = G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
+  var dest = document.getElementById('route-dest');
+  if(!dest || !dest.value) { showMsg('Wybierz lotnisko!'); return; }
+  var toIcao = dest.value;
+  var fromIcao = G.homeAirport ? G.homeAirport.icao : '';
+
+  // Check if slot owned
+  var owned = {};
+  G.slots.forEach(function(s){owned[s]=true;});
+  if(G.homeAirport) owned[G.homeAirport.icao]=true;
+  if(!owned[toIcao]){ showMsg('Brak slotu na tym lotnisku!'); return; }
+
+  var info = getRouteInfo(fromIcao, toIcao, ac.model);
+  if(!info){ showMsg('Blad danych lotniska!'); return; }
+  if(!info.inRange){ showMsg('Zbyt duzy dystans dla '+ac.model+'!'); return; }
+
+  var ecoIn = document.getElementById('price-eco');
+  var bizIn = document.getElementById('price-biz');
+  var ecoPrice = ecoIn && !ecoIn.disabled ? parseInt(ecoIn.value)||0 : 0;
+  var bizPrice = bizIn && !bizIn.disabled ? parseInt(bizIn.value)||0 : 0;
+
+  var toAp = info.toAp;
+  var routeId = 'rt_'+Date.now();
+  var route = {
+    id: routeId,
+    acId: acId,
+    from: fromIcao,
+    to: toIcao,
+    fromLat: G.homeAirport.lat,
+    fromLng: G.homeAirport.lng,
+    toLat: toAp.lat,
+    toLng: toAp.lng,
+    distKm: info.dist,
+    durationMin: info.minutes,
+    duration: info.minutes * 60000, // ms
+    ticketPriceEco: ecoPrice,
+    ticketPriceBiz: bizPrice,
+    revenue: 0,
+    startTime: null
+  };
+
+  G.routes.push(route);
+  ac.routeId = routeId;
+  save();
+  closeModal();
+  showMsg('Trasa '+fromIcao+' - '+toIcao+' dodana! ('+info.timeStr+')');
+  var body = document.getElementById('panel-body');
+  if(body) renderFlotaMain(body);
+}
+
 
 function doStartFlight() { startFlight(_pendingAcId); }
 
@@ -288,18 +404,24 @@ function liveModSlider(val,brs,ers,brc,rows) {
   if(b)b.textContent=biz; if(e)e.textContent=eco; if(t)t.textContent=biz+eco;
 }
 
-function applySeats(el) { var acId=el&&el.dataset?el.dataset.id:el;
-  var slider=document.getElementById('md-slider'); if(!slider) return;
-  if(G.cash<30000){showMsg('Za malo gotowki ($30,000)');return;}
-  var ac=G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
-  var def=AC_DEFS[ac.model];
-  var bizRows=parseInt(slider.value);
-  G.cash-=30000; ac.bizRows=bizRows;
-  var seats=getAcSeats(ac); ac.seats=seats.total;
+function applySeats(el) {
+  var acId = el&&el.dataset?el.dataset.id:el;
+  var ac = G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
+  var def = AC_DEFS[ac.model]; if(!def) return;
+  if(G.cash < 30000){showMsg('Za malo gotowki!'); return;}
+  var slider = document.getElementById('md-slider');
+  var bizRows = slider ? parseInt(slider.value) : 0;
+  ac.bizRows = bizRows;
+  // Save seat config
+  var biz = bizRows * def.bizRowSeats;
+  var eco = Math.max(0, def.rows - bizRows*def.bizRowCost) * def.ecoRowSeats;
+  ac.config = {eco:eco, biz:biz, prem:0, first:0, total:eco+biz};
+  G.cash -= 30000;
   save(); updateHUD();
-  document.getElementById('modal').style.display='none';
-  showMsg('Kabina zmieniona: '+seats.biz+' Biz + '+seats.eco+' Eco');
+  closeModal();
+  showMsg('Konfiguracja zapisana! Biznes:'+biz+' Eko:'+eco);
 }
+
 
 function applyFuelUpg(el) { var acId=el&&el.dataset?el.dataset.id:el;
   if(G.cash<50000){showMsg('Za malo gotowki ($50,000)');return;}
@@ -307,3 +429,6 @@ function applyFuelUpg(el) { var acId=el&&el.dataset?el.dataset.id:el;
   G.cash-=50000; ac.fuelUpgrade=true; save(); updateHUD();
   openModAc(acId); showMsg('Ulepszenie zainstalowane!');
 }
+
+
+function confirmRouteGlobal() { confirmAddRoute(_pendingAcId); }
