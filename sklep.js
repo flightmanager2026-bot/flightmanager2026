@@ -14,7 +14,7 @@ var AIRCRAFT_CATALOG = {
   'Airbus': [
     {
       model: 'Airbus A321neo',
-      img: 'aircraft_a321neo',
+      img: 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A321_Neo.png',
       seats: 192, range: 7400, price: 120000000,
       desc: 'Waski kadlub, 192 miejsca, zasieg 7400km',
       engines: 'CFM LEAP-1A / P&W PW1100G',
@@ -22,7 +22,7 @@ var AIRCRAFT_CATALOG = {
     },
     {
       model: 'Airbus A380-800',
-      img: 'aircraft_a380',
+      img: 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png',
       seats: 555, range: 15200, price: 450000000,
       desc: 'Dwupokladowy gigant, 555 miejsc, zasieg 15200km',
       engines: 'Rolls-Royce Trent 970',
@@ -32,7 +32,7 @@ var AIRCRAFT_CATALOG = {
   'Boeing': [
     {
       model: 'Boeing 737-800',
-      img: null,
+      img: 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',
       seats: 162, range: 5765, price: 90000000,
       desc: 'Klasyczny waski kadlub, 162 miejsca',
       engines: 'CFM56-7B',
@@ -105,8 +105,9 @@ function openManufacturer(brand) {
 
   aircraft.forEach(function(ac) {
     var canBuy = G.level >= (ac.level || 1);
-    var img = (ac.img && typeof ICONS !== 'undefined' && ICONS[ac.img])
-      ? '<img src="'+ICONS[ac.img]+'" style="width:100%;max-height:130px;object-fit:contain;background:#000;border-radius:8px;margin-bottom:10px;">'
+    var imgSrc = ac.img || (typeof ICONS !== 'undefined' && ac.imgIcon ? ICONS[ac.imgIcon] : null);
+    var img = imgSrc
+      ? '<img src="'+imgSrc+'" style="width:100%;max-height:130px;object-fit:contain;background:#000;border-radius:8px;margin-bottom:10px;">'
       : '<div style="width:100%;height:80px;background:#0d1b2a;border-radius:8px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#5580a0;">Brak grafiki</div>';
 
     html += '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;margin-bottom:10px;">'
@@ -144,13 +145,8 @@ function buyAircraft(model) {
 
 function shopMsg(el) { closeModal(); showMsg(el&&el.dataset&&el.dataset.m?el.dataset.m:'Wkrotce!'); }
 function shopWatchAd() {
-  // Jesli masz kod AdSense/AdMob wklej go tutaj
-  // np. googletag.pubads().addEventListener('rewardedSlotReady', ...)
-  
-  // Na razie symulacja reklamy
   closeModal();
   showRewardedAd(function() {
-    // Callback po obejrzeniu reklamy
     G.points += 50;
     G.cash += 5000;
     save();
@@ -162,17 +158,39 @@ function shopWatchAd() {
 function showRewardedAd(callback) {
   window._adCallback = callback;
   var container = document.getElementById('ad-container');
-  if(!container) { callback(); return; }
-  
-  // Show ad container
+  if(!container) { 
+    // Brak kontenera - symulacja
+    showMsg('Reklama niedostepna, sprobuj pozniej');
+    return;
+  }
+
+  // Najpierw pokaz kontener
   container.style.display = 'flex';
-  
+
+  // Dopiero teraz zaladuj reklame (kontener ma wymiary)
+  var wrapper = document.getElementById('ad-slot-wrapper');
+  if(wrapper) {
+    wrapper.innerHTML = '<ins class="adsbygoogle"'
+      +' style="display:block;width:300px;height:200px;"'
+      +' data-ad-client="ca-pub-3572597201441656"'
+      +' data-ad-slot="7126799672"'
+      +' data-ad-format="fixed"></ins>';
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch(e) {}
+  }
+
   var timeLeft = 5;
   var timerEl = document.getElementById('ad-timer-txt');
   var closeBtn = document.getElementById('ad-close-btn');
   if(timerEl) timerEl.textContent = 'Zamknij za ' + timeLeft + 's';
-  if(closeBtn) { closeBtn.disabled = true; closeBtn.style.background='#333'; closeBtn.style.color='#888'; closeBtn.style.cursor='not-allowed'; }
-  
+  if(closeBtn) {
+    closeBtn.disabled = true;
+    closeBtn.style.background = '#333';
+    closeBtn.style.color = '#888';
+    closeBtn.style.cursor = 'not-allowed';
+  }
+
   var timer = setInterval(function() {
     timeLeft--;
     if(timerEl) timerEl.textContent = timeLeft > 0 ? 'Zamknij za '+timeLeft+'s' : 'Mozesz zamknac!';
