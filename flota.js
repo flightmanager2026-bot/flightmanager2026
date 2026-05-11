@@ -220,11 +220,15 @@ function openAddRoute(acId) {
   var hasBiz = cfg.biz > 0;
 
   var opts = '<option value="">-- Wybierz lotnisko --</option>';
+  // Pokazuj tylko lotniska z slotem
   ADB.forEach(function(ap){
     if(G.homeAirport && ap.icao === G.homeAirport.icao) return;
-    var hasSlot = owned[ap.icao];
-    opts += '<option value="'+ap.icao+'"'+(hasSlot?'':' style="color:#5580a0;"')+'>'+ap.icao+' - '+ap.city+(hasSlot?'':' [brak slotu]')+'</option>';
+    if(!owned[ap.icao]) return; // tylko sloty gracza
+    opts += '<option value="'+ap.icao+'">'+ap.icao+' - '+ap.city+' ('+ap.country+')</option>';
   });
+  if(opts === '<option value="">-- Wybierz lotnisko --</option>') {
+    opts += '<option disabled>Brak slotow - kup w Sklepie!</option>';
+  }
 
   document.getElementById('modal-body').innerHTML =
     '<div style="font-size:15px;font-weight:700;color:#00d4ff;margin-bottom:12px;">Nowa trasa - '+ac.model+'</div>'
