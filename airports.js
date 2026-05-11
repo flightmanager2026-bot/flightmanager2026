@@ -205,4 +205,95 @@ var ADB=[
 ,{icao:'LECO',city:'A Coruna',country:'Hiszpania',lat:43.302,lng:-8.377,cost:8000}
 ,{icao:'LEMH',city:'Menorca',country:'Hiszpania',lat:39.863,lng:4.219,cost:9000}
 ,{icao:'GCLA',city:'La Palma',country:'Hiszpania',lat:28.627,lng:-17.756,cost:9000}
+
+,{icao:'LPPT',city:'Lizbona',country:'Portugalia',lat:38.774,lng:-9.134,cost:15000}
+,{icao:'LPPR',city:'Porto',country:'Portugalia',lat:41.248,lng:-8.681,cost:12000}
+,{icao:'LPFR',city:'Faro',country:'Portugalia',lat:37.014,lng:-7.966,cost:10000}
+,{icao:'LPMA',city:'Funchal',country:'Portugalia',lat:32.698,lng:-16.774,cost:10000}
+,{icao:'LPPD',city:'Ponta Delgada',country:'Portugalia',lat:37.741,lng:-25.698,cost:9000}
+,{icao:'LPLA',city:'Terceira-Lajes',country:'Portugalia',lat:38.762,lng:-27.091,cost:8000}
+,{icao:'LPHR',city:'Horta',country:'Portugalia',lat:38.520,lng:-28.716,cost:7000}
+,{icao:'LPPS',city:'Porto Santo',country:'Portugalia',lat:33.074,lng:-16.350,cost:7000}
+,{icao:'LPAZ',city:'Santa Maria',country:'Portugalia',lat:36.971,lng:-25.171,cost:7000}
+,{icao:'LPBJ',city:'Beja',country:'Portugalia',lat:38.079,lng:-7.932,cost:5000}
+,{icao:'LPCS',city:'Cascais',country:'Portugalia',lat:38.725,lng:-9.355,cost:8000}
+,{icao:'EGLL',city:'Londyn-Heathrow',country:'UK',lat:51.477,lng:-0.461,cost:30000}
+,{icao:'EGKK',city:'Londyn-Gatwick',country:'UK',lat:51.148,lng:-0.190,cost:22000}
+,{icao:'EGSS',city:'Londyn-Stansted',country:'UK',lat:51.885,lng:0.235,cost:15000}
+,{icao:'EGGW',city:'Londyn-Luton',country:'UK',lat:51.874,lng:-0.368,cost:12000}
+,{icao:'EGLC',city:'Londyn-City',country:'UK',lat:51.505,lng:0.055,cost:18000}
+,{icao:'EGMC',city:'Londyn-Southend',country:'UK',lat:51.571,lng:0.696,cost:8000}
+,{icao:'EGCC',city:'Manchester',country:'UK',lat:53.354,lng:-2.275,cost:20000}
+,{icao:'EGBB',city:'Birmingham',country:'UK',lat:52.454,lng:-1.748,cost:16000}
+,{icao:'EGGD',city:'Bristol',country:'UK',lat:51.382,lng:-2.719,cost:12000}
+,{icao:'EGGP',city:'Liverpool',country:'UK',lat:53.334,lng:-2.850,cost:11000}
+,{icao:'EGNT',city:'Newcastle',country:'UK',lat:55.037,lng:-1.692,cost:11000}
+,{icao:'EGNM',city:'Leeds Bradford',country:'UK',lat:53.866,lng:-1.660,cost:10000}
+,{icao:'EGNX',city:'East Midlands',country:'UK',lat:52.831,lng:-1.328,cost:10000}
+,{icao:'EGHH',city:'Bournemouth',country:'UK',lat:50.780,lng:-1.842,cost:8000}
+,{icao:'EGHI',city:'Southampton',country:'UK',lat:50.950,lng:-1.357,cost:9000}
+,{icao:'EGSH',city:'Norwich',country:'UK',lat:52.675,lng:1.282,cost:8000}
+,{icao:'EGPH',city:'Edynburg',country:'UK',lat:55.950,lng:-3.373,cost:15000}
+,{icao:'EGPF',city:'Glasgow',country:'UK',lat:55.872,lng:-4.433,cost:14000}
+,{icao:'EGPD',city:'Aberdeen',country:'UK',lat:57.202,lng:-2.198,cost:11000}
+,{icao:'EGPE',city:'Inverness',country:'UK',lat:57.542,lng:-4.048,cost:9000}
+,{icao:'EGPK',city:'Glasgow-Prestwick',country:'UK',lat:55.509,lng:-4.587,cost:8000}
+,{icao:'EGPN',city:'Dundee',country:'UK',lat:56.452,lng:-3.026,cost:7000}
+,{icao:'EGFF',city:'Cardiff',country:'UK',lat:51.397,lng:-3.343,cost:10000}
+,{icao:'EGAA',city:'Belfast-International',country:'UK',lat:54.658,lng:-6.216,cost:11000}
+,{icao:'EGAC',city:'Belfast-City',country:'UK',lat:54.618,lng:-5.873,cost:10000}
+,{icao:'EGAE',city:'City of Derry',country:'UK',lat:55.043,lng:-7.161,cost:7000}
+,{icao:'EIDW',city:'Dublin',country:'Irlandia',lat:53.421,lng:-6.270,cost:18000}
+,{icao:'EICK',city:'Cork',country:'Irlandia',lat:51.841,lng:-8.491,cost:12000}
+,{icao:'EINN',city:'Shannon',country:'Irlandia',lat:52.702,lng:-8.925,cost:11000}
+,{icao:'EIKN',city:'Knock',country:'Irlandia',lat:53.910,lng:-8.818,cost:8000}
+,{icao:'EIKY',city:'Kerry',country:'Irlandia',lat:52.181,lng:-9.524,cost:7000}
+,{icao:'EIDL',city:'Donegal',country:'Irlandia',lat:54.933,lng:-8.341,cost:7000}
+,{icao:'EIWF',city:'Waterford',country:'Irlandia',lat:52.187,lng:-7.087,cost:7000}
+,{icao:'EISG',city:'Sligo',country:'Irlandia',lat:54.280,lng:-8.599,cost:6000}
+,{icao:'KATL',city:'Atlanta',country:'USA',lat:33.641,lng:-84.427,cost:25000}
+,{icao:'KJFK',city:'Nowy Jork-JFK',country:'USA',lat:40.641,lng:-73.778,cost:28000}
+,{icao:'KLAX',city:'Los Angeles',country:'USA',lat:33.943,lng:-118.408,cost:27000}
+,{icao:'KORD',city:'Chicago-OHare',country:'USA',lat:41.978,lng:-87.905,cost:25000}
+,{icao:'KDFW',city:'Dallas-Fort Worth',country:'USA',lat:32.897,lng:-97.038,cost:24000}
+,{icao:'KDEN',city:'Denver',country:'USA',lat:39.856,lng:-104.674,cost:22000}
+,{icao:'KSFO',city:'San Francisco',country:'USA',lat:37.619,lng:-122.375,cost:24000}
+,{icao:'KMIA',city:'Miami',country:'USA',lat:25.796,lng:-80.287,cost:22000}
+,{icao:'KEWR',city:'Newark',country:'USA',lat:40.693,lng:-74.169,cost:22000}
+,{icao:'KBOS',city:'Boston',country:'USA',lat:42.365,lng:-71.009,cost:21000}
+,{icao:'KLGA',city:'Nowy Jork-LaGuardia',country:'USA',lat:40.777,lng:-73.873,cost:20000}
+,{icao:'KIAD',city:'Waszyngton-Dulles',country:'USA',lat:38.944,lng:-77.456,cost:20000}
+,{icao:'KDCA',city:'Waszyngton-Reagan',country:'USA',lat:38.852,lng:-77.037,cost:20000}
+,{icao:'KPHL',city:'Filadelfia',country:'USA',lat:39.872,lng:-75.241,cost:19000}
+,{icao:'KCLT',city:'Charlotte',country:'USA',lat:35.214,lng:-80.943,cost:19000}
+,{icao:'KMCO',city:'Orlando',country:'USA',lat:28.429,lng:-81.309,cost:20000}
+,{icao:'KIAH',city:'Houston',country:'USA',lat:29.984,lng:-95.342,cost:20000}
+,{icao:'KMSP',city:'Minneapolis',country:'USA',lat:44.882,lng:-93.222,cost:18000}
+,{icao:'KDTW',city:'Detroit',country:'USA',lat:42.212,lng:-83.353,cost:18000}
+,{icao:'KLAS',city:'Las Vegas',country:'USA',lat:36.080,lng:-115.152,cost:20000}
+,{icao:'KPHX',city:'Phoenix',country:'USA',lat:33.438,lng:-112.008,cost:18000}
+,{icao:'KSLC',city:'Salt Lake City',country:'USA',lat:40.788,lng:-111.978,cost:17000}
+,{icao:'KSEA',city:'Seattle',country:'USA',lat:47.449,lng:-122.309,cost:20000}
+,{icao:'KSAN',city:'San Diego',country:'USA',lat:32.734,lng:-117.190,cost:18000}
+,{icao:'KSJC',city:'San Jose',country:'USA',lat:37.362,lng:-121.929,cost:17000}
+,{icao:'KPDX',city:'Portland',country:'USA',lat:45.589,lng:-122.598,cost:17000}
+,{icao:'PHNL',city:'Honolulu',country:'USA',lat:21.318,lng:-157.924,cost:20000}
+,{icao:'PANC',city:'Anchorage',country:'USA',lat:61.174,lng:-149.996,cost:18000}
+,{icao:'KFLL',city:'Fort Lauderdale',country:'USA',lat:26.073,lng:-80.150,cost:17000}
+,{icao:'KBWI',city:'Baltimore',country:'USA',lat:39.175,lng:-76.668,cost:17000}
+,{icao:'KTPA',city:'Tampa',country:'USA',lat:27.976,lng:-82.533,cost:17000}
+,{icao:'KMDW',city:'Chicago-Midway',country:'USA',lat:41.786,lng:-87.742,cost:16000}
+,{icao:'KAUS',city:'Austin',country:'USA',lat:30.198,lng:-97.670,cost:17000}
+,{icao:'KBNA',city:'Nashville',country:'USA',lat:36.124,lng:-86.678,cost:16000}
+,{icao:'KMSY',city:'New Orleans',country:'USA',lat:29.993,lng:-90.258,cost:16000}
+,{icao:'KMEM',city:'Memphis',country:'USA',lat:35.043,lng:-89.977,cost:15000}
+,{icao:'KSTL',city:'St. Louis',country:'USA',lat:38.748,lng:-90.370,cost:15000}
+,{icao:'KCLE',city:'Cleveland',country:'USA',lat:41.412,lng:-81.850,cost:15000}
+,{icao:'KPIT',city:'Pittsburgh',country:'USA',lat:40.492,lng:-80.233,cost:15000}
+,{icao:'TJSJ',city:'San Juan',country:'USA',lat:18.440,lng:-66.002,cost:16000}
+,{icao:'KSMF',city:'Sacramento',country:'USA',lat:38.696,lng:-121.591,cost:15000}
+,{icao:'KSNA',city:'Orange County',country:'USA',lat:33.676,lng:-117.868,cost:16000}
+,{icao:'KSAT',city:'San Antonio',country:'USA',lat:29.534,lng:-98.470,cost:15000}
+,{icao:'KMCI',city:'Kansas City',country:'USA',lat:39.298,lng:-94.714,cost:15000}
+,{icao:'KIND',city:'Indianapolis',country:'USA',lat:39.717,lng:-86.295,cost:15000}
 ];
