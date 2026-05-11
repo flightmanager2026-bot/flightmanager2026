@@ -115,10 +115,13 @@ function openNewAircraftShop() {
   var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
     +'<button onclick="openShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;">&#8592;</button>'
     +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">Wybierz producenta</div></div>';
+  var BRAND_LOGOS = {
+    'Boeing':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/logo.boeing.png'
+  };
   brands.forEach(function(brand) {
     var planes = AIRCRAFT_CATALOG[brand];
-    var imgSrc = null;
-    planes.forEach(function(p){ if(!imgSrc && p.img) imgSrc = p.img; });
+    var imgSrc = BRAND_LOGOS[brand] || null;
+    if(!imgSrc) planes.forEach(function(p){ if(!imgSrc && p.img) imgSrc = p.img; });
     html += '<div data-brand="'+brand+'" onclick="openManufacturerByName(this)" '
       +'style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);margin-bottom:6px;cursor:pointer;">'
       +(imgSrc?'<img src="'+imgSrc+'" style="width:70px;height:38px;object-fit:contain;background:#000;border-radius:6px;flex-shrink:0;">':'<div style="width:70px;height:38px;background:#0d1b2a;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;">&#9992;</div>')
