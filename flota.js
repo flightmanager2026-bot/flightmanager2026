@@ -1,4 +1,4 @@
-function openBrandFleetByEl(el){ openBrandFleet(el.getAttribute("data-brand")); }
+function openBrandFleetByEl(el){ var brand=el.getAttribute("data-brand"); if(brand) openBrandFleet(brand); }
 
 /* -- FLOTA -- */
 var _flotaTab='samoloty';
@@ -51,6 +51,9 @@ function renderFlotaMain(body) {
 }
 
 function openBrandFleet(brand) {
+  // Make sure panel is open
+  var panel = document.getElementById('panel');
+  if(panel) panel.style.transform = 'translateY(0)';
   var body = document.getElementById('panel-body');
   if(!body) return;
 
