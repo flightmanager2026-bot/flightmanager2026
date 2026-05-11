@@ -207,31 +207,136 @@ function closeAd() {
   if(window._adCallback){ window._adCallback(); window._adCallback=null; }
 }
 
+/* Kraje i poziomy odblokowania */
+var COUNTRY_LEVELS = {
+  'Polska':     {lvl:1,  cost:50000,  flag:'🇵🇱'},
+  'Niemcy':     {lvl:2,  cost:80000,  flag:'🇩🇪'},
+  'Czechy':     {lvl:3,  cost:75000,  flag:'🇨🇿'},
+  'Austria':    {lvl:4,  cost:75000,  flag:'🇦🇹'},
+  'Francja':    {lvl:5,  cost:100000, flag:'🇫🇷'},
+  'Hiszpania':  {lvl:6,  cost:90000,  flag:'🇪🇸'},
+  'Portugalia': {lvl:7,  cost:85000,  flag:'🇵🇹'},
+  'UK':         {lvl:8,  cost:110000, flag:'🇬🇧'},
+  'Irlandia':   {lvl:9,  cost:100000, flag:'🇮🇪'},
+  'Wlochy':     {lvl:10, cost:95000,  flag:'🇮🇹'},
+  'Holandia':   {lvl:11, cost:95000,  flag:'🇳🇱'},
+  'Belgia':     {lvl:12, cost:90000,  flag:'🇧🇪'},
+  'Szwajcaria': {lvl:13, cost:120000, flag:'🇨🇭'},
+  'Turcja':     {lvl:14, cost:100000, flag:'🇹🇷'},
+  'Egipt':      {lvl:15, cost:120000, flag:'🇪🇬'},
+  'UAE':        {lvl:16, cost:150000, flag:'🇦🇪'},
+  'Skandynawia':{lvl:17, cost:110000, flag:'🌍'},
+  'Indie':      {lvl:18, cost:160000, flag:'🇮🇳'},
+  'Tajlandia':  {lvl:19, cost:150000, flag:'🇹🇭'},
+  'Singapore':  {lvl:20, cost:200000, flag:'🇸🇬'},
+  'Japonia':    {lvl:21, cost:190000, flag:'🇯🇵'},
+  'Korea':      {lvl:22, cost:180000, flag:'🇰🇷'},
+  'Chiny':      {lvl:23, cost:200000, flag:'🇨🇳'},
+  'Etiopia':    {lvl:24, cost:150000, flag:'🇪🇹'},
+  'RPA':        {lvl:25, cost:170000, flag:'🇿🇦'},
+  'Australia':  {lvl:26, cost:220000, flag:'🇦🇺'},
+  'Kanada':     {lvl:27, cost:180000, flag:'🇨🇦'},
+  'Brazylia':   {lvl:28, cost:200000, flag:'🇧🇷'},
+  'USA':        {lvl:29, cost:200000, flag:'🇺🇸'},
+};
+
+/* Mapowanie country z ADB na klucze COUNTRY_LEVELS */
+function getCountryKey(country) {
+  var map = {
+    'Niemcy':'Niemcy','Francja':'Francja','UK':'UK','Hiszpania':'Hiszpania',
+    'Portugalia':'Portugalia','Irlandia':'Irlandia','USA':'USA',
+    'Italy':'Wlochy','Switzerland':'Szwajcaria','Netherlands':'Holandia',
+    'Belgium':'Belgia','Turkey':'Turcja','UAE':'UAE','India':'Indie',
+    'China':'Chiny','Japan':'Japonia','Korea':'Korea','Thailand':'Tajlandia',
+    'Australia':'Australia','Brazil':'Brazylia','Egypt':'Egipt',
+    'S.Africa':'RPA','Ethiopia':'Etiopia','Singapore':'Singapore',
+    'Polska':'Polska'
+  };
+  return map[country] || country;
+}
+
 function openSlotShop() {
-  var slots=[],lvl=G.level;
+  var lvl = G.level || 1;
+  
+  // Get all unique countries from ADB
+  var countries = {};
   ADB.forEach(function(ap){
+    var key = getCountryKey(ap.country);
+    if(!countries[key]) countries[key] = {key:key, country:ap.country, airports:[]};
+    countries[key].airports.push(ap);
+  });
+
+  var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
+    +'<button onclick="openShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:20px;">&#8592;</button>'
+    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">KUP SLOT</div></div>'
+    +'<div style="font-size:11px;color:#5580a0;margin-bottom:12px;">Twoj poziom: <span style="color:#f5a623;font-weight:700;">'+lvl+'</span></div>';
+
+  // Sort by required level
+  var sorted = Object.keys(countries).sort(function(a,b){
+    var la = (COUNTRY_LEVELS[a]||{lvl:9}).lvl;
+    var lb = (COUNTRY_LEVELS[b]||{lvl:9}).lvl;
+    return la-lb;
+  });
+
+  sorted.forEach(function(key){
+    var info = COUNTRY_LEVELS[key] || {lvl:3, cost:100000, flag:'🌍'};
+    var unlocked = lvl >= info.lvl;
+    var c = countries[key];
+    // Count available slots
+    var available = c.airports.filter(function(ap){
+      return G.slots.indexOf(ap.icao)<0 && !(G.homeAirport&&G.homeAirport.icao===ap.icao);
+    }).length;
+
+    html += '<div '+(unlocked?'data-ckey="'+key+'" onclick="openCountrySlots(this.dataset.ckey)"':'')
+      +' style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;background:'+(unlocked?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.02)')+';border:1px solid '+(unlocked?'rgba(255,255,255,0.08)':'rgba(255,255,255,0.03)')+';margin-bottom:6px;cursor:'+(unlocked?'pointer':'default')+';opacity:'+(unlocked?'1':'0.5')+'">'
+      +'<div style="font-size:22px;">'+info.flag+'</div>'
+      +'<div style="flex:1;">'
+      +'<div style="font-size:13px;font-weight:700;color:'+(unlocked?'#e0f0ff':'#5580a0')+';">'+key+'</div>'
+      +'<div style="font-size:10px;color:#5580a0;">'+available+' lotnisk &bull; $'+info.cost.toLocaleString()+'/slot</div>'
+      +'</div>'
+      +(unlocked
+        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5580a0" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
+        : '<div style="font-size:10px;color:#e63946;font-weight:700;">LVL '+info.lvl+'</div>'
+      )
+      +'</div>';
+  });
+
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function openCountrySlots(countryKey) {
+  var info = COUNTRY_LEVELS[countryKey] || {lvl:1, cost:100000, flag:'🌍'};
+  var lvl = G.level || 1;
+  if(lvl < info.lvl) { showMsg('Wymagany poziom '+info.lvl+'!'); return; }
+
+  var slots = [];
+  ADB.forEach(function(ap){
+    var key = getCountryKey(ap.country);
+    if(key !== countryKey) return;
     if(G.slots.indexOf(ap.icao)>=0||(G.homeAirport&&G.homeAirport.icao===ap.icao)) return;
-    if(lvl<3&&ap.country!=='Polska') return;
-    if(lvl<5&&ap.country!=='Polska'&&ap.country!=='Niemcy') return;
     slots.push(ap);
   });
-  var html='<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
-    +'<button onclick="openShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:20px;">&#8592;</button>'
-    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">KUP SLOT</div></div>';
+
+  var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
+    +'<button onclick="openSlotShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:20px;">&#8592;</button>'
+    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">'+info.flag+' '+countryKey+'</div></div>';
+
   if(!slots.length) {
-    html+='<div style="padding:20px;text-align:center;color:#5580a0;">Brak dostepnych lotnisk na tym poziomie</div>';
+    html += '<div style="padding:20px;text-align:center;color:#5580a0;">Brak dostepnych lotnisk lub wszystkie kupione</div>';
   } else {
-    slots.slice(0,20).forEach(function(ap){
-      var cost=ap.country==='Polska'?50000:ap.country==='Niemcy'?80000:150000;
-      html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);">'
-        +'<div><div style="font-size:13px;font-weight:600;color:#e0f0ff;">'+ap.icao+' - '+ap.city+'</div>'
-        +'<div style="font-size:11px;color:#5580a0;">'+ap.country+'</div></div>'
-        +'<button data-icao="'+ap.icao+'" data-cost="'+cost+'" onclick="buySlotByEl(this)" style="padding:6px 14px;background:#1a56db;border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">$'+cost.toLocaleString()+'</button>'
+    slots.forEach(function(ap){
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);">'
+        +'<div>'
+        +'<div style="font-size:13px;font-weight:600;color:#e0f0ff;">'+ap.icao+' - '+ap.city+'</div>'
+        +'<div style="font-size:10px;color:#5580a0;">$'+info.cost.toLocaleString()+'</div>'
+        +'</div>'
+        +'<button data-icao="'+ap.icao+'" data-cost="'+info.cost+'" onclick="buySlotByEl(this)" style="padding:6px 14px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Kup</button>'
         +'</div>';
     });
   }
-  document.getElementById('modal-body').innerHTML=html;
-  document.getElementById('modal').style.display='flex';
+
+  document.getElementById('modal-body').innerHTML = html;
 }
 
 function buySlotByEl(el){ buySlot(el.dataset.icao,parseInt(el.dataset.cost)); }
