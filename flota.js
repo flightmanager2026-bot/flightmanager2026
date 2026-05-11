@@ -51,11 +51,10 @@ function renderFlotaMain(body) {
 }
 
 function openBrandFleet(brand) {
-  // Make sure panel is open
-  var panel = document.getElementById('panel');
-  if(panel) panel.style.transform = 'translateY(0)';
-  var body = document.getElementById('panel-body');
+  // Use modal so panel doesn't interfere
+  var body = document.getElementById('modal-body');
   if(!body) return;
+  document.getElementById('modal').style.display = 'flex';
 
   var AC_IMAGES = {
     'Boeing 737-800': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',
@@ -66,7 +65,7 @@ function openBrandFleet(brand) {
   var planes = G.fleet.filter(function(ac){ return ac.model.split(' ')[0] === brand; });
 
   var out = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07);">'
-    +'<button onclick="goBackToFlota()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;line-height:1;">&#8592;</button>'
+    +'<button onclick="closeModal()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;line-height:1;">&#8592;</button>'
     +'<div style="font-size:14px;font-weight:700;color:#00d4ff;letter-spacing:1px;">'+brand.toUpperCase()+'</div>'
     +'</div>';
 
@@ -566,4 +565,4 @@ function applyFuelUpg(el) { var acId=el&&el.dataset?el.dataset.id:el;
 
 function confirmRouteGlobal() { confirmAddRoute(_pendingAcId); }
 
-function goBackToFlota(){ var b=document.getElementById('panel-body'); if(b) renderFlotaMain(b); }
+function goBackToFlota(){ closeModal(); }
