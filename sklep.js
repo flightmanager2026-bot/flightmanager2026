@@ -17,7 +17,8 @@ var AIRCRAFT_CATALOG = {
     {model:'Airbus A320neo',img:null,seats:180,range:6300,price:110000000,desc:'Najpopularniejszy samolot swiata, 180 miejsc',engines:'CFM LEAP-1A / PW1100G',level:1},
     {model:'Airbus A321neo',img:'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A321_Neo.png',seats:244,range:7400,price:130000000,desc:'Wydluzony A320, 244 miejsca, zasieg 7400km',engines:'CFM LEAP-1A / PW1100G',level:1},
     {model:'Airbus A330-300',img:null,seats:335,range:11750,price:230000000,desc:'Szeroki kadlub sredniodystansowy, 335 miejsc',engines:'CF6-80E / PW4000 / Trent 700',level:3},
-    {model:'Airbus A350-900',img:null,seats:369,range:15000,price:320000000,desc:'Nowoczesny szeroki kadlub, 369 miejsc',engines:'Rolls-Royce Trent XWB',level:4},
+    {model:'Airbus A340-300',img:'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A340-300-removebg-preview.png',seats:295,range:13500,price:250000000,desc:'Czteroslilnikowy dlugi zasieg, 295 miejsc',engines:'CFM56-5C4',level:4},
+    {model:'Airbus A350-900',img:'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A350-900_XWB-removebg-preview.png',seats:369,range:15000,price:320000000,desc:'Nowoczesny szeroki kadlub, 369 miejsc',engines:'Rolls-Royce Trent XWB',level:4},
     {model:'Airbus A380-800',img:'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png',seats:555,range:15200,price:450000000,desc:'Dwupokladowy gigant, 555 miejsc',engines:'Rolls-Royce Trent 970',level:5}
   ],
   'Boeing': [
