@@ -50,7 +50,24 @@ function renderMarkers() {
   if(!LMAP) return;
   Object.keys(AP_MARKERS).forEach(function(k){try{LMAP.removeLayer(AP_MARKERS[k]);}catch(e){}});
   AP_MARKERS={};
-  ADB.forEach(function(ap){ addPin(ap); });
+  
+  // Add home airport from G.homeAirport (real city coordinates)
+  if(G.homeAirport) {
+    addPin(G.homeAirport);
+  }
+  
+  // Add other airports from ADB (skip if same ICAO as home)
+  ADB.forEach(function(ap){
+    if(G.homeAirport && ap.icao === G.homeAirport.icao) return;
+    addPin(ap);
+  });
+  
+  // Add owned slots
+  G.airports.forEach(function(ap){
+    if(!ap.isHome && (!G.homeAirport || ap.icao !== G.homeAirport.icao)) {
+      addPin(ap);
+    }
+  });
 }
 
 function renderRoutes() {
