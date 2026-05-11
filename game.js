@@ -82,8 +82,24 @@ function updateHUD() {
 var _nT;
 function showMsg(msg) {
   var n=document.getElementById('msg'); if(!n) return;
-  n.textContent=msg; n.style.transform='translateX(-50%) translateY(0)';
-  clearTimeout(_nT); _nT=setTimeout(function(){n.style.transform='translateX(-50%) translateY(-80px)';},3000);
+  // Clear any existing timeout and animation
+  clearTimeout(_nT);
+  n.style.transition='none';
+  n.style.opacity='0';
+  n.style.transform='translateX(-50%) translateY(-80px)';
+  
+  // Force reflow then show
+  void n.offsetHeight;
+  n.style.transition='transform 0.3s ease, opacity 0.3s ease';
+  n.textContent=msg;
+  n.style.opacity='1';
+  n.style.transform='translateX(-50%) translateY(0)';
+  
+  // Hide after 3 seconds
+  _nT=setTimeout(function(){
+    n.style.opacity='0';
+    n.style.transform='translateX(-50%) translateY(-80px)';
+  },3000);
 }
 
 function closeModal() {
