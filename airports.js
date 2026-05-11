@@ -8,6 +8,8 @@ var ADB=[
 {icao:'LSZH',city:'Zurich',country:'Switzerland',lat:47.458,lng:8.548,cost:13000},
 {icao:'LOWW',city:'Vienna',country:'Austria',lat:48.110,lng:16.570,cost:12000},
 {icao:'EPWA',city:'Warszawa',country:'Polska',lat:52.165,lng:20.967,cost:8000},
+{icao:'EPMO',city:'Warszawa Modlin',country:'Polska',lat:52.451,lng:20.652,cost:6000},
+{icao:'EPRA',city:'Radom',country:'Polska',lat:51.389,lng:21.213,cost:5000},
 {icao:'EPKK',city:'Krakow',country:'Polska',lat:50.077,lng:19.784,cost:7000},
 {icao:'EPGD',city:'Gdansk',country:'Polska',lat:54.377,lng:18.466,cost:7000},
 {icao:'EPWR',city:'Wroclaw',country:'Polska',lat:51.102,lng:16.885,cost:7000},
