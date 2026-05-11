@@ -16,7 +16,10 @@ function renderFlotaMain(body) {
   });
   var AC_IMAGES = {
     'Boeing 737-800':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',
+    'Boeing 737 MAX 8':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',
     'Airbus A321neo':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A321_Neo.png',
+    'Airbus A340-300':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A340-300-removebg-preview.png',
+    'Airbus A350-900':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A350-900_XWB-removebg-preview.png',
     'Airbus A380-800':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png'
   };
   var BRAND_LOGOS = {
@@ -45,7 +48,10 @@ function renderFlotaMain(body) {
 function showBrandModal(brand) {
   var AC_IMAGES = {
     'Boeing 737-800':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',
+    'Boeing 737 MAX 8':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',
     'Airbus A321neo':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A321_Neo.png',
+    'Airbus A340-300':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A340-300-removebg-preview.png',
+    'Airbus A350-900':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A350-900_XWB-removebg-preview.png',
     'Airbus A380-800':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png'
   };
   var planes = G.fleet.filter(function(ac){ return ac.model.split(' ')[0]===brand; });
