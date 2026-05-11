@@ -12,18 +12,23 @@ function showSetupScreen() {
     +'<button id="sbtn" onclick="setupGo()" disabled style="width:100%;padding:14px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:16px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;opacity:0.5;">Rozpocznij</button>'
     +'</div>';
   document.body.appendChild(el);
-  _setupFiltered=POLISH_CITIES.slice();
+  _setupFiltered=POLISH_CITIES.filter(function(c){ return (typeof REAL_AIRPORTS_ICAO==='undefined'||REAL_AIRPORTS_ICAO.indexOf(c.icao)<0); });
   renderSetupList();
   setTimeout(function(){var sq=document.getElementById('sq');if(sq)sq.focus();},100);
 }
 /* -- SETUP -- */
 var _setupFiltered=[], _setupPicked=null;
 
+/* ICAOs ktore sa prawdziwymi lotniskami - nie mozna jako baza */
+var REAL_AIRPORTS_ICAO = ['EPWA','EPMO','EPRA','EPKK','EPGD','EPWR','EPPO','EPKT','EPRZ','EPSC','EPLL','EPBY','EPLU','EPCP'];
+
 function setupFilter() {
   var q=(document.getElementById('sq').value||'').toLowerCase();
   _setupFiltered=[];
   for(var i=0;i<POLISH_CITIES.length;i++){
     var c=POLISH_CITIES[i];
+    // Skip cities that are real airports (they appear on map separately)
+    if(REAL_AIRPORTS_ICAO.indexOf(c.icao)>=0) continue;
     if(!q||c.name.toLowerCase().indexOf(q)>=0||c.voiv.toLowerCase().indexOf(q)>=0) _setupFiltered.push(c);
   }
   renderSetupList();
