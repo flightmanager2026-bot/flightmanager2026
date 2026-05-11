@@ -50,7 +50,9 @@ function setupPick(j) {
 
 function setupGo() {
   var c=_setupPicked; if(!c) return;
-  var ap={id:'AP_HOME',name:c.airport!=='brak lotniska'?c.airport:c.name,icao:c.icao,city:c.name,country:'Polska',lat:c.lat,lng:c.lng,isHome:true,level:1,maxSlots:10,usedSlots:0};
+  // Gracz buduje wlasne lotnisko w wybranym miescie
+  var cityIcao = 'EP'+c.name.substring(0,2).toUpperCase();
+  var ap={id:'AP_HOME',name:'Lotnisko '+c.name,icao:cityIcao,city:c.name,country:'Polska',lat:c.lat,lng:c.lng,isHome:true,level:1,maxSlots:10,usedSlots:0};
   G.airports.push(ap); G.homeAirport=ap;
   G.airline.name='VIS Airlines'; G.airline.iata='VS';
   save();
