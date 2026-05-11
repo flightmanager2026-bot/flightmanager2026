@@ -19,13 +19,16 @@ function renderFlotaMain(body) {
     'Airbus A321neo':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A321_Neo.png',
     'Airbus A380-800':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png'
   };
+  var BRAND_LOGOS = {
+    'Boeing':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/logo.boeing.png'
+  };
   var out = '';
   Object.keys(manufacturers).forEach(function(brand) {
     var planes = manufacturers[brand];
     var flying = planes.filter(function(a){return a.status==='flying';}).length;
     var ground = planes.filter(function(a){return a.status!=='flying';}).length;
-    var imgSrc = null;
-    planes.forEach(function(ac){ if(!imgSrc && AC_IMAGES[ac.model]) imgSrc=AC_IMAGES[ac.model]; });
+    var imgSrc = BRAND_LOGOS[brand] || null;
+    if(!imgSrc) planes.forEach(function(ac){ if(!imgSrc && AC_IMAGES[ac.model]) imgSrc=AC_IMAGES[ac.model]; });
     out += '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;" data-b="'+brand+'" onclick="showBrandModal(this.dataset.b)">'
       +(imgSrc?'<img src="'+imgSrc+'" style="width:90px;height:48px;object-fit:contain;background:#000;border-radius:8px;flex-shrink:0;">':'<div style="width:90px;height:48px;background:#0d1b2a;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;">&#9992;</div>')
       +'<div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#e0f0ff;margin-bottom:4px;">'+brand+'</div>'
