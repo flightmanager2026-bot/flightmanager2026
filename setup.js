@@ -50,9 +50,9 @@ function setupPick(j) {
 
 function setupGo() {
   var c=_setupPicked; if(!c) return;
-  // Gracz buduje wlasne lotnisko w wybranym miescie
-  var cityIcao = 'EP'+c.name.substring(0,2).toUpperCase();
-  var ap={id:'AP_HOME',name:'Lotnisko '+c.name,icao:cityIcao,city:c.name,country:'Polska',lat:c.lat,lng:c.lng,isHome:true,level:1,maxSlots:10,usedSlots:0};
+  // Uzyj istniejacego kodu ICAO z bazy miast lub stworz wlasny
+  var icao = c.icao && c.icao !== '' ? c.icao : 'EP'+c.name.substring(0,2).toUpperCase().replace(/[^A-Z]/g,'X');
+  var ap={id:'AP_HOME',name:'Port Lotniczy '+c.name,icao:icao,city:c.name,country:'Polska',lat:c.lat,lng:c.lng,isHome:true,level:1,maxSlots:10,usedSlots:0,upgrades:{runways:1,terminal:1,hangar:1,shops:0,parking:0},income:0};
   G.airports.push(ap); G.homeAirport=ap;
   G.airline.name='VIS Airlines'; G.airline.iata='VS';
   save();
