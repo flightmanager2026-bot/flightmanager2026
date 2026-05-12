@@ -201,4 +201,216 @@ var ADB=[
 {icao:'KSAT',city:'San Antonio',country:'USA',lat:29.534,lng:-98.470,cost:15000},
 {icao:'KMCI',city:'Kansas City',country:'USA',lat:39.298,lng:-94.714,cost:15000},
 {icao:'KIND',city:'Indianapolis',country:'USA',lat:39.717,lng:-86.295,cost:15000}
+
+,{icao:'YMML',city:'Melbourne',country:'Australia',lat:-37.673,lng:144.843,cost:18000}
+,{icao:'YBBN',city:'Brisbane',country:'Australia',lat:-27.384,lng:153.118,cost:16000}
+,{icao:'YPPH',city:'Perth',country:'Australia',lat:-31.94,lng:115.967,cost:15000}
+,{icao:'YPAD',city:'Adelaide',country:'Australia',lat:-34.945,lng:138.531,cost:13000}
+,{icao:'YBCG',city:'Gold Coast',country:'Australia',lat:-28.164,lng:153.505,cost:11000}
+,{icao:'YSCB',city:'Canberra',country:'Australia',lat:-35.307,lng:149.195,cost:10000}
+,{icao:'YPDN',city:'Darwin',country:'Australia',lat:-12.408,lng:130.873,cost:10000}
+,{icao:'YMHB',city:'Hobart',country:'Australia',lat:-42.836,lng:147.51,cost:9000}
+,{icao:'YBTL',city:'Townsville',country:'Australia',lat:-19.253,lng:146.766,cost:8000}
+,{icao:'YBCS',city:'Cairns',country:'Australia',lat:-16.886,lng:145.755,cost:9000}
+,{icao:'NZAA',city:'Auckland',country:'Nowa Zelandia',lat:-37.008,lng:174.792,cost:14000}
+,{icao:'NZWN',city:'Wellington',country:'Nowa Zelandia',lat:-41.327,lng:174.805,cost:12000}
+,{icao:'NZCH',city:'Christchurch',country:'Nowa Zelandia',lat:-43.489,lng:172.532,cost:11000}
+,{icao:'NZDN',city:'Dunedin',country:'Nowa Zelandia',lat:-45.928,lng:170.198,cost:8000}
+,{icao:'CYYZ',city:'Toronto',country:'Kanada',lat:43.677,lng:-79.631,cost:20000}
+,{icao:'CYVR',city:'Vancouver',country:'Kanada',lat:49.194,lng:-123.184,cost:19000}
+,{icao:'CYUL',city:'Montreal',country:'Kanada',lat:45.47,lng:-73.741,cost:18000}
+,{icao:'CYYC',city:'Calgary',country:'Kanada',lat:51.114,lng:-114.02,cost:15000}
+,{icao:'CYEG',city:'Edmonton',country:'Kanada',lat:53.309,lng:-113.58,cost:14000}
+,{icao:'CYOW',city:'Ottawa',country:'Kanada',lat:45.323,lng:-75.669,cost:13000}
+,{icao:'CYWG',city:'Winnipeg',country:'Kanada',lat:49.91,lng:-97.24,cost:12000}
+,{icao:'CYHZ',city:'Halifax',country:'Kanada',lat:44.881,lng:-63.509,cost:11000}
+,{icao:'CYQB',city:'Quebec',country:'Kanada',lat:46.791,lng:-71.393,cost:10000}
+,{icao:'MMMX',city:'Meksyk',country:'Meksyk',lat:19.436,lng:-99.072,cost:18000}
+,{icao:'MMGL',city:'Guadalajara',country:'Meksyk',lat:20.521,lng:-103.311,cost:13000}
+,{icao:'MMMY',city:'Monterrey',country:'Meksyk',lat:25.778,lng:-100.107,cost:13000}
+,{icao:'MMCU',city:'Chihuahua',country:'Meksyk',lat:28.703,lng:-105.965,cost:9000}
+,{icao:'MMUN',city:'Cancun',country:'Meksyk',lat:21.037,lng:-86.877,cost:14000}
+,{icao:'MMTJ',city:'Tijuana',country:'Meksyk',lat:32.541,lng:-116.97,cost:10000}
+,{icao:'SBGL',city:'Rio de Janeiro',country:'Brazylia',lat:-22.81,lng:-43.251,cost:16000}
+,{icao:'SBBR',city:'Brasilia',country:'Brazylia',lat:-15.871,lng:-47.919,cost:14000}
+,{icao:'SBSV',city:'Salvador',country:'Brazylia',lat:-12.911,lng:-38.331,cost:11000}
+,{icao:'SBFZ',city:'Fortaleza',country:'Brazylia',lat:-3.776,lng:-38.532,cost:11000}
+,{icao:'SBCF',city:'Belo Horizonte',country:'Brazylia',lat:-19.624,lng:-43.972,cost:12000}
+,{icao:'SBEG',city:'Manaus',country:'Brazylia',lat:-3.038,lng:-60.05,cost:11000}
+,{icao:'SBCT',city:'Curitiba',country:'Brazylia',lat:-25.528,lng:-49.176,cost:11000}
+,{icao:'SBRF',city:'Recife',country:'Brazylia',lat:-8.126,lng:-34.923,cost:11000}
+,{icao:'SBPA',city:'Porto Alegre',country:'Brazylia',lat:-29.994,lng:-51.171,cost:11000}
+,{icao:'SAEZ',city:'Buenos Aires-Ezeiza',country:'Argentyna',lat:-34.822,lng:-58.536,cost:16000}
+,{icao:'SACO',city:'Kordoba',country:'Argentyna',lat:-31.323,lng:-64.208,cost:11000}
+,{icao:'SAME',city:'Mendoza',country:'Argentyna',lat:-32.832,lng:-68.793,cost:10000}
+,{icao:'SAST',city:'Tucuman',country:'Argentyna',lat:-26.841,lng:-65.105,cost:9000}
+,{icao:'SKBO',city:'Bogota',country:'Kolumbia',lat:4.702,lng:-74.147,cost:15000}
+,{icao:'SKMD',city:'Medellin',country:'Kolumbia',lat:6.165,lng:-75.59,cost:12000}
+,{icao:'SKCL',city:'Cali',country:'Kolumbia',lat:3.543,lng:-76.382,cost:11000}
+,{icao:'SKBQ',city:'Barranquilla',country:'Kolumbia',lat:10.89,lng:-74.781,cost:10000}
+,{icao:'SCEL',city:'Santiago',country:'Chile',lat:-33.393,lng:-70.786,cost:15000}
+,{icao:'SCFA',city:'Antofagasta',country:'Chile',lat:-23.444,lng:-70.445,cost:9000}
+,{icao:'SCIE',city:'Concepcion',country:'Chile',lat:-36.776,lng:-73.063,cost:9000}
+,{icao:'SPIM',city:'Lima',country:'Peru',lat:-12.022,lng:-77.114,cost:14000}
+,{icao:'SPZO',city:'Cusco',country:'Peru',lat:-13.535,lng:-71.939,cost:10000}
+,{icao:'SPHI',city:'Chiclayo',country:'Peru',lat:-6.787,lng:-79.828,cost:8000}
+,{icao:'SVMI',city:'Caracas',country:'Wenezuela',lat:10.603,lng:-66.991,cost:12000}
+,{icao:'SVMC',city:'Maracaibo',country:'Wenezuela',lat:10.558,lng:-71.728,cost:10000}
+,{icao:'RJTT',city:'Tokio-Haneda',country:'Japonia',lat:35.553,lng:139.781,cost:22000}
+,{icao:'RJBB',city:'Osaka-Kansai',country:'Japonia',lat:34.434,lng:135.244,cost:18000}
+,{icao:'RJOO',city:'Osaka-Itami',country:'Japonia',lat:34.785,lng:135.438,cost:16000}
+,{icao:'RJCC',city:'Sapporo',country:'Japonia',lat:42.775,lng:141.693,cost:13000}
+,{icao:'RJFF',city:'Fukuoka',country:'Japonia',lat:33.585,lng:130.451,cost:14000}
+,{icao:'RJSS',city:'Sendai',country:'Japonia',lat:38.14,lng:140.917,cost:11000}
+,{icao:'RJOK',city:'Kochi',country:'Japonia',lat:33.546,lng:133.669,cost:9000}
+,{icao:'RKSS',city:'Seul-Gimpo',country:'Korea Poludniowa',lat:37.558,lng:126.791,cost:18000}
+,{icao:'RKPK',city:'Busan',country:'Korea Poludniowa',lat:35.179,lng:128.938,cost:14000}
+,{icao:'RKTN',city:'Daegu',country:'Korea Poludniowa',lat:35.894,lng:128.659,cost:11000}
+,{icao:'ZSSS',city:'Szanghaj-Hongqiao',country:'Chiny',lat:31.198,lng:121.336,cost:20000}
+,{icao:'ZGGG',city:'Guangzhou',country:'Chiny',lat:23.392,lng:113.299,cost:18000}
+,{icao:'ZGSZ',city:'Shenzhen',country:'Chiny',lat:22.639,lng:113.811,cost:17000}
+,{icao:'ZUUU',city:'Chengdu',country:'Chiny',lat:30.578,lng:103.947,cost:15000}
+,{icao:'ZHHH',city:'Wuhan',country:'Chiny',lat:30.783,lng:114.208,cost:14000}
+,{icao:'ZLXY',city:'Xian',country:'Chiny',lat:34.447,lng:108.752,cost:13000}
+,{icao:'ZUCK',city:'Chongqing',country:'Chiny',lat:29.72,lng:106.641,cost:14000}
+,{icao:'ZGHA',city:'Changsha',country:'Chiny',lat:28.189,lng:113.22,cost:12000}
+,{icao:'VOBL',city:'Bangalore',country:'Indie',lat:13.199,lng:77.706,cost:15000}
+,{icao:'VOHY',city:'Hyderabad',country:'Indie',lat:17.231,lng:78.43,cost:13000}
+,{icao:'VOMM',city:'Chennai',country:'Indie',lat:12.994,lng:80.181,cost:13000}
+,{icao:'VECC',city:'Kolkata',country:'Indie',lat:22.654,lng:88.447,cost:13000}
+,{icao:'VAPO',city:'Pune',country:'Indie',lat:18.582,lng:73.919,cost:10000}
+,{icao:'VAID',city:'Ahmedabad',country:'Indie',lat:23.072,lng:72.634,cost:10000}
+,{icao:'VIJP',city:'Jaipur',country:'Indie',lat:26.824,lng:75.812,cost:10000}
+,{icao:'OMAA',city:'Abu Zabi',country:'ZEA',lat:24.433,lng:54.651,cost:22000}
+,{icao:'OMSJ',city:'Szardza',country:'ZEA',lat:25.329,lng:55.517,cost:15000}
+,{icao:'OERK',city:'Rijad',country:'Arabia Saudyjska',lat:24.958,lng:46.699,cost:20000}
+,{icao:'OEJN',city:'Dżudda',country:'Arabia Saudyjska',lat:21.68,lng:39.157,cost:18000}
+,{icao:'OEDF',city:'Dammam',country:'Arabia Saudyjska',lat:26.472,lng:49.799,cost:14000}
+,{icao:'LTAI',city:'Antalya',country:'Turcja',lat:36.899,lng:30.8,cost:15000}
+,{icao:'LTBJ',city:'Izmir',country:'Turcja',lat:38.293,lng:27.157,cost:13000}
+,{icao:'LTAC',city:'Ankara',country:'Turcja',lat:40.128,lng:32.996,cost:13000}
+,{icao:'LTCG',city:'Trabzon',country:'Turcja',lat:40.995,lng:39.789,cost:9000}
+,{icao:'UUDD',city:'Moskwa-Domodiedowo',country:'Rosja',lat:55.409,lng:37.906,cost:17000}
+,{icao:'ULLI',city:'Petersburg',country:'Rosja',lat:59.8,lng:30.262,cost:14000}
+,{icao:'UNNT',city:'Nowosybirsk',country:'Rosja',lat:55.013,lng:82.651,cost:10000}
+,{icao:'USSS',city:'Jekaterynburg',country:'Rosja',lat:56.743,lng:60.803,cost:10000}
+,{icao:'UWKD',city:'Kazań',country:'Rosja',lat:55.606,lng:49.279,cost:9000}
+,{icao:'URSS',city:'Soczi',country:'Rosja',lat:43.449,lng:39.957,cost:10000}
+,{icao:'UHWW',city:'Władywostok',country:'Rosja',lat:43.399,lng:132.148,cost:10000}
+,{icao:'VTBD',city:'Bangkok-Don Mueang',country:'Tajlandia',lat:13.913,lng:100.607,cost:15000}
+,{icao:'VTCC',city:'Chiang Mai',country:'Tajlandia',lat:18.767,lng:98.963,cost:11000}
+,{icao:'VTSP',city:'Phuket',country:'Tajlandia',lat:8.113,lng:98.317,cost:13000}
+,{icao:'WMKK',city:'Kuala Lumpur',country:'Malezja',lat:2.746,lng:101.71,cost:16000}
+,{icao:'WMKP',city:'Penang',country:'Malezja',lat:5.298,lng:100.277,cost:10000}
+,{icao:'WBKK',city:'Kota Kinabalu',country:'Malezja',lat:5.937,lng:116.051,cost:10000}
+,{icao:'WIII',city:'Dzakarta',country:'Indonezja',lat:-6.126,lng:106.656,cost:16000}
+,{icao:'WARR',city:'Surabaja',country:'Indonezja',lat:-7.38,lng:112.787,cost:12000}
+,{icao:'WADD',city:'Bali',country:'Indonezja',lat:-8.748,lng:115.167,cost:14000}
+,{icao:'WIMM',city:'Medan',country:'Indonezja',lat:3.642,lng:98.885,cost:10000}
+,{icao:'RPLL',city:'Manila',country:'Filipiny',lat:14.509,lng:121.019,cost:14000}
+,{icao:'RPVM',city:'Cebu',country:'Filipiny',lat:10.307,lng:123.979,cost:10000}
+,{icao:'RPMR',city:'Davao',country:'Filipiny',lat:7.126,lng:125.646,cost:9000}
+,{icao:'VVTS',city:'Ho Chi Minh',country:'Wietnam',lat:10.819,lng:106.652,cost:14000}
+,{icao:'VVNB',city:'Hanoi',country:'Wietnam',lat:21.221,lng:105.807,cost:13000}
+,{icao:'VVDN',city:'Da Nang',country:'Wietnam',lat:16.044,lng:108.199,cost:10000}
+,{icao:'UAAA',city:'Almaty',country:'Kazachstan',lat:43.353,lng:77.04,cost:10000}
+,{icao:'UACC',city:'Astana',country:'Kazachstan',lat:51.023,lng:71.467,cost:10000}
+,{icao:'UKBB',city:'Kijów-Boryspol',country:'Ukraina',lat:50.345,lng:30.894,cost:12000}
+,{icao:'UKLL',city:'Lwów',country:'Ukraina',lat:49.812,lng:23.956,cost:9000}
+,{icao:'UKOO',city:'Odessa',country:'Ukraina',lat:46.427,lng:30.676,cost:9000}
+,{icao:'LKPR',city:'Praga',country:'Czechy',lat:50.101,lng:14.26,cost:12000}
+,{icao:'LKTB',city:'Brno',country:'Czechy',lat:49.151,lng:16.694,cost:7000}
+,{icao:'LHBP',city:'Budapeszt',country:'Wegry',lat:47.439,lng:19.261,cost:12000}
+,{icao:'LROP',city:'Bukareszt',country:'Rumunia',lat:44.572,lng:26.102,cost:11000}
+,{icao:'LRCL',city:'Cluj-Napoca',country:'Rumunia',lat:46.785,lng:23.686,cost:8000}
+,{icao:'LBSF',city:'Sofia',country:'Bulgaria',lat:42.696,lng:23.411,cost:10000}
+,{icao:'LBWN',city:'Warna',country:'Bulgaria',lat:43.232,lng:27.825,cost:9000}
+,{icao:'LGAV',city:'Ateny',country:'Grecja',lat:37.936,lng:23.944,cost:14000}
+,{icao:'LGTS',city:'Saloniki',country:'Grecja',lat:40.519,lng:22.971,cost:11000}
+,{icao:'LGIR',city:'Heraklion',country:'Grecja',lat:35.34,lng:25.181,cost:10000}
+,{icao:'LYBE',city:'Belgrad',country:'Serbia',lat:44.818,lng:20.309,cost:10000}
+,{icao:'LDZA',city:'Zagrzeb',country:'Chorwacja',lat:45.743,lng:16.069,cost:9000}
+,{icao:'LDSP',city:'Split',country:'Chorwacja',lat:43.539,lng:16.298,cost:9000}
+,{icao:'LDDU',city:'Dubrownik',country:'Chorwacja',lat:42.561,lng:18.268,cost:10000}
+,{icao:'LJLJ',city:'Lublana',country:'Slowenia',lat:46.224,lng:14.458,cost:8000}
+,{icao:'LZIB',city:'Bratysława',country:'Slowacja',lat:48.17,lng:17.213,cost:9000}
+,{icao:'LATI',city:'Tirana',country:'Albania',lat:41.415,lng:19.721,cost:8000}
+,{icao:'ENGM',city:'Oslo',country:'Norwegia',lat:60.194,lng:11.1,cost:14000}
+,{icao:'ENBR',city:'Bergen',country:'Norwegia',lat:60.293,lng:5.218,cost:10000}
+,{icao:'ENZV',city:'Stavanger',country:'Norwegia',lat:58.877,lng:5.638,cost:10000}
+,{icao:'ENVA',city:'Trondheim',country:'Norwegia',lat:63.458,lng:10.924,cost:10000}
+,{icao:'ENTC',city:'Tromsø',country:'Norwegia',lat:69.683,lng:18.919,cost:9000}
+,{icao:'ESSA',city:'Sztokholm-Arlanda',country:'Szwecja',lat:59.652,lng:17.919,cost:14000}
+,{icao:'ESGG',city:'Goteborg',country:'Szwecja',lat:57.662,lng:12.28,cost:11000}
+,{icao:'ESMS',city:'Malmo',country:'Szwecja',lat:55.537,lng:13.376,cost:10000}
+,{icao:'ESNU',city:'Umea',country:'Szwecja',lat:63.792,lng:20.283,cost:8000}
+,{icao:'EKCH',city:'Kopenhaga',country:'Dania',lat:55.618,lng:12.656,cost:14000}
+,{icao:'EKBI',city:'Billund',country:'Dania',lat:55.74,lng:9.152,cost:9000}
+,{icao:'EFHK',city:'Helsinki',country:'Finlandia',lat:60.317,lng:24.963,cost:13000}
+,{icao:'EFTU',city:'Turku',country:'Finlandia',lat:60.514,lng:22.263,cost:8000}
+,{icao:'EFOU',city:'Oulu',country:'Finlandia',lat:64.93,lng:25.355,cost:8000}
+,{icao:'BIKF',city:'Reykjavik',country:'Islandia',lat:63.985,lng:-22.606,cost:12000}
+,{icao:'EBBR',city:'Bruksela',country:'Belgia',lat:50.901,lng:4.484,cost:14000}
+,{icao:'EBCI',city:'Charleroi',country:'Belgia',lat:50.459,lng:4.453,cost:8000}
+,{icao:'EHEH',city:'Eindhoven',country:'Holandia',lat:51.45,lng:5.374,cost:8000}
+,{icao:'ELLX',city:'Luksemburg',country:'Luksemburg',lat:49.627,lng:6.212,cost:9000}
+,{icao:'LSGG',city:'Genewa',country:'Szwajcaria',lat:46.238,lng:6.109,cost:13000}
+,{icao:'LOWI',city:'Innsbruck',country:'Austria',lat:47.26,lng:11.344,cost:9000}
+,{icao:'LMML',city:'Malta',country:'Malta',lat:35.857,lng:14.477,cost:9000}
+,{icao:'LCLK',city:'Larnaka',country:'Cypr',lat:34.875,lng:33.625,cost:10000}
+,{icao:'LCPH',city:'Pafos',country:'Cypr',lat:34.718,lng:32.486,cost:9000}
+,{icao:'HEAR',city:'Aleksandria',country:'Egipt',lat:31.184,lng:29.949,cost:10000}
+,{icao:'HELX',city:'Luksor',country:'Egipt',lat:25.671,lng:32.706,cost:9000}
+,{icao:'HEGN',city:'Hurghada',country:'Egipt',lat:27.178,lng:33.799,cost:10000}
+,{icao:'HESH',city:'Szarm el-Szejk',country:'Egipt',lat:27.977,lng:34.395,cost:10000}
+,{icao:'GMMN',city:'Casablanca',country:'Maroko',lat:33.367,lng:-7.59,cost:12000}
+,{icao:'GMME',city:'Rabat',country:'Maroko',lat:34.051,lng:-6.752,cost:9000}
+,{icao:'GMMX',city:'Marrakesz',country:'Maroko',lat:31.607,lng:-8.036,cost:10000}
+,{icao:'GMTT',city:'Tanger',country:'Maroko',lat:35.726,lng:-5.916,cost:9000}
+,{icao:'GMAD',city:'Agadir',country:'Maroko',lat:30.325,lng:-9.413,cost:9000}
+,{icao:'DTTA',city:'Tunis',country:'Tunezja',lat:36.851,lng:10.227,cost:10000}
+,{icao:'DTMB',city:'Monastir',country:'Tunezja',lat:35.758,lng:10.755,cost:8000}
+,{icao:'DAAG',city:'Algier',country:'Algieria',lat:36.691,lng:3.215,cost:10000}
+,{icao:'DAOO',city:'Oran',country:'Algieria',lat:35.624,lng:-0.622,cost:8000}
+,{icao:'DNMM',city:'Lagos',country:'Nigeria',lat:6.577,lng:3.321,cost:12000}
+,{icao:'DNAA',city:'Abuja',country:'Nigeria',lat:9.007,lng:7.263,cost:10000}
+,{icao:'DNKN',city:'Kano',country:'Nigeria',lat:12.047,lng:8.524,cost:8000}
+,{icao:'DGAA',city:'Akra',country:'Ghana',lat:5.605,lng:-0.167,cost:10000}
+,{icao:'GOBD',city:'Dakar',country:'Senegal',lat:14.741,lng:-17.49,cost:10000}
+,{icao:'HKJK',city:'Nairobi',country:'Kenia',lat:-1.319,lng:36.925,cost:12000}
+,{icao:'HKMO',city:'Mombasa',country:'Kenia',lat:-4.035,lng:39.594,cost:9000}
+,{icao:'HTDA',city:'Dar es Salaam',country:'Tanzania',lat:-6.878,lng:39.203,cost:10000}
+,{icao:'HTKJ',city:'Kilimandżaro',country:'Tanzania',lat:-3.429,lng:37.075,cost:8000}
+,{icao:'HTAR',city:'Arusha',country:'Tanzania',lat:-3.368,lng:36.633,cost:8000}
+,{icao:'FAOR',city:'Johannesburg',country:'RPA',lat:-26.133,lng:28.242,cost:14000}
+,{icao:'FADU',city:'Durban',country:'RPA',lat:-29.615,lng:31.117,cost:11000}
+,{icao:'FNLU',city:'Luanda',country:'Angola',lat:-8.858,lng:13.231,cost:10000}
+,{icao:'FQMA',city:'Maputo',country:'Mozambik',lat:-25.921,lng:32.573,cost:9000}
+,{icao:'FKYS',city:'Jaunde',country:'Kamerun',lat:3.836,lng:11.523,cost:8000}
+,{icao:'LLBG',city:'Tel Awiw',country:'Izrael',lat:32.011,lng:34.887,cost:16000}
+,{icao:'OJAM',city:'Amman',country:'Jordania',lat:31.723,lng:35.993,cost:11000}
+,{icao:'ORBI',city:'Bagdad',country:'Irak',lat:33.262,lng:44.235,cost:10000}
+,{icao:'OIIE',city:'Teheran',country:'Iran',lat:35.416,lng:51.152,cost:12000}
+,{icao:'OIKK',city:'Masz-had',country:'Iran',lat:36.235,lng:59.641,cost:10000}
+,{icao:'OTBD',city:'Doha',country:'Katar',lat:25.261,lng:51.565,cost:18000}
+,{icao:'OKBK',city:'Kuwejt',country:'Kuwejt',lat:29.227,lng:47.969,cost:14000}
+,{icao:'OOMS',city:'Maskat',country:'Oman',lat:23.594,lng:58.285,cost:13000}
+,{icao:'UGTB',city:'Tbilisi',country:'Gruzja',lat:41.669,lng:44.954,cost:9000}
+,{icao:'UGSS',city:'Batumi',country:'Gruzja',lat:41.61,lng:41.599,cost:8000}
+,{icao:'UBBB',city:'Baku',country:'Azerbejdzan',lat:40.467,lng:50.047,cost:10000}
+,{icao:'UDYZ',city:'Erewan',country:'Armenia',lat:40.147,lng:44.396,cost:9000}
+,{icao:'UTTT',city:'Taszkent',country:'Uzbekistan',lat:41.258,lng:69.282,cost:9000}
+,{icao:'UTSS',city:'Samarkanda',country:'Uzbekistan',lat:39.7,lng:66.984,cost:8000}
+,{icao:'RCTP',city:'Tajpej-Taoyuan',country:'Tajwan',lat:25.077,lng:121.233,cost:16000}
+,{icao:'RCKH',city:'Kaohsiung',country:'Tajwan',lat:22.577,lng:120.35,cost:11000}
+,{icao:'VHHH',city:'Hongkong',country:'Hongkong',lat:22.309,lng:113.915,cost:20000}
+,{icao:'ZMUB',city:'Ułan Bator',country:'Mongolia',lat:47.843,lng:106.766,cost:8000}
+,{icao:'EYVI',city:'Wilno',country:'Litwa',lat:54.634,lng:25.286,cost:9000}
+,{icao:'EVRA',city:'Ryga',country:'Lotwa',lat:56.924,lng:23.971,cost:9000}
+,{icao:'EETN',city:'Tallin',country:'Estonia',lat:59.413,lng:24.833,cost:9000}
+,{icao:'UMMS',city:'Minsk',country:'Bialorus',lat:53.888,lng:28.033,cost:9000}
+,{icao:'LWSK',city:'Skopje',country:'Macedonia Polnocna',lat:41.961,lng:21.621,cost:8000}
+,{icao:'LQSA',city:'Sarajewo',country:'Bosnia i Hercegowina',lat:43.824,lng:18.331,cost:8000}
+,{icao:'LUKK',city:'Kiszyniów',country:'Moldawia',lat:46.928,lng:28.931,cost:7000}
+,{icao:'AYPY',city:'Port Moresby',country:'Papua Nowa Gwinea',lat:-9.443,lng:147.22,cost:9000}
 ];
