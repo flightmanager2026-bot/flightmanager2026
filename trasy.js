@@ -75,6 +75,13 @@ function departSingle(el) {
       r.durationMin=Math.round(d/sp*60)+20; r.distKm=d;
     }
     r.duration=(r.durationMin||40)*60000;
+    // Kasa za odlot
+    var _mins=r.durationMin||40;
+    var _eco=free.config?(free.config.eco||0):(free.seats||150);
+    var _biz=free.config?(free.config.biz||0):0;
+    var _rate=(80+Math.random()*20)/60;
+    r.revenue=Math.round(_eco*_mins*_rate+_biz*_mins*_rate*2.5);
+    G.cash+=r.revenue; updateHUD();
     if(!r.fromLat&&G.homeAirport){r.fromLat=G.homeAirport.lat;r.fromLng=G.homeAirport.lng;}
     removeFlightLayer(r.id); drawFlightLayer(r);
     save(); showMsg('Odlecial '+free.model+'!');
@@ -107,6 +114,13 @@ function departAll() {
       r.durationMin=Math.round(d/sp*60)+20; r.distKm=d;
     }
     r.duration=(r.durationMin||40)*60000;
+    // Kasa za odlot
+    var _mins=r.durationMin||40;
+    var _eco=free.config?(free.config.eco||0):(free.seats||150);
+    var _biz=free.config?(free.config.biz||0):0;
+    var _rate=(80+Math.random()*20)/60;
+    r.revenue=Math.round(_eco*_mins*_rate+_biz*_mins*_rate*2.5);
+    G.cash+=r.revenue; updateHUD();
       if(!r.fromLat&&G.homeAirport){r.fromLat=G.homeAirport.lat;r.fromLng=G.homeAirport.lng;}
       removeFlightLayer(r.id); drawFlightLayer(r);
       departed++;
