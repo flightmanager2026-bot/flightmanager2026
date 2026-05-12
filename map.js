@@ -51,13 +51,19 @@ function renderMarkers() {
   Object.keys(AP_MARKERS).forEach(function(k){try{LMAP.removeLayer(AP_MARKERS[k]);}catch(e){}});
   AP_MARKERS={};
 
-  // Baza gracza (czerwona pinezka)
+  // TYLKO baza gracza (czerwona)
   if(G.homeAirport) addPin(G.homeAirport);
 
-  // Wszystkie prawdziwe lotniska z ADB (niebieskie)
+  // TYLKO prawdziwe lotniska z ADB (niebieskie) - NIE z G.airports
   ADB.forEach(function(ap){
     if(G.homeAirport && ap.icao === G.homeAirport.icao) return;
     addPin(ap);
+  });
+
+  // Wyczysc falszywe lotniska z G.airports przy okazji
+  G.airports = G.airports.filter(function(ap){
+    if(ap.isHome) return true;
+    return ADB.some(function(a){ return a.icao === ap.icao; });
   });
 }
 
