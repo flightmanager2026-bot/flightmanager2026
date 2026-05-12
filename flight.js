@@ -34,20 +34,9 @@ function updateFlightPositions() {
     }
     if(t>=1) {
       ac.status='landed';
-      // Calculate real revenue now
-      // Always recalculate revenue
-      var mins = route.durationMin || 40;
-      var ecoSeats = ac.config ? (ac.config.eco||0) : (ac.seats||150);
-      var bizSeats = ac.config ? (ac.config.biz||0) : 0;
-      var ratePerMin = (80 + Math.random()*20) / 60; // 1.33-1.67 zł/min
-      route.revenue = Math.round(
-        ecoSeats * mins * ratePerMin +
-        bizSeats * mins * ratePerMin * 2.5
-      );
-      G.cash+=route.revenue;
       G.totalFlights=(G.totalFlights||0)+1;
       checkLevelUp(); save();
-      showMsg('Wyladowal '+ac.model+'! +$'+route.revenue.toLocaleString());
+      showMsg('Wyladowal '+ac.model+'!');
       if(_activeTab==='trasy'){var pb=document.getElementById('panel-body');if(pb)renderTrasy(pb);}
       if(_activeTab==='flota'){var pb=document.getElementById('panel-body');if(pb)renderFlotaMain(pb);}
     }
