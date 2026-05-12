@@ -29,9 +29,26 @@ function loadSave() {
     if(!d) return false;
     var g=JSON.parse(d);
     if(g.cash) G.cash=g.cash;
-    if(g.airports) G.airports=g.airports;
+    if(g.airports) {
+      // Filtruj - zostaw tylko baze i sloty z prawdziwych lotnisk ADB
+      G.airports = g.airports.filter(function(ap){
+        if(ap.isHome) return true; // baza gracza zawsze
+        // Sprawdz czy lotnisko jest w ADB
+        if(typeof ADB !== 'undefined') {
+          return ADB.some(function(a){ return a.icao === ap.icao; });
+        }
+        return false;
+      });
+    }
     if(g.routes) G.routes=g.routes;
-    if(g.slots) G.slots=g.slots;
+    if(g.slots) {
+      G.slots = g.slots.filter(function(icao){
+        if(typeof ADB !== 'undefined') {
+          return ADB.some(function(a){ return a.icao === icao; });
+        }
+        return true;
+      });
+    }
     if(g.homeAirport) G.homeAirport=g.homeAirport;
     if(g.fleet && g.fleet.length) G.fleet=g.fleet;
     if(g.airline) G.airline=g.airline;
