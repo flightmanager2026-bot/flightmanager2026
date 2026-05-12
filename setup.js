@@ -4,35 +4,32 @@ var _setupFiltered=[], _setupPicked=null, _setupCountry=null;
 var REAL_AIRPORTS_ICAO = ['EPWA','EPMO','EPRA','EPKK','EPGD','EPWR','EPPO','EPKT','EPRZ','EPSC','EPLL','EPBY','EPLU','EPCP'];
 
 var WORLD_CITIES = {
-  'Albania': {flag:'🇦🇱',cities:[
+  'Albania': {flag:'🇦🇱',region:'Europa Południowa',neighbors:['Serbia', 'Macedonia', 'Grecja', 'Czarnogóra'],cities:[
     {name:'Tirana',lat:41.328,lng:19.818},
     {name:'Durres',lat:41.324,lng:19.455},
     {name:'Vlora',lat:40.467,lng:19.483}
   ]},
-  'Algieria': {flag:'🇩🇿',cities:[
+  'Algieria': {flag:'🇩🇿',region:'Afryka Północna',neighbors:['Maroko', 'Tunezja', 'Libia', 'Niger', 'Mali', 'Mauretania'],cities:[
     {name:'Algier',lat:36.738,lng:3.087},
     {name:'Oran',lat:35.691,lng:-0.641},
     {name:'Konstantyna',lat:36.365,lng:6.615},
     {name:'Annaba',lat:36.897,lng:7.765},
-    {name:'Batna',lat:35.556,lng:6.173},
-    {name:'Djelfa',lat:34.67,lng:3.263}
+    {name:'Batna',lat:35.556,lng:6.173}
   ]},
-  'Angola': {flag:'🇦🇴',cities:[
+  'Angola': {flag:'🇦🇴',region:'Afryka Środkowa',neighbors:['DR Konga', 'Rep. Konga', 'Namibia', 'Zambia'],cities:[
     {name:'Luanda',lat:-8.839,lng:13.289},
     {name:'Huambo',lat:-12.776,lng:15.739},
     {name:'Lobito',lat:-12.348,lng:13.546}
   ]},
-  'Arabia Saudyjska': {flag:'🇸🇦',cities:[
+  'Arabia Saudyjska': {flag:'🇸🇦',region:'Azja Zachodnia',neighbors:['Jordania', 'Irak', 'Kuwejt', 'Bahrajn', 'Katar', 'ZEA', 'Oman', 'Jemen'],cities:[
     {name:'Rijad',lat:24.688,lng:46.722},
     {name:'Dżudda',lat:21.543,lng:39.173},
     {name:'Mekka',lat:21.387,lng:39.857},
     {name:'Medyna',lat:24.524,lng:39.57},
     {name:'Dammam',lat:26.435,lng:50.104},
-    {name:'Taif',lat:21.283,lng:40.415},
-    {name:'Tabuk',lat:28.383,lng:36.568},
-    {name:'Buraida',lat:26.357,lng:43.975}
+    {name:'Taif',lat:21.283,lng:40.415}
   ]},
-  'Argentyna': {flag:'🇦🇷',cities:[
+  'Argentyna': {flag:'🇦🇷',region:'Ameryka Południowa',neighbors:['Chile', 'Boliwia', 'Paragwaj', 'Brazylia', 'Urugwaj'],cities:[
     {name:'Buenos Aires',lat:-34.614,lng:-58.444},
     {name:'Kordoba',lat:-31.415,lng:-64.183},
     {name:'Rosario',lat:-32.944,lng:-60.651},
@@ -41,19 +38,13 @@ var WORLD_CITIES = {
     {name:'San Miguel de Tucuman',lat:-26.808,lng:-65.218},
     {name:'Mar del Plata',lat:-38.005,lng:-57.543},
     {name:'Salta',lat:-24.783,lng:-65.412},
-    {name:'Santa Fe',lat:-31.633,lng:-60.7},
-    {name:'San Juan',lat:-31.538,lng:-68.536},
-    {name:'Resistencia',lat:-27.451,lng:-58.987},
-    {name:'Corrientes',lat:-27.467,lng:-58.834},
-    {name:'Posadas',lat:-27.367,lng:-55.9},
-    {name:'Bahi Blanca',lat:-38.719,lng:-62.265}
+    {name:'Santa Fe',lat:-31.633,lng:-60.7}
   ]},
-  'Armenya': {flag:'🇦🇲',cities:[
+  'Armenia': {flag:'🇦🇲',region:'Azja Zachodnia',neighbors:['Turcja', 'Gruzja', 'Azerbejdżan', 'Iran'],cities:[
     {name:'Erewan',lat:40.182,lng:44.514},
-    {name:'Giumri',lat:40.789,lng:43.847},
-    {name:'Wandzor',lat:40.813,lng:44.488}
+    {name:'Giumri',lat:40.789,lng:43.847}
   ]},
-  'Australia': {flag:'🇦🇺',cities:[
+  'Australia': {flag:'🇦🇺',region:'Oceania',neighbors:['Papua Nowa Gwinea', 'Indonezja'],cities:[
     {name:'Sydney',lat:-33.868,lng:151.209},
     {name:'Melbourne',lat:-37.814,lng:144.963},
     {name:'Brisbane',lat:-27.469,lng:153.025},
@@ -65,15 +56,9 @@ var WORLD_CITIES = {
     {name:'Hobart',lat:-42.879,lng:147.324},
     {name:'Townsville',lat:-19.258,lng:146.817},
     {name:'Cairns',lat:-16.92,lng:145.777},
-    {name:'Toowoomba',lat:-27.567,lng:151.95},
-    {name:'Geelong',lat:-38.147,lng:144.36},
-    {name:'Newcastle',lat:-32.927,lng:151.778},
-    {name:'Wollongong',lat:-34.425,lng:150.893},
-    {name:'Sunshine Coast',lat:-26.65,lng:153.067},
-    {name:'Ballarat',lat:-37.561,lng:143.859},
-    {name:'Bendigo',lat:-36.758,lng:144.282}
+    {name:'Newcastle',lat:-32.927,lng:151.778}
   ]},
-  'Austria': {flag:'🇦🇹',cities:[
+  'Austria': {flag:'🇦🇹',region:'Europa Środkowa',neighbors:['Niemcy', 'Czechy', 'Słowacja', 'Węgry', 'Słowenia', 'Włochy', 'Szwajcaria', 'Liechtenstein'],cities:[
     {name:'Wiedeń',lat:48.21,lng:16.363},
     {name:'Graz',lat:47.07,lng:15.44},
     {name:'Linz',lat:48.306,lng:14.286},
@@ -81,29 +66,21 @@ var WORLD_CITIES = {
     {name:'Innsbruck',lat:47.268,lng:11.394},
     {name:'Klagenfurt',lat:46.624,lng:14.308},
     {name:'Wels',lat:48.159,lng:14.033},
-    {name:'Sankt Polten',lat:48.205,lng:15.625},
-    {name:'Dornbirn',lat:47.412,lng:9.744}
+    {name:'Sankt Polten',lat:48.205,lng:15.625}
   ]},
-  'Azerbejdzan': {flag:'🇦🇿',cities:[
+  'Azerbejdzan': {flag:'🇦🇿',region:'Azja Zachodnia',neighbors:['Rosja', 'Gruzja', 'Armenia', 'Iran'],cities:[
     {name:'Baku',lat:40.409,lng:49.867},
     {name:'Ganca',lat:40.683,lng:46.36},
-    {name:'Sumgait',lat:40.59,lng:49.669},
-    {name:'Mingacevir',lat:40.771,lng:47.055},
-    {name:'Lankaran',lat:38.752,lng:48.848}
+    {name:'Sumgait',lat:40.59,lng:49.669}
   ]},
-  'Bahrajn': {flag:'🇧🇭',cities:[
-    {name:'Manama',lat:26.215,lng:50.586},
-    {name:'Al Muharraq',lat:26.257,lng:50.609}
-  ]},
-  'Bangladesz': {flag:'🇧🇩',cities:[
+  'Bangladesz': {flag:'🇧🇩',region:'Azja Południowa',neighbors:['Indie', 'Myanmar'],cities:[
     {name:'Dhaka',lat:23.724,lng:90.409},
     {name:'Chittagong',lat:22.356,lng:91.783},
     {name:'Sylhet',lat:24.896,lng:91.872},
     {name:'Rajshahi',lat:24.374,lng:88.6},
-    {name:'Khulna',lat:22.845,lng:89.54},
-    {name:'Comilla',lat:23.461,lng:91.187}
+    {name:'Khulna',lat:22.845,lng:89.54}
   ]},
-  'Belgia': {flag:'🇧🇪',cities:[
+  'Belgia': {flag:'🇧🇪',region:'Europa Zachodnia',neighbors:['Francja', 'Niemcy', 'Luksemburg', 'Holandia'],cities:[
     {name:'Bruksela',lat:50.851,lng:4.352},
     {name:'Antwerpia',lat:51.221,lng:4.4},
     {name:'Gandawa',lat:51.054,lng:3.721},
@@ -111,13 +88,9 @@ var WORLD_CITIES = {
     {name:'Charleroi',lat:50.411,lng:4.444},
     {name:'Brugge',lat:51.209,lng:3.225},
     {name:'Namur',lat:50.466,lng:4.867},
-    {name:'Leuven',lat:50.878,lng:4.704},
-    {name:'Mechelen',lat:51.028,lng:4.48},
-    {name:'Aalst',lat:50.939,lng:4.04},
-    {name:'La Louviere',lat:50.474,lng:4.189},
-    {name:'Kortrijk',lat:50.828,lng:3.265}
+    {name:'Leuven',lat:50.878,lng:4.704}
   ]},
-  'Bialorus': {flag:'🇧🇾',cities:[
+  'Białoruś': {flag:'🇧🇾',region:'Europa Wschodnia',neighbors:['Polska', 'Litwa', 'Łotwa', 'Rosja', 'Ukraina'],cities:[
     {name:'Minsk',lat:53.904,lng:27.562},
     {name:'Homel',lat:52.424,lng:30.994},
     {name:'Mohylew',lat:53.906,lng:30.329},
@@ -125,12 +98,12 @@ var WORLD_CITIES = {
     {name:'Hrodna',lat:53.679,lng:23.829},
     {name:'Brest',lat:52.097,lng:23.734}
   ]},
-  'Bosnia i Hercegowina': {flag:'🇧🇦',cities:[
+  'Bosnia i Hercegowina': {flag:'🇧🇦',region:'Europa Południowa',neighbors:['Chorwacja', 'Serbia', 'Czarnogóra'],cities:[
     {name:'Sarajewo',lat:43.848,lng:18.356},
     {name:'Banja Luka',lat:44.773,lng:17.191},
-    {name:'Zenica',lat:44.204,lng:17.907}
+    {name:'Tuzla',lat:44.539,lng:18.669}
   ]},
-  'Brazylia': {flag:'🇧🇷',cities:[
+  'Brazylia': {flag:'🇧🇷',region:'Ameryka Południowa',neighbors:['Wenezuela', 'Gujana', 'Surinam', 'Kolumbia', 'Peru', 'Boliwia', 'Paragwaj', 'Argentyna', 'Urugwaj'],cities:[
     {name:'Sao Paulo',lat:-23.55,lng:-46.634},
     {name:'Rio de Janeiro',lat:-22.906,lng:-43.173},
     {name:'Brasilia',lat:-15.78,lng:-47.93},
@@ -143,17 +116,13 @@ var WORLD_CITIES = {
     {name:'Porto Alegre',lat:-30.033,lng:-51.23},
     {name:'Belem',lat:-1.455,lng:-48.503},
     {name:'Goiania',lat:-16.686,lng:-49.265},
-    {name:'Guarulhos',lat:-23.462,lng:-46.534},
     {name:'Campinas',lat:-22.906,lng:-47.061},
-    {name:'Sao Luis',lat:-2.529,lng:-44.303},
-    {name:'Maceio',lat:-9.666,lng:-35.735},
     {name:'Natal',lat:-5.795,lng:-35.21},
-    {name:'Joao Pessoa',lat:-7.121,lng:-34.884},
-    {name:'Campo Grande',lat:-20.448,lng:-54.609},
-    {name:'Teresina',lat:-5.092,lng:-42.803},
-    {name:'Florianopolis',lat:-27.595,lng:-48.548}
+    {name:'Maceio',lat:-9.666,lng:-35.735},
+    {name:'Florianopolis',lat:-27.595,lng:-48.548},
+    {name:'Campo Grande',lat:-20.448,lng:-54.609}
   ]},
-  'Bulgaria': {flag:'🇧🇬',cities:[
+  'Bułgaria': {flag:'🇧🇬',region:'Europa Południowa',neighbors:['Rumunia', 'Serbia', 'Macedonia', 'Grecja', 'Turcja'],cities:[
     {name:'Sofia',lat:42.698,lng:23.322},
     {name:'Plovdiw',lat:42.135,lng:24.745},
     {name:'Warna',lat:43.21,lng:27.914},
@@ -161,22 +130,15 @@ var WORLD_CITIES = {
     {name:'Ruse',lat:43.849,lng:25.954},
     {name:'Stara Zagora',lat:42.426,lng:25.64}
   ]},
-  'Burkina Faso': {flag:'🇧🇫',cities:[
-    {name:'Wagadugu',lat:12.365,lng:-1.534},
-    {name:'Bobo-Dioulasso',lat:11.177,lng:-4.298}
-  ]},
-  'Chile': {flag:'🇨🇱',cities:[
+  'Chile': {flag:'🇨🇱',region:'Ameryka Południowa',neighbors:['Peru', 'Boliwia', 'Argentyna'],cities:[
     {name:'Santiago',lat:-33.457,lng:-70.648},
     {name:'Valparaiso',lat:-33.047,lng:-71.619},
     {name:'Concepcion',lat:-36.827,lng:-73.05},
     {name:'Antofagasta',lat:-23.652,lng:-70.396},
-    {name:'Vina del Mar',lat:-33.024,lng:-71.552},
     {name:'Temuco',lat:-38.736,lng:-72.59},
-    {name:'Rancagua',lat:-34.17,lng:-70.74},
-    {name:'Talca',lat:-35.427,lng:-71.665},
     {name:'Arica',lat:-18.478,lng:-70.317}
   ]},
-  'Chiny': {flag:'🇨🇳',cities:[
+  'Chiny': {flag:'🇨🇳',region:'Azja Wschodnia',neighbors:['Rosja', 'Mongolia', 'Kazachstan', 'Kirgistan', 'Tadżykistan', 'Afganistan', 'Pakistan', 'Indie', 'Nepal', 'Bhutan', 'Myanmar', 'Laos', 'Wietnam', 'Korea Północna'],cities:[
     {name:'Szanghaj',lat:31.224,lng:121.469},
     {name:'Pekin',lat:39.905,lng:116.391},
     {name:'Guangzhou',lat:23.13,lng:113.264},
@@ -196,16 +158,13 @@ var WORLD_CITIES = {
     {name:'Kunming',lat:25.046,lng:102.719},
     {name:'Qingdao',lat:36.067,lng:120.383},
     {name:'Dalian',lat:38.914,lng:121.614},
-    {name:'Hefei',lat:31.861,lng:117.285},
-    {name:'Nanchang',lat:28.683,lng:115.858},
     {name:'Fuzhou',lat:26.075,lng:119.297},
     {name:'Xiamen',lat:24.48,lng:118.089},
     {name:'Urumqi',lat:43.825,lng:87.617},
-    {name:'Guiyang',lat:26.647,lng:106.63},
     {name:'Nanning',lat:22.817,lng:108.366},
     {name:'Lanzhou',lat:36.056,lng:103.834}
   ]},
-  'Chorwacja': {flag:'🇭🇷',cities:[
+  'Chorwacja': {flag:'🇭🇷',region:'Europa Południowa',neighbors:['Słowenia', 'Węgry', 'Serbia', 'Bośnia', 'Czarnogóra'],cities:[
     {name:'Zagrzeb',lat:45.814,lng:15.978},
     {name:'Split',lat:43.508,lng:16.44},
     {name:'Rijeka',lat:45.328,lng:14.442},
@@ -213,12 +172,12 @@ var WORLD_CITIES = {
     {name:'Zadar',lat:44.119,lng:15.232},
     {name:'Dubrownik',lat:42.651,lng:18.094}
   ]},
-  'Cypr': {flag:'🇨🇾',cities:[
+  'Cypr': {flag:'🇨🇾',region:'Europa Południowa',neighbors:[],cities:[
     {name:'Nikozja',lat:35.166,lng:33.367},
     {name:'Limassol',lat:34.685,lng:33.033},
     {name:'Larnaka',lat:34.917,lng:33.623}
   ]},
-  'Czechy': {flag:'🇨🇿',cities:[
+  'Czechy': {flag:'🇨🇿',region:'Europa Środkowa',neighbors:['Polska', 'Niemcy', 'Austria', 'Słowacja'],cities:[
     {name:'Praga',lat:50.075,lng:14.438},
     {name:'Brno',lat:49.195,lng:16.608},
     {name:'Ostrawa',lat:49.821,lng:18.263},
@@ -227,66 +186,58 @@ var WORLD_CITIES = {
     {name:'Olomouc',lat:49.594,lng:17.252},
     {name:'Usti nad Labem',lat:50.659,lng:14.043},
     {name:'Hradec Kralove',lat:50.209,lng:15.832},
-    {name:'Pardubice',lat:50.039,lng:15.779},
-    {name:'Zlin',lat:49.225,lng:17.659},
-    {name:'Havirov',lat:49.778,lng:18.436}
+    {name:'Pardubice',lat:50.039,lng:15.779}
   ]},
-  'Dania': {flag:'🇩🇰',cities:[
+  'Dania': {flag:'🇩🇰',region:'Europa Północna',neighbors:['Niemcy', 'Szwecja'],cities:[
     {name:'Kopenhaga',lat:55.676,lng:12.568},
     {name:'Aarhus',lat:56.156,lng:10.211},
     {name:'Odense',lat:55.396,lng:10.389},
     {name:'Aalborg',lat:57.048,lng:9.919},
-    {name:'Frederiksberg',lat:55.678,lng:12.523},
     {name:'Esbjerg',lat:55.467,lng:8.453},
-    {name:'Randers',lat:56.461,lng:10.036},
-    {name:'Kolding',lat:55.49,lng:9.472},
-    {name:'Horsens',lat:55.86,lng:9.85}
+    {name:'Randers',lat:56.461,lng:10.036}
   ]},
-  'Egipt': {flag:'🇪🇬',cities:[
+  'Egipt': {flag:'🇪🇬',region:'Afryka Północna',neighbors:['Libia', 'Sudan', 'Izrael', 'Jordania'],cities:[
     {name:'Kair',lat:30.044,lng:31.236},
     {name:'Aleksandria',lat:31.2,lng:29.918},
     {name:'Giza',lat:30.013,lng:31.213},
-    {name:'Shubra el-Kheima',lat:30.128,lng:31.242},
     {name:'Port Said',lat:31.256,lng:32.284},
     {name:'Suez',lat:29.974,lng:32.549},
     {name:'Luksor',lat:25.687,lng:32.639},
-    {name:'Mansura',lat:31.04,lng:31.381},
-    {name:'El-Mahalla el-Kubra',lat:30.975,lng:31.163},
-    {name:'Tanta',lat:30.782,lng:31.002},
     {name:'Hurghada',lat:27.258,lng:33.812},
-    {name:'Szarm el-Szejk',lat:27.916,lng:34.328}
+    {name:'Szarm el-Szejk',lat:27.916,lng:34.328},
+    {name:'Asuan',lat:24.088,lng:32.899}
   ]},
-  'Estonia': {flag:'🇪🇪',cities:[
+  'Estonia': {flag:'🇪🇪',region:'Europa Wschodnia',neighbors:['Łotwa', 'Rosja'],cities:[
     {name:'Tallin',lat:59.437,lng:24.745},
     {name:'Tartu',lat:58.377,lng:26.729},
     {name:'Narwa',lat:59.378,lng:28.191},
-    {name:'Parnu',lat:58.386,lng:24.5},
-    {name:'Kohtla-Jarve',lat:59.399,lng:27.273}
+    {name:'Parnu',lat:58.386,lng:24.5}
   ]},
-  'Etiopia': {flag:'🇪🇹',cities:[
+  'Etiopia': {flag:'🇪🇹',region:'Afryka Wschodnia',neighbors:['Erytrea', 'Dżibuti', 'Somalia', 'Kenia', 'Sudan Płd.', 'Sudan'],cities:[
     {name:'Addis Abeba',lat:9.025,lng:38.747},
     {name:'Dire Dawa',lat:9.593,lng:41.866},
     {name:'Mekele',lat:13.497,lng:39.476},
     {name:'Gondar',lat:12.604,lng:37.464},
-    {name:'Bahir Dar',lat:11.593,lng:37.39},
-    {name:'Hawasa',lat:7.063,lng:38.476}
+    {name:'Bahir Dar',lat:11.593,lng:37.39}
   ]},
-  'Filipiny': {flag:'🇵🇭',cities:[
+  'Filipiny': {flag:'🇵🇭',region:'Azja Południowo-Wschodnia',neighbors:[],cities:[
     {name:'Manila',lat:14.599,lng:120.984},
     {name:'Quezon City',lat:14.676,lng:121.044},
     {name:'Cebu',lat:10.317,lng:123.891},
     {name:'Davao',lat:7.073,lng:125.613},
     {name:'Zamboanga',lat:6.91,lng:122.073}
   ]},
-  'Finlandia': {flag:'🇫🇮',cities:[
+  'Finlandia': {flag:'🇫🇮',region:'Europa Północna',neighbors:['Szwecja', 'Norwegia', 'Rosja'],cities:[
     {name:'Helsinki',lat:60.169,lng:24.938},
     {name:'Tampere',lat:61.498,lng:23.76},
     {name:'Turku',lat:60.452,lng:22.267},
     {name:'Oulu',lat:65.013,lng:25.465},
     {name:'Jyvaskyla',lat:62.243,lng:25.748},
-    {name:'Lahti',lat:60.984,lng:25.657}
+    {name:'Lahti',lat:60.984,lng:25.657},
+    {name:'Kuopio',lat:62.892,lng:27.677},
+    {name:'Pori',lat:61.485,lng:21.798}
   ]},
-  'Francja': {flag:'🇫🇷',cities:[
+  'Francja': {flag:'🇫🇷',region:'Europa Zachodnia',neighbors:['Niemcy', 'Belgia', 'Luksemburg', 'Szwajcaria', 'Wlochy', 'Monako', 'Andora', 'Hiszpania'],cities:[
     {name:'Paryz',lat:48.856,lng:2.352},
     {name:'Marsylia',lat:43.296,lng:5.381},
     {name:'Lyon',lat:45.748,lng:4.847},
@@ -302,59 +253,44 @@ var WORLD_CITIES = {
     {name:'Le Havre',lat:49.494,lng:0.108},
     {name:'Grenoble',lat:45.188,lng:5.724},
     {name:'Dijon',lat:47.322,lng:5.041},
-    {name:'Angers',lat:47.478,lng:-0.563},
     {name:'Nimes',lat:43.837,lng:4.361},
     {name:'Tours',lat:47.394,lng:0.69},
-    {name:'Aix-en-Provence',lat:43.53,lng:5.447},
-    {name:'Amiens',lat:49.896,lng:2.302},
-    {name:'Limoges',lat:45.834,lng:1.261},
-    {name:'Clermont-Ferrand',lat:45.778,lng:3.083},
-    {name:'Villeurbanne',lat:45.767,lng:4.879},
     {name:'Toulon',lat:43.125,lng:5.931},
     {name:'Brest',lat:48.39,lng:-4.487},
     {name:'Metz',lat:49.119,lng:6.175},
     {name:'Nancy',lat:48.692,lng:6.184},
     {name:'Perpignan',lat:42.699,lng:2.895},
-    {name:'Pau',lat:43.3,lng:-0.371},
     {name:'Caen',lat:49.182,lng:-0.371},
     {name:'Besancon',lat:47.238,lng:6.024},
     {name:'Orleans',lat:47.903,lng:1.909},
-    {name:'Annecy',lat:45.899,lng:6.13},
-    {name:'Valenciennes',lat:50.358,lng:3.523},
-    {name:'Troyes',lat:48.297,lng:4.074},
-    {name:'Poitiers',lat:46.58,lng:0.34},
     {name:'Rouen',lat:49.443,lng:1.099},
-    {name:'Avignon',lat:43.95,lng:4.806}
+    {name:'Avignon',lat:43.95,lng:4.806},
+    {name:'Clermont-Ferrand',lat:45.778,lng:3.083},
+    {name:'Pau',lat:43.3,lng:-0.371},
+    {name:'Angers',lat:47.478,lng:-0.563}
   ]},
-  'Ghana': {flag:'🇬🇭',cities:[
+  'Ghana': {flag:'🇬🇭',region:'Afryka Zachodnia',neighbors:['Wybrzeze Kosci Sloniowej', 'Burkina Faso', 'Togo'],cities:[
     {name:'Akra',lat:5.556,lng:-0.197},
     {name:'Kumasi',lat:6.687,lng:-1.624},
-    {name:'Tamale',lat:9.401,lng:-0.842},
-    {name:'Sekondi-Takoradi',lat:4.934,lng:-1.716},
-    {name:'Cape Coast',lat:5.105,lng:-1.247}
+    {name:'Tamale',lat:9.401,lng:-0.842}
   ]},
-  'Grecja': {flag:'🇬🇷',cities:[
+  'Grecja': {flag:'🇬🇷',region:'Europa Południowa',neighbors:['Albania', 'Macedonia', 'Bułgaria', 'Turcja'],cities:[
     {name:'Ateny',lat:37.984,lng:23.728},
     {name:'Saloniki',lat:40.641,lng:22.944},
     {name:'Pireus',lat:37.942,lng:23.646},
     {name:'Patras',lat:38.246,lng:21.735},
     {name:'Heraklion',lat:35.34,lng:25.133},
     {name:'Larisa',lat:39.638,lng:22.419},
-    {name:'Wołos',lat:39.365,lng:22.95},
-    {name:'Ioannina',lat:39.665,lng:20.853},
-    {name:'Kavala',lat:40.939,lng:24.402},
     {name:'Rodos',lat:36.434,lng:28.217},
     {name:'Kerkyra',lat:39.621,lng:19.923},
     {name:'Chania',lat:35.513,lng:24.019}
   ]},
-  'Gruzja': {flag:'🇬🇪',cities:[
+  'Gruzja': {flag:'🇬🇪',region:'Azja Zachodnia',neighbors:['Rosja', 'Turcja', 'Armenia', 'Azerbejdżan'],cities:[
     {name:'Tbilisi',lat:41.694,lng:44.834},
     {name:'Kutaisi',lat:42.269,lng:42.698},
-    {name:'Batumi',lat:41.641,lng:41.641},
-    {name:'Rustawi',lat:41.549,lng:44.993},
-    {name:'Zugdidi',lat:42.508,lng:41.871}
+    {name:'Batumi',lat:41.641,lng:41.641}
   ]},
-  'Hiszpania': {flag:'🇪🇸',cities:[
+  'Hiszpania': {flag:'🇪🇸',region:'Europa Zachodnia',neighbors:['Portugalia', 'Francja', 'Andora'],cities:[
     {name:'Madryt',lat:40.416,lng:-3.703},
     {name:'Barcelona',lat:41.385,lng:2.173},
     {name:'Walencja',lat:39.47,lng:-0.376},
@@ -369,11 +305,9 @@ var WORLD_CITIES = {
     {name:'Valladolid',lat:41.652,lng:-4.724},
     {name:'Vigo',lat:42.232,lng:-8.712},
     {name:'Gijon',lat:43.545,lng:-5.662},
-    {name:'Hospitalet',lat:41.36,lng:2.1},
     {name:'La Coruna',lat:43.371,lng:-8.396},
     {name:'Granada',lat:37.188,lng:-3.6},
     {name:'Vitoria',lat:42.846,lng:-2.673},
-    {name:'Elche',lat:38.267,lng:-0.7},
     {name:'Oviedo',lat:43.362,lng:-5.849},
     {name:'Santa Cruz de Tenerife',lat:28.463,lng:-16.252},
     {name:'Las Palmas',lat:28.099,lng:-15.414},
@@ -381,17 +315,10 @@ var WORLD_CITIES = {
     {name:'Santander',lat:43.463,lng:-3.81},
     {name:'Almeria',lat:36.84,lng:-2.468},
     {name:'San Sebastian',lat:43.318,lng:-1.981},
-    {name:'Burgos',lat:42.341,lng:-3.7},
     {name:'Salamanca',lat:40.966,lng:-5.664},
-    {name:'Albacete',lat:38.994,lng:-1.856},
-    {name:'Huelva',lat:37.261,lng:-6.949},
-    {name:'Logorno',lat:42.466,lng:-2.449},
-    {name:'Leon',lat:42.6,lng:-5.57},
-    {name:'Cadiz',lat:36.527,lng:-6.295},
-    {name:'Tarragona',lat:41.119,lng:1.245},
-    {name:'Jerez de la Frontera',lat:36.685,lng:-6.136}
+    {name:'Cadiz',lat:36.527,lng:-6.295}
   ]},
-  'Holandia': {flag:'🇳🇱',cities:[
+  'Holandia': {flag:'🇳🇱',region:'Europa Zachodnia',neighbors:['Niemcy', 'Belgia'],cities:[
     {name:'Amsterdam',lat:52.374,lng:4.898},
     {name:'Rotterdam',lat:51.924,lng:4.47},
     {name:'Haga',lat:52.078,lng:4.312},
@@ -405,17 +332,12 @@ var WORLD_CITIES = {
     {name:'Enschede',lat:52.223,lng:6.895},
     {name:'Haarlem',lat:52.381,lng:4.636},
     {name:'Arnhem',lat:51.985,lng:5.898},
-    {name:'Zaanstad',lat:52.456,lng:4.83},
-    {name:'Leiden',lat:52.16,lng:4.497},
-    {name:'Dordrecht',lat:51.813,lng:4.669},
-    {name:'Zoetermeer',lat:52.058,lng:4.494},
     {name:'Maastricht',lat:50.851,lng:5.693}
   ]},
-  'Hongkong': {flag:'🇭🇰',cities:[
-    {name:'Hongkong',lat:22.396,lng:114.109},
-    {name:'Kowloon',lat:22.328,lng:114.174}
+  'Hongkong': {flag:'🇭🇰',region:'Azja Wschodnia',neighbors:['Chiny'],cities:[
+    {name:'Hongkong',lat:22.396,lng:114.109}
   ]},
-  'Indie': {flag:'🇮🇳',cities:[
+  'Indie': {flag:'🇮🇳',region:'Azja Południowa',neighbors:['Pakistan', 'Chiny', 'Nepal', 'Bhutan', 'Bangladesz', 'Myanmar'],cities:[
     {name:'Mumbai',lat:19.076,lng:72.878},
     {name:'Delhi',lat:28.614,lng:77.209},
     {name:'Bangalore',lat:12.972,lng:77.594},
@@ -430,85 +352,60 @@ var WORLD_CITIES = {
     {name:'Kanpur',lat:26.449,lng:80.336},
     {name:'Nagpur',lat:21.146,lng:79.082},
     {name:'Indore',lat:22.719,lng:75.857},
-    {name:'Thane',lat:19.183,lng:72.973},
-    {name:'Bhopal',lat:23.259,lng:77.413},
-    {name:'Visakhapatnam',lat:17.686,lng:83.218},
-    {name:'Pimpri-Chinchwad',lat:18.627,lng:73.806},
     {name:'Patna',lat:25.594,lng:85.137},
     {name:'Vadodara',lat:22.307,lng:73.181},
-    {name:'Ghaziabad',lat:28.668,lng:77.445},
-    {name:'Ludhiana',lat:30.901,lng:75.857},
     {name:'Agra',lat:27.177,lng:78.008},
-    {name:'Nashik',lat:20.0,lng:73.79},
-    {name:'Faridabad',lat:28.408,lng:77.314},
-    {name:'Meerut',lat:28.984,lng:77.706},
-    {name:'Rajkot',lat:22.303,lng:70.802},
-    {name:'Varanasi',lat:25.316,lng:82.974},
-    {name:'Srinagar',lat:34.081,lng:74.797},
-    {name:'Aurangabad',lat:19.877,lng:75.343}
+    {name:'Varanasi',lat:25.316,lng:82.974}
   ]},
-  'Indonezja': {flag:'🇮🇩',cities:[
+  'Indonezja': {flag:'🇮🇩',region:'Azja Południowo-Wschodnia',neighbors:['Malezja', 'Papua Nowa Gwinea', 'Timor Wschodni'],cities:[
     {name:'Dzakarta',lat:-6.211,lng:106.845},
     {name:'Surabaja',lat:-7.257,lng:112.752},
     {name:'Bandung',lat:-6.917,lng:107.619},
-    {name:'Bekasi',lat:-6.235,lng:106.993},
     {name:'Medan',lat:-3.595,lng:98.672},
     {name:'Semarang',lat:-6.99,lng:110.42},
-    {name:'Tangerang',lat:-6.178,lng:106.63},
-    {name:'Depok',lat:-6.402,lng:106.794},
-    {name:'Palembang',lat:-2.992,lng:104.756},
     {name:'Makasar',lat:-5.135,lng:119.413},
-    {name:'Batam',lat:1.128,lng:104.053},
+    {name:'Palembang',lat:-2.992,lng:104.756},
     {name:'Pekanbaru',lat:0.507,lng:101.448},
-    {name:'Bandar Lampung',lat:-5.429,lng:105.261},
-    {name:'Manado',lat:1.487,lng:124.842},
-    {name:'Bali Denpasar',lat:-8.671,lng:115.212}
+    {name:'Bali Denpasar',lat:-8.671,lng:115.212},
+    {name:'Manado',lat:1.487,lng:124.842}
   ]},
-  'Irak': {flag:'🇮🇶',cities:[
+  'Irak': {flag:'🇮🇶',region:'Azja Zachodnia',neighbors:['Turcja', 'Iran', 'Kuwejt', 'Arabia Saudyjska', 'Jordania', 'Syria'],cities:[
     {name:'Bagdad',lat:33.341,lng:44.401},
     {name:'Basra',lat:30.508,lng:47.783},
     {name:'Mosul',lat:36.34,lng:43.128},
     {name:'Arbil',lat:36.19,lng:44.009},
-    {name:'Kirkuk',lat:35.471,lng:44.393},
-    {name:'Nadżaf',lat:32.003,lng:44.335}
+    {name:'Kirkuk',lat:35.471,lng:44.393}
   ]},
-  'Iran': {flag:'🇮🇷',cities:[
+  'Iran': {flag:'🇮🇷',region:'Azja Zachodnia',neighbors:['Turcja', 'Irak', 'Kuwejt', 'Arabia Saudyjska', 'ZEA', 'Oman', 'Pakistan', 'Afganistan', 'Turkmenistan', 'Azerbejdżan', 'Armenia'],cities:[
     {name:'Teheran',lat:35.694,lng:51.421},
     {name:'Maszhad',lat:36.316,lng:59.6},
     {name:'Isfahan',lat:32.661,lng:51.68},
     {name:'Karadż',lat:35.748,lng:50.942},
     {name:'Tebriz',lat:38.08,lng:46.291},
     {name:'Sziras',lat:29.591,lng:52.584},
-    {name:'Kum',lat:34.64,lng:50.876},
-    {name:'Ahwaz',lat:31.318,lng:48.672},
-    {name:'Kom',lat:34.64,lng:50.876}
+    {name:'Ahwaz',lat:31.318,lng:48.672}
   ]},
-  'Irlandia': {flag:'🇮🇪',cities:[
+  'Irlandia': {flag:'🇮🇪',region:'Europa Zachodnia',neighbors:['Wielka Brytania'],cities:[
     {name:'Dublin',lat:53.333,lng:-6.249},
     {name:'Cork',lat:51.898,lng:-8.475},
     {name:'Limerick',lat:52.668,lng:-8.63},
     {name:'Galway',lat:53.274,lng:-9.05},
     {name:'Waterford',lat:52.259,lng:-7.11},
-    {name:'Drogheda',lat:53.717,lng:-6.356},
-    {name:'Dundalk',lat:54.001,lng:-6.41},
-    {name:'Swords',lat:53.459,lng:-6.219},
-    {name:'Bray',lat:53.2,lng:-6.1}
+    {name:'Shannon',lat:52.702,lng:-8.925}
   ]},
-  'Islandia': {flag:'🇮🇸',cities:[
+  'Islandia': {flag:'🇮🇸',region:'Europa Północna',neighbors:[],cities:[
     {name:'Reykjavik',lat:64.135,lng:-21.895},
     {name:'Kopavogur',lat:64.107,lng:-21.926},
-    {name:'Hafnarfjordur',lat:64.067,lng:-21.94},
     {name:'Akureyri',lat:65.683,lng:-18.091}
   ]},
-  'Izrael': {flag:'🇮🇱',cities:[
+  'Izrael': {flag:'🇮🇱',region:'Azja Zachodnia',neighbors:['Liban', 'Syria', 'Jordania', 'Egipt'],cities:[
     {name:'Tel Awiw',lat:32.087,lng:34.798},
     {name:'Jerozolima',lat:31.769,lng:35.216},
     {name:'Hajfa',lat:32.82,lng:34.998},
-    {name:'Riszon le-Syjon',lat:31.964,lng:34.804},
-    {name:'Petach Tikwa',lat:32.091,lng:34.888},
-    {name:'Beer Szewa',lat:31.252,lng:34.791}
+    {name:'Beer Szewa',lat:31.252,lng:34.791},
+    {name:'Netanya',lat:32.332,lng:34.86}
   ]},
-  'Japonia': {flag:'🇯🇵',cities:[
+  'Japonia': {flag:'🇯🇵',region:'Azja Wschodnia',neighbors:['Rosja', 'Korea Południowa', 'Chiny'],cities:[
     {name:'Tokio',lat:35.689,lng:139.692},
     {name:'Osaka',lat:34.694,lng:135.502},
     {name:'Nagoja',lat:35.183,lng:136.907},
@@ -518,36 +415,26 @@ var WORLD_CITIES = {
     {name:'Kioto',lat:35.012,lng:135.768},
     {name:'Hiroszima',lat:34.385,lng:132.455},
     {name:'Sendai',lat:38.269,lng:140.869},
-    {name:'Kitakyushu',lat:33.882,lng:130.815},
-    {name:'Chiba',lat:35.606,lng:140.106},
-    {name:'Sakai',lat:34.573,lng:135.483},
     {name:'Kumamoto',lat:32.803,lng:130.708},
     {name:'Okayama',lat:34.655,lng:133.919},
-    {name:'Sagamihara',lat:35.571,lng:139.372},
-    {name:'Hamamatsu',lat:34.71,lng:137.727},
-    {name:'Funabashi',lat:35.694,lng:139.983},
-    {name:'Higashiosaka',lat:34.679,lng:135.601},
-    {name:'Niigata',lat:37.902,lng:139.022},
-    {name:'Shizuoka',lat:34.977,lng:138.383},
     {name:'Kagoshima',lat:31.596,lng:130.558}
   ]},
-  'Jordania': {flag:'🇯🇴',cities:[
+  'Jordania': {flag:'🇯🇴',region:'Azja Zachodnia',neighbors:['Syria', 'Irak', 'Arabia Saudyjska', 'Izrael'],cities:[
     {name:'Amman',lat:31.955,lng:35.945},
     {name:'Zarqa',lat:32.073,lng:36.088},
     {name:'Irbid',lat:32.556,lng:35.85},
     {name:'Aqaba',lat:29.527,lng:35.006}
   ]},
-  'Kambodza': {flag:'🇰🇭',cities:[
+  'Kambodza': {flag:'🇰🇭',region:'Azja Południowo-Wschodnia',neighbors:['Tajlandia', 'Laos', 'Wietnam'],cities:[
     {name:'Phnom Penh',lat:11.569,lng:104.921},
-    {name:'Siem Reap',lat:13.362,lng:103.86},
-    {name:'Sihanoukville',lat:10.61,lng:103.523}
+    {name:'Siem Reap',lat:13.362,lng:103.86}
   ]},
-  'Kamerun': {flag:'🇨🇲',cities:[
+  'Kamerun': {flag:'🇨🇲',region:'Afryka Środkowa',neighbors:['Nigeria', 'Chad', 'Rep. Środkowoafrykańska', 'Rep. Konga', 'Gabon', 'Gwinea Równikowa'],cities:[
     {name:'Jaunde',lat:3.861,lng:11.52},
     {name:'Duala',lat:4.05,lng:9.7},
     {name:'Garoua',lat:9.298,lng:13.399}
   ]},
-  'Kanada': {flag:'🇨🇦',cities:[
+  'Kanada': {flag:'🇨🇦',region:'Ameryka Północna',neighbors:['USA'],cities:[
     {name:'Toronto',lat:43.653,lng:-79.383},
     {name:'Montreal',lat:45.501,lng:-73.567},
     {name:'Vancouver',lat:49.283,lng:-123.121},
@@ -556,172 +443,119 @@ var WORLD_CITIES = {
     {name:'Ottawa',lat:45.421,lng:-75.697},
     {name:'Winnipeg',lat:49.899,lng:-97.138},
     {name:'Quebec',lat:46.813,lng:-71.208},
-    {name:'Hamilton',lat:43.256,lng:-79.869},
-    {name:'Kitchener',lat:43.451,lng:-80.493},
-    {name:'London Ontario',lat:42.983,lng:-81.244},
-    {name:'Victoria',lat:48.428,lng:-123.365},
     {name:'Halifax',lat:44.647,lng:-63.591},
-    {name:'Saskatoon',lat:52.133,lng:-106.67},
+    {name:'Victoria',lat:48.428,lng:-123.365},
     {name:'Regina',lat:50.448,lng:-104.619},
-    {name:'St. Johns',lat:47.56,lng:-52.713},
-    {name:'Kelowna',lat:49.888,lng:-119.496},
-    {name:'Windsor',lat:42.317,lng:-83.03}
+    {name:'Saskatoon',lat:52.133,lng:-106.67}
   ]},
-  'Katar': {flag:'🇶🇦',cities:[
+  'Katar': {flag:'🇶🇦',region:'Azja Zachodnia',neighbors:['Arabia Saudyjska', 'Bahrajn'],cities:[
     {name:'Doha',lat:25.286,lng:51.533},
-    {name:'Al Wakrah',lat:25.166,lng:51.6},
-    {name:'Al Khor',lat:25.683,lng:51.5}
+    {name:'Al Wakrah',lat:25.166,lng:51.6}
   ]},
-  'Kazachstan': {flag:'🇰🇿',cities:[
+  'Kazachstan': {flag:'🇰🇿',region:'Azja Centralna',neighbors:['Rosja', 'Chiny', 'Kirgistan', 'Uzbekistan', 'Turkmenistan'],cities:[
     {name:'Almaty',lat:43.222,lng:76.851},
     {name:'Astana',lat:51.128,lng:71.43},
     {name:'Szymkent',lat:42.317,lng:69.596},
-    {name:'Aktobe',lat:50.279,lng:57.208},
     {name:'Karaganda',lat:49.803,lng:73.089},
-    {name:'Taraz',lat:42.9,lng:71.368},
-    {name:'Ust-Kamenogorsk',lat:49.978,lng:82.616},
-    {name:'Semej',lat:50.412,lng:80.258}
+    {name:'Aktobe',lat:50.279,lng:57.208}
   ]},
-  'Kenia': {flag:'🇰🇪',cities:[
+  'Kenia': {flag:'🇰🇪',region:'Afryka Wschodnia',neighbors:['Somalia', 'Etiopia', 'Sudan Płd.', 'Uganda', 'Tanzania'],cities:[
     {name:'Nairobi',lat:-1.286,lng:36.818},
     {name:'Mombasa',lat:-4.043,lng:39.668},
     {name:'Nakuru',lat:-0.284,lng:36.066},
-    {name:'Eldoret',lat:0.52,lng:35.27},
-    {name:'Kisumu',lat:-0.102,lng:34.762}
+    {name:'Kisumu',lat:-0.102,lng:34.762},
+    {name:'Eldoret',lat:0.52,lng:35.27}
   ]},
-  'Kolumbia': {flag:'🇨🇴',cities:[
+  'Kolumbia': {flag:'🇨🇴',region:'Ameryka Południowa',neighbors:['Panama', 'Wenezuela', 'Brazylia', 'Peru', 'Ekwador'],cities:[
     {name:'Bogota',lat:4.711,lng:-74.073},
     {name:'Medellin',lat:6.244,lng:-75.574},
     {name:'Cali',lat:3.451,lng:-76.532},
     {name:'Barranquilla',lat:10.964,lng:-74.796},
     {name:'Cartagena',lat:10.4,lng:-75.514},
-    {name:'Cucuta',lat:7.894,lng:-72.505},
-    {name:'Bucaramanga',lat:7.13,lng:-73.126},
-    {name:'Pereira',lat:4.813,lng:-75.696},
-    {name:'Santa Marta',lat:11.242,lng:-74.2}
+    {name:'Bucaramanga',lat:7.13,lng:-73.126}
   ]},
-  'Korea Poludniowa': {flag:'🇰🇷',cities:[
+  'Korea Poludniowa': {flag:'🇰🇷',region:'Azja Wschodnia',neighbors:['Korea Północna', 'Chiny', 'Japonia'],cities:[
     {name:'Seul',lat:37.566,lng:126.978},
     {name:'Busan',lat:35.179,lng:129.076},
     {name:'Incheon',lat:37.456,lng:126.706},
     {name:'Daegu',lat:35.871,lng:128.602},
     {name:'Daejeon',lat:36.352,lng:127.385},
     {name:'Gwangju',lat:35.16,lng:126.852},
-    {name:'Suwon',lat:37.263,lng:126.999},
     {name:'Ulsan',lat:35.538,lng:129.311},
-    {name:'Goyang',lat:37.659,lng:126.832},
-    {name:'Changwon',lat:35.228,lng:128.681},
-    {name:'Seongnam',lat:37.42,lng:127.127},
-    {name:'Cheongju',lat:36.637,lng:127.491}
+    {name:'Changwon',lat:35.228,lng:128.681}
   ]},
-  'Kuwejt': {flag:'🇰🇼',cities:[
-    {name:'Kuwejt',lat:29.367,lng:47.978},
-    {name:'Hawali',lat:29.334,lng:48.034},
-    {name:'As Salimiyah',lat:29.338,lng:48.079}
+  'Kuwejt': {flag:'🇰🇼',region:'Azja Zachodnia',neighbors:['Irak', 'Arabia Saudyjska'],cities:[
+    {name:'Kuwejt',lat:29.367,lng:47.978}
   ]},
-  'Laos': {flag:'🇱🇦',cities:[
-    {name:'Wientian',lat:17.967,lng:102.6},
-    {name:'Luang Prabang',lat:19.889,lng:102.135}
-  ]},
-  'Liban': {flag:'🇱🇧',cities:[
-    {name:'Bejrut',lat:33.889,lng:35.502},
-    {name:'Trypolis',lat:34.437,lng:35.85},
-    {name:'Sydon',lat:33.557,lng:35.371}
-  ]},
-  'Libia': {flag:'🇱🇾',cities:[
-    {name:'Trypolis',lat:32.892,lng:13.192},
-    {name:'Bengazi',lat:32.12,lng:20.068},
-    {name:'Misrata',lat:32.375,lng:15.093}
-  ]},
-  'Litwa': {flag:'🇱🇹',cities:[
+  'Litwa': {flag:'🇱🇹',region:'Europa Wschodnia',neighbors:['Polska', 'Białoruś', 'Łotwa', 'Rosja (Kaliningrad)'],cities:[
     {name:'Wilno',lat:54.687,lng:25.279},
     {name:'Kowno',lat:54.897,lng:23.886},
     {name:'Kłajpeda',lat:55.703,lng:21.145},
     {name:'Szawle',lat:55.933,lng:23.316},
     {name:'Poniewież',lat:55.735,lng:24.351}
   ]},
-  'Lotwa': {flag:'🇱🇻',cities:[
-    {name:'Ryga',lat:56.946,lng:24.106},
-    {name:'Daugavpils',lat:55.874,lng:26.535},
-    {name:'Lipawa',lat:56.504,lng:21.011},
-    {name:'Jelgawa',lat:56.652,lng:23.721},
-    {name:'Jurmała',lat:56.968,lng:23.77}
-  ]},
-  'Luksemburg': {flag:'🇱🇺',cities:[
+  'Luksemburg': {flag:'🇱🇺',region:'Europa Zachodnia',neighbors:['Belgia', 'Francja', 'Niemcy'],cities:[
     {name:'Luksemburg',lat:49.611,lng:6.132},
     {name:'Esch-sur-Alzette',lat:49.496,lng:5.985}
   ]},
-  'Macedonia Polnocna': {flag:'🇲🇰',cities:[
+  'Macedonia Polnocna': {flag:'🇲🇰',region:'Europa Południowa',neighbors:['Serbia', 'Bułgaria', 'Grecja', 'Albania'],cities:[
     {name:'Skopje',lat:41.996,lng:21.431},
-    {name:'Bitola',lat:41.032,lng:21.335},
-    {name:'Kumanowo',lat:42.132,lng:21.714}
+    {name:'Bitola',lat:41.032,lng:21.335}
   ]},
-  'Madagaskar': {flag:'🇲🇬',cities:[
-    {name:'Antananarywa',lat:-18.914,lng:47.536},
-    {name:'Toamasina',lat:-18.145,lng:49.401},
-    {name:'Antsirabe',lat:-19.866,lng:47.032}
-  ]},
-  'Malezja': {flag:'🇲🇾',cities:[
+  'Malezja': {flag:'🇲🇾',region:'Azja Południowo-Wschodnia',neighbors:['Tajlandia', 'Brunei', 'Indonezja'],cities:[
     {name:'Kuala Lumpur',lat:3.14,lng:101.686},
-    {name:'Klang',lat:3.045,lng:101.451},
     {name:'Johor Bahru',lat:1.492,lng:103.74},
     {name:'Penang',lat:5.416,lng:100.333},
     {name:'Kota Kinabalu',lat:5.98,lng:116.073},
     {name:'Kuching',lat:1.55,lng:110.336},
-    {name:'Shah Alam',lat:3.08,lng:101.533},
-    {name:'Petaling Jaya',lat:3.107,lng:101.606},
     {name:'Ipoh',lat:4.597,lng:101.09}
   ]},
-  'Mali': {flag:'🇲🇱',cities:[
-    {name:'Bamako',lat:12.65,lng:-8.0},
-    {name:'Sikasso',lat:11.317,lng:-5.667},
-    {name:'Segou',lat:13.45,lng:-6.267}
+  'Malta': {flag:'🇲🇹',region:'Europa Południowa',neighbors:[],cities:[
+    {name:'Valletta',lat:35.9,lng:14.514}
   ]},
-  'Malta': {flag:'🇲🇹',cities:[
-    {name:'Valletta',lat:35.9,lng:14.514},
-    {name:'Birkirkara',lat:35.896,lng:14.462},
-    {name:'Mosta',lat:35.91,lng:14.426}
-  ]},
-  'Maroko': {flag:'🇲🇦',cities:[
+  'Maroko': {flag:'🇲🇦',region:'Afryka Północna',neighbors:['Algieria', 'Mauretania', 'Sahara Zach.'],cities:[
     {name:'Casablanca',lat:33.588,lng:-7.614},
     {name:'Fez',lat:34.037,lng:-5.0},
     {name:'Marrakesz',lat:31.628,lng:-8.009},
     {name:'Rabat',lat:34.02,lng:-6.841},
     {name:'Agadir',lat:30.428,lng:-9.598},
     {name:'Tanger',lat:35.76,lng:-5.834},
-    {name:'Meknes',lat:33.895,lng:-5.554},
-    {name:'Oujda',lat:34.681,lng:-1.908}
+    {name:'Meknes',lat:33.895,lng:-5.554}
   ]},
-  'Meksyk': {flag:'🇲🇽',cities:[
+  'Meksyk': {flag:'🇲🇽',region:'Ameryka Północna',neighbors:['USA', 'Gwatemala', 'Belize'],cities:[
     {name:'Meksyk',lat:19.433,lng:-99.133},
     {name:'Guadalajara',lat:20.677,lng:-103.347},
-    {name:'Monterrey',lat:25.687,lng:-100.314}
+    {name:'Monterrey',lat:25.687,lng:-100.314},
+    {name:'Puebla',lat:19.044,lng:-98.197},
+    {name:'Tijuana',lat:32.514,lng:-117.024},
+    {name:'Leon',lat:21.122,lng:-101.682},
+    {name:'Juarez',lat:31.738,lng:-106.487},
+    {name:'Merida',lat:20.967,lng:-89.623},
+    {name:'Cancun',lat:21.161,lng:-86.851},
+    {name:'Culiacan',lat:24.799,lng:-107.394},
+    {name:'Acapulco',lat:16.863,lng:-99.883},
+    {name:'Veracruz',lat:19.173,lng:-96.134}
   ]},
-  'Mozambik': {flag:'🇲🇿',cities:[
-    {name:'Maputo',lat:-25.966,lng:32.573},
-    {name:'Matola',lat:-25.962,lng:32.459},
-    {name:'Nampula',lat:-15.116,lng:39.267},
-    {name:'Beira',lat:-19.844,lng:34.839}
+  'Mongolia': {flag:'🇲🇳',region:'Azja Wschodnia',neighbors:['Rosja', 'Chiny'],cities:[
+    {name:'Ułan Bator',lat:47.906,lng:106.883},
+    {name:'Darhan',lat:49.487,lng:105.953}
   ]},
-  'Mołdawia': {flag:'🇲🇩',cities:[
+  'Mołdawia': {flag:'🇲🇩',region:'Europa Wschodnia',neighbors:['Ukraina', 'Rumunia'],cities:[
     {name:'Kiszyniów',lat:47.005,lng:28.857},
     {name:'Balti',lat:47.762,lng:27.929},
     {name:'Tyraspol',lat:46.843,lng:29.641}
   ]},
-  'Myanmar': {flag:'🇲🇲',cities:[
+  'Myanmar': {flag:'🇲🇲',region:'Azja Południowo-Wschodnia',neighbors:['Bangladesz', 'Indie', 'Chiny', 'Laos', 'Tajlandia'],cities:[
     {name:'Rangun',lat:16.805,lng:96.155},
     {name:'Mandalaj',lat:21.975,lng:96.08},
-    {name:'Naypyidaw',lat:19.745,lng:96.115},
-    {name:'Mawlamyine',lat:16.49,lng:97.628}
+    {name:'Naypyidaw',lat:19.745,lng:96.115}
   ]},
-  'Nepal': {flag:'🇳🇵',cities:[
+  'Nepal': {flag:'🇳🇵',region:'Azja Południowa',neighbors:['Chiny', 'Indie'],cities:[
     {name:'Katmandu',lat:27.717,lng:85.319},
     {name:'Pokhara',lat:28.21,lng:83.987},
-    {name:'Lalitpur',lat:27.666,lng:85.32},
-    {name:'Biratnagar',lat:26.454,lng:87.276},
-    {name:'Birgunj',lat:27.012,lng:84.877}
+    {name:'Lalitpur',lat:27.666,lng:85.32}
   ]},
-  'Niemcy': {flag:'🇩🇪',cities:[
+  'Niemcy': {flag:'🇩🇪',region:'Europa Zachodnia',neighbors:['Polska', 'Czechy', 'Austria', 'Szwajcaria', 'Francja', 'Luksemburg', 'Belgia', 'Holandia', 'Dania'],cities:[
     {name:'Berlin',lat:52.52,lng:13.405},
     {name:'Hamburg',lat:53.551,lng:9.993},
     {name:'Monachium',lat:48.137,lng:11.575},
@@ -748,88 +582,69 @@ var WORLD_CITIES = {
     {name:'Freiburg',lat:47.999,lng:7.842},
     {name:'Lubeka',lat:53.865,lng:10.687},
     {name:'Mainz',lat:49.992,lng:8.247},
-    {name:'Darmstadt',lat:49.877,lng:8.657},
-    {name:'Heidelberg',lat:49.399,lng:8.672},
-    {name:'Trier',lat:49.75,lng:6.637},
-    {name:'Ulm',lat:48.4,lng:9.987},
-    {name:'Wurzburg',lat:49.791,lng:9.953},
     {name:'Aachen',lat:50.776,lng:6.084},
     {name:'Kiel',lat:54.323,lng:10.135},
     {name:'Mannheim',lat:49.488,lng:8.466},
     {name:'Chemnitz',lat:50.833,lng:12.917},
     {name:'Braunschweig',lat:52.268,lng:10.526},
-    {name:'Halle',lat:51.483,lng:11.97},
-    {name:'Wuppertal',lat:51.257,lng:7.151},
-    {name:'Bielefeld',lat:52.021,lng:8.532},
     {name:'Bochum',lat:51.482,lng:7.216},
-    {name:'Bonn',lat:50.733,lng:7.099},
-    {name:'Oberhausen',lat:51.47,lng:6.851},
-    {name:'Gelsenkirchen',lat:51.517,lng:7.085},
-    {name:'Krefeld',lat:51.337,lng:6.585},
-    {name:'Hamm',lat:51.68,lng:7.815}
+    {name:'Bielefeld',lat:52.021,lng:8.532}
   ]},
-  'Nigeria': {flag:'🇳🇬',cities:[
+  'Nigeria': {flag:'🇳🇬',region:'Afryka Zachodnia',neighbors:['Benin', 'Niger', 'Chad', 'Kamerun'],cities:[
     {name:'Lagos',lat:6.455,lng:3.396},
     {name:'Kano',lat:12.002,lng:8.592},
     {name:'Ibadan',lat:7.388,lng:3.9},
     {name:'Abuja',lat:9.076,lng:7.399},
     {name:'Port Harcourt',lat:4.778,lng:6.999},
-    {name:'Benin City',lat:6.335,lng:5.627},
-    {name:'Maiduguri',lat:11.846,lng:13.16},
-    {name:'Kaduna',lat:10.526,lng:7.438},
-    {name:'Zaria',lat:11.078,lng:7.708}
+    {name:'Benin City',lat:6.335,lng:5.627}
   ]},
-  'Norwegia': {flag:'🇳🇴',cities:[
+  'Norwegia': {flag:'🇳🇴',region:'Europa Północna',neighbors:['Szwecja', 'Finlandia', 'Rosja'],cities:[
     {name:'Oslo',lat:59.913,lng:10.752},
     {name:'Bergen',lat:60.391,lng:5.322},
     {name:'Stavanger',lat:58.97,lng:5.733},
     {name:'Trondheim',lat:63.43,lng:10.395},
-    {name:'Baerum',lat:59.896,lng:10.527},
     {name:'Kristiansand',lat:58.147,lng:7.996},
-    {name:'Fredrikstad',lat:59.211,lng:10.944},
-    {name:'Drammen',lat:59.743,lng:10.205},
     {name:'Tromsø',lat:69.649,lng:18.956},
-    {name:'Sandnes',lat:58.851,lng:5.736},
-    {name:'Skien',lat:59.208,lng:9.609},
-    {name:'Alesund',lat:62.472,lng:6.15}
+    {name:'Alesund',lat:62.472,lng:6.15},
+    {name:'Drammen',lat:59.743,lng:10.205}
   ]},
-  'Nowa Zelandia': {flag:'🇳🇿',cities:[
+  'Nowa Zelandia': {flag:'🇳🇿',region:'Oceania',neighbors:['Australia'],cities:[
     {name:'Auckland',lat:-36.861,lng:174.762},
     {name:'Wellington',lat:-41.286,lng:174.776},
     {name:'Christchurch',lat:-43.532,lng:172.637},
     {name:'Hamilton',lat:-37.787,lng:175.279},
-    {name:'Tauranga',lat:-37.687,lng:176.166},
     {name:'Dunedin',lat:-45.879,lng:170.504},
-    {name:'Palmerston North',lat:-40.356,lng:175.611},
-    {name:'Napier',lat:-39.492,lng:176.912}
+    {name:'Tauranga',lat:-37.687,lng:176.166}
   ]},
-  'Oman': {flag:'🇴🇲',cities:[
+  'Oman': {flag:'🇴🇲',region:'Azja Zachodnia',neighbors:['ZEA', 'Arabia Saudyjska', 'Jemen'],cities:[
     {name:'Maskat',lat:23.614,lng:58.593},
     {name:'Salalah',lat:17.015,lng:54.091},
-    {name:'Sohar',lat:24.347,lng:56.746},
-    {name:'Sur',lat:22.567,lng:59.528}
+    {name:'Sohar',lat:24.347,lng:56.746}
   ]},
-  'Pakistan': {flag:'🇵🇰',cities:[
+  'Pakistan': {flag:'🇵🇰',region:'Azja Południowa',neighbors:['Iran', 'Afganistan', 'Indie', 'Chiny'],cities:[
     {name:'Karaczi',lat:24.861,lng:67.01},
     {name:'Lahore',lat:31.558,lng:74.352},
     {name:'Faisalabad',lat:31.418,lng:73.079},
     {name:'Rawalpindi',lat:33.597,lng:73.042},
     {name:'Islamabad',lat:33.729,lng:73.094},
     {name:'Multan',lat:30.197,lng:71.481},
-    {name:'Hyderabad',lat:25.368,lng:68.366},
     {name:'Peshawar',lat:34.008,lng:71.579},
     {name:'Kweta',lat:30.192,lng:67.006}
   ]},
-  'Peru': {flag:'🇵🇪',cities:[
+  'Papua Nowa Gwinea': {flag:'🇵🇬',region:'Oceania',neighbors:['Indonezja', 'Australia'],cities:[
+    {name:'Port Moresby',lat:-9.444,lng:147.18},
+    {name:'Lae',lat:-6.72,lng:146.992},
+    {name:'Madang',lat:-5.221,lng:145.788}
+  ]},
+  'Peru': {flag:'🇵🇪',region:'Ameryka Południowa',neighbors:['Ekwador', 'Kolumbia', 'Brazylia', 'Boliwia', 'Chile'],cities:[
     {name:'Lima',lat:-12.046,lng:-77.043},
     {name:'Arequipa',lat:-16.409,lng:-71.537},
     {name:'Trujillo',lat:-8.112,lng:-79.029},
     {name:'Chiclayo',lat:-6.776,lng:-79.844},
-    {name:'Piura',lat:-5.194,lng:-80.633},
-    {name:'Iquitos',lat:-3.748,lng:-73.247},
-    {name:'Cusco',lat:-13.532,lng:-71.968}
+    {name:'Cusco',lat:-13.532,lng:-71.968},
+    {name:'Iquitos',lat:-3.748,lng:-73.247}
   ]},
-  'Polska': {flag:'🇵🇱',cities:[
+  'Polska': {flag:'🇵🇱',region:'Europa Środkowa',neighbors:['Niemcy', 'Czechy', 'Słowacja', 'Ukraina', 'Białoruś', 'Litwa', 'Rosja (Kaliningrad)'],cities:[
     {name:'Warszawa',lat:52.229,lng:21.012},
     {name:'Krakow',lat:50.061,lng:19.937},
     {name:'Lodz',lat:51.759,lng:19.457},
@@ -883,7 +698,6 @@ var WORLD_CITIES = {
     {name:'Przemysl',lat:49.783,lng:22.768},
     {name:'Zamoc',lat:50.723,lng:23.252},
     {name:'Chelm',lat:51.143,lng:23.472},
-    {name:'Zamosc',lat:50.723,lng:23.252},
     {name:'Biala Podlaska',lat:52.033,lng:23.15},
     {name:'Ostroleka',lat:53.081,lng:21.572},
     {name:'Pila',lat:53.151,lng:16.738},
@@ -891,15 +705,195 @@ var WORLD_CITIES = {
     {name:'Leszno',lat:51.842,lng:16.575},
     {name:'Swidnica',lat:50.85,lng:16.487},
     {name:'Tczew',lat:53.779,lng:18.776},
-    {name:'Pruszcz Gdanski',lat:54.257,lng:18.635},
     {name:'Wejherowo',lat:54.607,lng:18.234},
     {name:'Rumia',lat:54.571,lng:18.396},
     {name:'Sopot',lat:54.441,lng:18.56},
     {name:'Nowa Sol',lat:51.803,lng:15.716},
     {name:'Gorzow Wielkopolski',lat:52.733,lng:15.239},
-    {name:'Zgorzelec',lat:51.155,lng:15.013}
+    {name:'Zgorzelec',lat:51.155,lng:15.013},
+    {name:'Elk',lat:53.828,lng:22.356},
+    {name:'Gizycko',lat:54.037,lng:21.763},
+    {name:'Lidzbark Warminski',lat:54.125,lng:20.577},
+    {name:'Ketrzyn',lat:54.074,lng:21.375},
+    {name:'Braniewo',lat:54.382,lng:19.823},
+    {name:'Bartoszyce',lat:54.248,lng:20.808},
+    {name:'Nidzica',lat:53.36,lng:20.427},
+    {name:'Szczytno',lat:53.563,lng:20.99},
+    {name:'Pisz',lat:53.624,lng:21.82},
+    {name:'Augustow',lat:53.843,lng:22.978},
+    {name:'Sejny',lat:54.117,lng:23.347},
+    {name:'Lomza',lat:53.178,lng:22.059},
+    {name:'Kolno',lat:53.407,lng:21.937},
+    {name:'Wysokie Mazowieckie',lat:52.921,lng:22.51},
+    {name:'Zambrów',lat:52.987,lng:22.244},
+    {name:'Siemiatycze',lat:52.426,lng:22.862},
+    {name:'Hajnowka',lat:52.744,lng:23.584},
+    {name:'Bielsk Podlaski',lat:52.765,lng:23.19},
+    {name:'Sokolka',lat:53.403,lng:23.502},
+    {name:'Monki',lat:53.398,lng:22.791},
+    {name:'Grajewo',lat:53.644,lng:22.454},
+    {name:'Kolbuszowa',lat:50.241,lng:21.776},
+    {name:'Debica',lat:50.054,lng:21.411},
+    {name:'Ropczyce',lat:50.052,lng:21.622},
+    {name:'Nisko',lat:50.519,lng:22.139},
+    {name:'Tarnobrzeg',lat:50.577,lng:21.681},
+    {name:'Sandomierz',lat:50.681,lng:21.749},
+    {name:'Ostrowiec Swietokrzyski',lat:50.937,lng:21.401},
+    {name:'Starachowice',lat:51.038,lng:21.073},
+    {name:'Skarzysko-Kamienna',lat:51.122,lng:20.875},
+    {name:'Konskie',lat:51.196,lng:20.414},
+    {name:'Opoczno',lat:51.372,lng:20.285},
+    {name:'Piotrkow Trybunalski',lat:51.405,lng:19.703},
+    {name:'Belchatow',lat:51.362,lng:19.36},
+    {name:'Radomsko',lat:51.068,lng:19.448},
+    {name:'Wielun',lat:51.22,lng:18.566},
+    {name:'Sieradz',lat:51.595,lng:18.731},
+    {name:'Zdunska Wola',lat:51.601,lng:18.934},
+    {name:'Pajeczno',lat:51.144,lng:18.999},
+    {name:'Wieruszow',lat:51.298,lng:18.153},
+    {name:'Kepno',lat:51.278,lng:17.982},
+    {name:'Ostrzeszow',lat:51.419,lng:17.929},
+    {name:'Krotoszyn',lat:51.696,lng:17.441},
+    {name:'Jarocin',lat:51.973,lng:17.504},
+    {name:'Srem',lat:52.09,lng:17.017},
+    {name:'Srodka',lat:52.407,lng:17.017},
+    {name:'Wrzesnia',lat:52.321,lng:17.572},
+    {name:'Gniezno',lat:52.534,lng:17.582},
+    {name:'Wagrowiec',lat:52.805,lng:17.197},
+    {name:'Chodziez',lat:52.994,lng:16.93},
+    {name:'Czarnkow',lat:52.902,lng:16.566},
+    {name:'Szamotuly',lat:52.611,lng:16.58},
+    {name:'Obrzycko',lat:52.701,lng:16.534},
+    {name:'Murowana Goslina',lat:52.566,lng:17.225},
+    {name:'Swarzedz',lat:52.411,lng:17.087},
+    {name:'Lubon',lat:52.349,lng:16.877},
+    {name:'Mosina',lat:52.249,lng:16.85},
+    {name:'Srem',lat:52.09,lng:17.017},
+    {name:'Goslyn',lat:52.117,lng:16.831},
+    {name:'Bojanowo',lat:51.71,lng:17.013},
+    {name:'Rawicz',lat:51.607,lng:16.858},
+    {name:'Gostyn',lat:51.877,lng:17.009},
+    {name:'Krobia',lat:51.775,lng:17.133},
+    {name:'Pleszewo',lat:51.897,lng:17.78},
+    {name:'Krotoszyn',lat:51.696,lng:17.441},
+    {name:'Ostrow Wielkopolski',lat:51.652,lng:17.806},
+    {name:'Kalisz',lat:51.757,lng:18.091},
+    {name:'Turek',lat:51.507,lng:18.502},
+    {name:'Kolo',lat:52.198,lng:18.636},
+    {name:'Slupca',lat:52.284,lng:17.87},
+    {name:'Powidz',lat:52.377,lng:17.885},
+    {name:'Strzalkowo',lat:52.267,lng:17.792},
+    {name:'Kleczew',lat:52.374,lng:18.205},
+    {name:'Golina',lat:52.183,lng:18.085},
+    {name:'Stare Kozlowo',lat:53.218,lng:20.2},
+    {name:'Nidzica',lat:53.36,lng:20.427},
+    {name:'Dzialdowo',lat:53.233,lng:20.179},
+    {name:'Lidzbark',lat:53.247,lng:19.826},
+    {name:'Brodnica',lat:53.257,lng:19.393},
+    {name:'Golub-Dobrzyn',lat:53.108,lng:19.04},
+    {name:'Rypin',lat:53.064,lng:19.551},
+    {name:'Lipno',lat:52.854,lng:19.167},
+    {name:'Wloclawek',lat:52.648,lng:19.065},
+    {name:'Radziejow',lat:52.62,lng:18.531},
+    {name:'Aleksandrow Kujawski',lat:52.875,lng:18.697},
+    {name:'Ciechocinek',lat:52.878,lng:18.791},
+    {name:'Nieszawa',lat:52.843,lng:18.9},
+    {name:'Wabrzezno',lat:53.287,lng:18.948},
+    {name:'Chelmno',lat:53.348,lng:18.428},
+    {name:'Swiecie',lat:53.407,lng:18.446},
+    {name:'Nowe',lat:53.647,lng:18.737},
+    {name:'Gniew',lat:53.836,lng:18.829},
+    {name:'Starogard Gdanski',lat:53.962,lng:18.532},
+    {name:'Koscierzyna',lat:54.119,lng:17.985},
+    {name:'Kartuzy',lat:54.333,lng:18.196},
+    {name:'Lebork',lat:54.542,lng:17.748},
+    {name:'Bytow',lat:54.17,lng:17.491},
+    {name:'Czluchow',lat:53.659,lng:17.368},
+    {name:'Walcz',lat:53.265,lng:16.471},
+    {name:'Zlotow',lat:53.363,lng:17.038},
+    {name:'Wyrzysk',lat:53.153,lng:17.278},
+    {name:'Naklo nad Notecia',lat:53.14,lng:17.591},
+    {name:'Szubin',lat:52.982,lng:17.738},
+    {name:'Mogilno',lat:52.657,lng:17.953},
+    {name:'Znin',lat:52.851,lng:17.726},
+    {name:'Janowiec Wielkopolski',lat:52.769,lng:17.499},
+    {name:'Rogowo',lat:52.756,lng:17.344},
+    {name:'Kcynia',lat:52.986,lng:17.499},
+    {name:'Damaslawek',lat:52.939,lng:17.277},
+    {name:'Szubin',lat:52.982,lng:17.738},
+    {name:'Labiszyn',lat:52.953,lng:18.083},
+    {name:'Barcin',lat:52.869,lng:17.936},
+    {name:'Zlotniki Kujawskie',lat:52.76,lng:18.125},
+    {name:'Kruszwica',lat:52.68,lng:18.331},
+    {name:'Strzelno',lat:52.627,lng:18.163},
+    {name:'Janikowo',lat:52.77,lng:18.118},
+    {name:'Pakos',lat:52.801,lng:18.047},
+    {name:'Brzesko',lat:49.965,lng:20.609},
+    {name:'Bochnia',lat:49.971,lng:20.432},
+    {name:'Wieliczka',lat:49.988,lng:20.065},
+    {name:'Myslowice',lat:50.224,lng:19.167},
+    {name:'Jaworzno',lat:50.205,lng:19.274},
+    {name:'Jawor',lat:50.964,lng:16.193},
+    {name:'Dzierzoniow',lat:50.728,lng:16.649},
+    {name:'Swidnica',lat:50.85,lng:16.487},
+    {name:'Bogatynia',lat:50.902,lng:14.956},
+    {name:'Zgorzelec',lat:51.155,lng:15.013},
+    {name:'Boleslawiec',lat:51.262,lng:15.562},
+    {name:'Lubań',lat:51.12,lng:15.289},
+    {name:'Nowogrodziec',lat:51.201,lng:15.398},
+    {name:'Lwowek Slaski',lat:51.105,lng:15.582},
+    {name:'Zary',lat:51.638,lng:15.14},
+    {name:'Zagan',lat:51.619,lng:15.319},
+    {name:'Szprotawa',lat:51.568,lng:15.533},
+    {name:'Glogow',lat:51.666,lng:16.083},
+    {name:'Polkowice',lat:51.503,lng:16.072},
+    {name:'Gora',lat:51.668,lng:16.544},
+    {name:'Rawicz',lat:51.607,lng:16.858},
+    {name:'Milicz',lat:51.523,lng:17.284},
+    {name:'Trzebnnica',lat:51.304,lng:17.061},
+    {name:'Wolomin',lat:52.345,lng:21.239},
+    {name:'Marki',lat:52.32,lng:21.106},
+    {name:'Zielonka',lat:52.306,lng:21.156},
+    {name:'Legionowo',lat:52.409,lng:20.939},
+    {name:'Nowy Dwor Mazowiecki',lat:52.43,lng:20.693},
+    {name:'Modlin',lat:52.451,lng:20.652},
+    {name:'Zakroczym',lat:52.44,lng:20.627},
+    {name:'Plonsk',lat:52.624,lng:20.378},
+    {name:'Ciechanow',lat:52.879,lng:20.623},
+    {name:'Mlawa',lat:53.112,lng:20.381},
+    {name:'Zuromin',lat:53.068,lng:19.903},
+    {name:'Sierpc',lat:52.857,lng:19.676},
+    {name:'Plock',lat:52.546,lng:19.706},
+    {name:'Sochaczew',lat:52.228,lng:20.238},
+    {name:'Zyrardow',lat:52.048,lng:20.445},
+    {name:'Grodzisk Mazowiecki',lat:52.105,lng:20.626},
+    {name:'Pruszkow',lat:52.17,lng:20.8},
+    {name:'Piaseczno',lat:52.08,lng:21.028},
+    {name:'Gora Kalwaria',lat:51.979,lng:21.212},
+    {name:'Garwolin',lat:51.91,lng:21.614},
+    {name:'Kozienice',lat:51.584,lng:21.559},
+    {name:'Zwolen',lat:51.36,lng:21.601},
+    {name:'Lipsko',lat:51.157,lng:21.657},
+    {name:'Ilza',lat:51.164,lng:21.242},
+    {name:'Pionki',lat:51.481,lng:21.456},
+    {name:'Pulawy',lat:51.416,lng:21.97},
+    {name:'Deblin',lat:51.561,lng:21.853},
+    {name:'Lubartow',lat:51.469,lng:22.601},
+    {name:'Radzyn Podlaski',lat:51.782,lng:22.621},
+    {name:'Miedzyrzec Podlaski',lat:51.993,lng:22.796},
+    {name:'Lukow',lat:51.929,lng:22.375},
+    {name:'Ryki',lat:51.627,lng:21.938},
+    {name:'Konskowola',lat:51.56,lng:22.183},
+    {name:'Opole Lubelskie',lat:51.148,lng:21.963},
+    {name:'Annopol',lat:50.889,lng:21.847},
+    {name:'Krasnik',lat:50.922,lng:22.228},
+    {name:'Janow Lubelski',lat:50.706,lng:22.416},
+    {name:'Bilgoraj',lat:50.543,lng:22.723},
+    {name:'Tomaszow Lubelski',lat:50.447,lng:23.416},
+    {name:'Hrubieszow',lat:50.8,lng:23.893},
+    {name:'Zamosc',lat:50.723,lng:23.252}
   ]},
-  'Portugalia': {flag:'🇵🇹',cities:[
+  'Portugalia': {flag:'🇵🇹',region:'Europa Zachodnia',neighbors:['Hiszpania'],cities:[
     {name:'Lizbona',lat:38.717,lng:-9.139},
     {name:'Porto',lat:41.157,lng:-8.629},
     {name:'Braga',lat:41.55,lng:-8.426},
@@ -907,27 +901,21 @@ var WORLD_CITIES = {
     {name:'Faro',lat:37.016,lng:-7.935},
     {name:'Funchal',lat:32.66,lng:-16.914},
     {name:'Setubal',lat:38.524,lng:-8.896},
-    {name:'Almada',lat:38.68,lng:-9.155},
-    {name:'Agualva-Cacem',lat:38.767,lng:-9.286},
     {name:'Aveiro',lat:40.641,lng:-8.654},
     {name:'Guimaraes',lat:41.443,lng:-8.292},
     {name:'Evora',lat:38.571,lng:-7.907},
     {name:'Leiria',lat:39.744,lng:-8.807},
-    {name:'Viseu',lat:40.662,lng:-7.909},
     {name:'Ponta Delgada',lat:37.741,lng:-25.698}
   ]},
-  'RPA': {flag:'🇿🇦',cities:[
+  'RPA': {flag:'🇿🇦',region:'Afryka Południowa',neighbors:['Namibia', 'Botswana', 'Zimbabwe', 'Mozambik', 'Suazi', 'Lesoto'],cities:[
     {name:'Johannesburg',lat:-26.204,lng:28.046},
     {name:'Kapsztad',lat:-33.925,lng:18.424},
     {name:'Durban',lat:-29.858,lng:31.03},
     {name:'Pretoria',lat:-25.746,lng:28.187},
     {name:'Port Elizabeth',lat:-33.961,lng:25.599},
-    {name:'Bloemfontein',lat:-29.121,lng:26.214},
-    {name:'East London',lat:-33.016,lng:27.912},
-    {name:'Pietermaritzburg',lat:-29.617,lng:30.393},
-    {name:'Benoni',lat:-26.187,lng:28.321}
+    {name:'Bloemfontein',lat:-29.121,lng:26.214}
   ]},
-  'Rosja': {flag:'🇷🇺',cities:[
+  'Rosja': {flag:'🇷🇺',region:'Azja/Europa',neighbors:['Norwegia', 'Finlandia', 'Estonia', 'Łotwa', 'Białoruś', 'Ukraina', 'Gruzja', 'Azerbejdżan', 'Kazachstan', 'Chiny', 'Mongolia', 'Korea Północna'],cities:[
     {name:'Moskwa',lat:55.751,lng:37.618},
     {name:'Petersburg',lat:59.939,lng:30.316},
     {name:'Nowosybirsk',lat:54.989,lng:82.904},
@@ -943,69 +931,44 @@ var WORLD_CITIES = {
     {name:'Perm',lat:58.01,lng:56.23},
     {name:'Wołgograd',lat:48.708,lng:44.514},
     {name:'Woroneż',lat:51.661,lng:39.2},
-    {name:'Saratow',lat:51.533,lng:46.034},
     {name:'Irkuck',lat:52.286,lng:104.281},
     {name:'Tiumeń',lat:57.161,lng:68.404},
     {name:'Chabarowsk',lat:48.48,lng:135.082},
     {name:'Władywostok',lat:43.134,lng:131.928},
     {name:'Rostów nad Donem',lat:47.223,lng:39.718}
   ]},
-  'Rumunia': {flag:'🇷🇴',cities:[
+  'Rumunia': {flag:'🇷🇴',region:'Europa Środkowa',neighbors:['Ukraina', 'Mołdawia', 'Bułgaria', 'Serbia', 'Węgry'],cities:[
     {name:'Bukareszt',lat:44.432,lng:26.104},
     {name:'Cluj-Napoca',lat:46.77,lng:23.59},
     {name:'Timisoara',lat:45.757,lng:21.229},
     {name:'Iasi',lat:47.158,lng:27.602},
     {name:'Konstanca',lat:44.18,lng:28.654},
-    {name:'Krakow',lat:50.061,lng:19.937},
     {name:'Craiova',lat:44.319,lng:23.8},
     {name:'Galati',lat:45.436,lng:28.049},
     {name:'Brasov',lat:45.65,lng:25.607},
-    {name:'Ploiesti',lat:44.944,lng:25.985},
-    {name:'Oradea',lat:47.046,lng:21.918},
-    {name:'Bacau',lat:46.567,lng:26.914}
+    {name:'Ploiesti',lat:44.944,lng:25.985}
   ]},
-  'Senegal': {flag:'🇸🇳',cities:[
+  'Senegal': {flag:'🇸🇳',region:'Afryka Zachodnia',neighbors:['Mauretania', 'Mali', 'Gwinea', 'Gwinea Bissau', 'Gambia'],cities:[
     {name:'Dakar',lat:14.693,lng:-17.447},
-    {name:'Pikine',lat:14.751,lng:-17.394},
-    {name:'Touba',lat:14.85,lng:-15.883},
-    {name:'Thies',lat:14.788,lng:-16.926}
+    {name:'Thies',lat:14.788,lng:-16.926},
+    {name:'Kaolack',lat:14.151,lng:-16.073}
   ]},
-  'Serbia': {flag:'🇷🇸',cities:[
+  'Serbia': {flag:'🇷🇸',region:'Europa Południowa',neighbors:['Węgry', 'Rumunia', 'Bułgaria', 'Macedonia', 'Czarnogóra', 'Bośnia', 'Chorwacja'],cities:[
     {name:'Belgrad',lat:44.802,lng:20.465},
     {name:'Nowy Sad',lat:45.267,lng:19.833},
     {name:'Nisz',lat:43.32,lng:21.896},
     {name:'Kragujewac',lat:44.013,lng:20.928},
     {name:'Subotica',lat:46.1,lng:19.667}
   ]},
-  'Singapur': {flag:'🇸🇬',cities:[
+  'Singapur': {flag:'🇸🇬',region:'Azja Południowo-Wschodnia',neighbors:['Malezja'],cities:[
     {name:'Singapur',lat:1.352,lng:103.82}
   ]},
-  'Slowenia': {flag:'🇸🇮',cities:[
-    {name:'Lublana',lat:46.051,lng:14.505},
-    {name:'Maribor',lat:46.558,lng:15.646},
-    {name:'Celje',lat:46.23,lng:15.267}
-  ]},
-  'Sri Lanka': {flag:'🇱🇰',cities:[
+  'Sri Lanka': {flag:'🇱🇰',region:'Azja Południowa',neighbors:['Indie'],cities:[
     {name:'Kolombo',lat:6.932,lng:79.848},
-    {name:'Dehiwala',lat:6.851,lng:79.865},
-    {name:'Sri Jayawardenepura Kotte',lat:6.887,lng:79.92},
-    {name:'Negombo',lat:7.21,lng:79.835},
-    {name:'Jaffna',lat:9.668,lng:80.007},
+    {name:'Kandy',lat:7.291,lng:80.636},
     {name:'Galle',lat:6.053,lng:80.22}
   ]},
-  'Sudan': {flag:'🇸🇩',cities:[
-    {name:'Chartum',lat:15.5,lng:32.56},
-    {name:'Omdurman',lat:15.644,lng:32.481},
-    {name:'Port Sudan',lat:19.614,lng:37.217}
-  ]},
-  'Syria': {flag:'🇸🇾',cities:[
-    {name:'Damaszek',lat:33.51,lng:36.291},
-    {name:'Aleppo',lat:36.202,lng:37.161},
-    {name:'Hims',lat:34.73,lng:36.709},
-    {name:'Hama',lat:35.132,lng:36.755},
-    {name:'Latakia',lat:35.524,lng:35.792}
-  ]},
-  'Szwajcaria': {flag:'🇨🇭',cities:[
+  'Szwajcaria': {flag:'🇨🇭',region:'Europa Zachodnia',neighbors:['Niemcy', 'Francja', 'Wlochy', 'Austria', 'Liechtenstein'],cities:[
     {name:'Zurich',lat:47.377,lng:8.541},
     {name:'Genewa',lat:46.204,lng:6.144},
     {name:'Bazylea',lat:47.56,lng:7.589},
@@ -1014,29 +977,22 @@ var WORLD_CITIES = {
     {name:'Winterthur',lat:47.499,lng:8.726},
     {name:'Lucerna',lat:47.05,lng:8.309},
     {name:'St. Gallen',lat:47.422,lng:9.376},
-    {name:'Lugano',lat:46.005,lng:8.954},
-    {name:'Biel',lat:47.137,lng:7.247},
-    {name:'Thun',lat:46.758,lng:7.629},
-    {name:'Bellinzona',lat:46.194,lng:9.022}
+    {name:'Lugano',lat:46.005,lng:8.954}
   ]},
-  'Szwecja': {flag:'🇸🇪',cities:[
+  'Szwecja': {flag:'🇸🇪',region:'Europa Północna',neighbors:['Norwegia', 'Finlandia', 'Dania'],cities:[
     {name:'Sztokholm',lat:59.333,lng:18.065},
     {name:'Goteborg',lat:57.707,lng:11.967},
     {name:'Malmo',lat:55.605,lng:13.0},
     {name:'Uppsala',lat:59.858,lng:17.645},
-    {name:'Vasteras',lat:59.609,lng:16.545},
-    {name:'Orebro',lat:59.275,lng:15.213},
     {name:'Linkoping',lat:58.41,lng:15.621},
+    {name:'Orebro',lat:59.275,lng:15.213},
     {name:'Helsingborg',lat:56.046,lng:12.694},
-    {name:'Jonkoping',lat:57.781,lng:14.162},
     {name:'Norrkoping',lat:58.587,lng:16.19},
     {name:'Lulea',lat:65.584,lng:22.154},
     {name:'Umea',lat:63.825,lng:20.264},
-    {name:'Gavle',lat:60.675,lng:17.141},
-    {name:'Boras',lat:57.721,lng:12.94},
     {name:'Sundsvall',lat:62.39,lng:17.309}
   ]},
-  'Słowacja': {flag:'🇸🇰',cities:[
+  'Słowacja': {flag:'🇸🇰',region:'Europa Środkowa',neighbors:['Polska', 'Czechy', 'Austria', 'Węgry', 'Ukraina'],cities:[
     {name:'Bratysława',lat:48.148,lng:17.107},
     {name:'Koszyce',lat:48.716,lng:21.261},
     {name:'Presov',lat:49.0,lng:21.239},
@@ -1044,39 +1000,40 @@ var WORLD_CITIES = {
     {name:'Banska Bystrica',lat:48.736,lng:19.146},
     {name:'Nitra',lat:48.306,lng:18.086}
   ]},
-  'Tajlandia': {flag:'🇹🇭',cities:[
+  'Słowenia': {flag:'🇸🇮',region:'Europa Południowa',neighbors:['Austria', 'Węgry', 'Chorwacja', 'Włochy'],cities:[
+    {name:'Lublana',lat:46.051,lng:14.505},
+    {name:'Maribor',lat:46.558,lng:15.646},
+    {name:'Celje',lat:46.23,lng:15.267}
+  ]},
+  'Tajlandia': {flag:'🇹🇭',region:'Azja Południowo-Wschodnia',neighbors:['Myanmar', 'Laos', 'Kambodża', 'Malezja'],cities:[
     {name:'Bangkok',lat:13.756,lng:100.502},
     {name:'Chiang Mai',lat:18.787,lng:98.993},
     {name:'Phuket',lat:7.89,lng:98.398},
     {name:'Pattaya',lat:12.928,lng:100.877},
     {name:'Hat Yai',lat:7.008,lng:100.473},
-    {name:'Nakhon Ratchasima',lat:14.97,lng:102.102},
     {name:'Khon Kaen',lat:16.437,lng:102.836},
-    {name:'Udon Thani',lat:17.414,lng:102.787},
-    {name:'Chiang Rai',lat:19.909,lng:99.833}
+    {name:'Chiang Rai',lat:19.909,lng:99.833},
+    {name:'Udon Thani',lat:17.414,lng:102.787}
   ]},
-  'Tajwan': {flag:'🇹🇼',cities:[
+  'Tajwan': {flag:'🇹🇼',region:'Azja Wschodnia',neighbors:['Chiny', 'Japonia', 'Filipiny'],cities:[
     {name:'Tajpej',lat:25.048,lng:121.514},
     {name:'Kaohsiung',lat:22.627,lng:120.302},
     {name:'Tajchung',lat:24.148,lng:120.674},
-    {name:'Tajnan',lat:22.997,lng:120.185},
-    {name:'Hsinchu',lat:24.807,lng:120.968}
+    {name:'Tajnan',lat:22.997,lng:120.185}
   ]},
-  'Tanzania': {flag:'🇹🇿',cities:[
+  'Tanzania': {flag:'🇹🇿',region:'Afryka Wschodnia',neighbors:['Kenia', 'Uganda', 'Rwanda', 'Burundi', 'DR Konga', 'Zambia', 'Malawi', 'Mozambik'],cities:[
     {name:'Dar es Salaam',lat:-6.792,lng:39.208},
     {name:'Mwanza',lat:-2.516,lng:32.899},
     {name:'Arusha',lat:-3.367,lng:36.683},
     {name:'Zanzibar',lat:-6.165,lng:39.199},
     {name:'Dodoma',lat:-6.173,lng:35.74}
   ]},
-  'Tunezja': {flag:'🇹🇳',cities:[
+  'Tunezja': {flag:'🇹🇳',region:'Afryka Północna',neighbors:['Algieria', 'Libia'],cities:[
     {name:'Tunis',lat:36.818,lng:10.164},
     {name:'Sfax',lat:34.739,lng:10.76},
-    {name:'Sousse',lat:35.828,lng:10.639},
-    {name:'Ettadhamen',lat:36.834,lng:10.157},
-    {name:'Kairouan',lat:35.678,lng:10.097}
+    {name:'Sousse',lat:35.828,lng:10.639}
   ]},
-  'Turcja': {flag:'🇹🇷',cities:[
+  'Turcja': {flag:'🇹🇷',region:'Azja Zachodnia',neighbors:['Bułgaria', 'Grecja', 'Gruzja', 'Armenia', 'Azerbejdżan', 'Iran', 'Irak', 'Syria'],cities:[
     {name:'Stambuł',lat:41.015,lng:28.979},
     {name:'Ankara',lat:39.92,lng:32.854},
     {name:'Izmir',lat:38.424,lng:27.143},
@@ -1088,18 +1045,9 @@ var WORLD_CITIES = {
     {name:'Kayseri',lat:38.732,lng:35.483},
     {name:'Mersin',lat:36.801,lng:34.621},
     {name:'Eskisehir',lat:39.783,lng:30.521},
-    {name:'Diyarbakir',lat:37.91,lng:40.218},
-    {name:'Samsun',lat:41.286,lng:36.33},
-    {name:'Denizli',lat:37.774,lng:29.096},
-    {name:'Trabzon',lat:41.005,lng:39.716},
-    {name:'Erzurum',lat:39.905,lng:41.27},
-    {name:'Van',lat:38.495,lng:43.38},
-    {name:'Malatya',lat:38.355,lng:38.31},
-    {name:'Kahramanmaras',lat:37.585,lng:36.937},
-    {name:'Izmit',lat:40.762,lng:29.94},
-    {name:'Tekirdag',lat:40.978,lng:27.515}
+    {name:'Trabzon',lat:41.005,lng:39.716}
   ]},
-  'USA': {flag:'🇺🇸',cities:[
+  'USA': {flag:'🇺🇸',region:'Ameryka Północna',neighbors:['Kanada', 'Meksyk'],cities:[
     {name:'Nowy Jork',lat:40.713,lng:-74.006},
     {name:'Los Angeles',lat:34.052,lng:-118.244},
     {name:'Chicago',lat:41.878,lng:-87.63},
@@ -1110,7 +1058,6 @@ var WORLD_CITIES = {
     {name:'San Diego',lat:32.715,lng:-117.157},
     {name:'Dallas',lat:32.783,lng:-96.807},
     {name:'San Francisco',lat:37.774,lng:-122.419},
-    {name:'Jacksonville',lat:30.332,lng:-81.656},
     {name:'Austin',lat:30.267,lng:-97.743},
     {name:'Miami',lat:25.774,lng:-80.194},
     {name:'Denver',lat:39.74,lng:-104.984},
@@ -1120,36 +1067,25 @@ var WORLD_CITIES = {
     {name:'Boston',lat:42.36,lng:-71.059},
     {name:'Portland',lat:45.523,lng:-122.676},
     {name:'Memphis',lat:35.149,lng:-90.048},
-    {name:'Oklahoma City',lat:35.468,lng:-97.517},
-    {name:'Louisville',lat:38.254,lng:-85.759},
+    {name:'Atlanta',lat:33.749,lng:-84.388},
     {name:'Baltimore',lat:39.29,lng:-76.611},
     {name:'Milwaukee',lat:43.038,lng:-87.906},
-    {name:'Albuquerque',lat:35.085,lng:-106.65},
-    {name:'Tucson',lat:32.221,lng:-110.969},
-    {name:'Fresno',lat:36.737,lng:-119.787},
-    {name:'Sacramento',lat:38.581,lng:-121.494},
-    {name:'Long Beach',lat:33.769,lng:-118.193},
     {name:'Kansas City',lat:39.099,lng:-94.578},
-    {name:'Mesa',lat:33.415,lng:-111.831},
-    {name:'Atlanta',lat:33.749,lng:-84.388},
-    {name:'Omaha',lat:41.257,lng:-95.995},
-    {name:'Colorado Springs',lat:38.833,lng:-104.822},
-    {name:'Raleigh',lat:35.78,lng:-78.639},
-    {name:'Virginia Beach',lat:36.853,lng:-75.977},
     {name:'Minneapolis',lat:44.979,lng:-93.265},
     {name:'Tampa',lat:27.948,lng:-82.459},
     {name:'New Orleans',lat:29.951,lng:-90.071},
     {name:'Cleveland',lat:41.499,lng:-81.695},
     {name:'Pittsburgh',lat:40.44,lng:-79.996},
-    {name:'Cincinnati',lat:39.103,lng:-84.512},
     {name:'Indianapolis',lat:39.768,lng:-86.158},
     {name:'Detroit',lat:42.331,lng:-83.046},
     {name:'Charlotte',lat:35.227,lng:-80.843},
     {name:'Washington',lat:38.907,lng:-77.037},
-    {name:'Las Cruces',lat:32.312,lng:-106.778},
-    {name:'Honolulu',lat:21.307,lng:-157.858}
+    {name:'Honolulu',lat:21.307,lng:-157.858},
+    {name:'Anchorage',lat:61.174,lng:-149.996},
+    {name:'Oklahoma City',lat:35.468,lng:-97.517},
+    {name:'Sacramento',lat:38.581,lng:-121.494}
   ]},
-  'Ukraina': {flag:'🇺🇦',cities:[
+  'Ukraina': {flag:'🇺🇦',region:'Europa Wschodnia',neighbors:['Polska', 'Słowacja', 'Węgry', 'Rumunia', 'Mołdawia', 'Białoruś', 'Rosja'],cities:[
     {name:'Kijów',lat:50.45,lng:30.524},
     {name:'Charków',lat:49.993,lng:36.23},
     {name:'Odessa',lat:46.482,lng:30.723},
@@ -1158,37 +1094,21 @@ var WORLD_CITIES = {
     {name:'Zaporoże',lat:47.838,lng:35.138},
     {name:'Krzywy Rog',lat:47.91,lng:33.354},
     {name:'Mykolaiw',lat:46.975,lng:31.994},
-    {name:'Mariupol',lat:47.097,lng:37.544},
-    {name:'Łuck',lat:50.747,lng:25.325},
-    {name:'Winnica',lat:49.233,lng:28.468},
-    {name:'Chersoń',lat:46.636,lng:32.617}
+    {name:'Łuck',lat:50.747,lng:25.325}
   ]},
-  'Uzbekistan': {flag:'🇺🇿',cities:[
+  'Uzbekistan': {flag:'🇺🇿',region:'Azja Centralna',neighbors:['Kazachstan', 'Kirgistan', 'Tadżykistan', 'Afganistan', 'Turkmenistan'],cities:[
     {name:'Taszkent',lat:41.299,lng:69.241},
     {name:'Samarkanda',lat:39.654,lng:66.975},
     {name:'Namangan',lat:40.998,lng:71.643},
-    {name:'Andijan',lat:40.783,lng:72.344},
-    {name:'Buchara',lat:39.768,lng:64.422},
-    {name:'Nukus',lat:42.462,lng:59.614}
+    {name:'Buchara',lat:39.768,lng:64.422}
   ]},
-  'Wegry': {flag:'🇭🇺',cities:[
-    {name:'Budapeszt',lat:47.498,lng:19.04},
-    {name:'Debrecen',lat:47.531,lng:21.626},
-    {name:'Miskolc',lat:48.104,lng:20.779},
-    {name:'Szeged',lat:46.253,lng:20.149},
-    {name:'Pecs',lat:46.077,lng:18.232},
-    {name:'Gyor',lat:47.685,lng:17.628},
-    {name:'Nyiregyhaza',lat:47.955,lng:21.717},
-    {name:'Kecskemet',lat:46.906,lng:19.69}
-  ]},
-  'Wenezuela': {flag:'🇻🇪',cities:[
+  'Wenezuela': {flag:'🇻🇪',region:'Ameryka Południowa',neighbors:['Kolumbia', 'Brazylia', 'Gujana'],cities:[
     {name:'Caracas',lat:10.48,lng:-66.903},
     {name:'Maracaibo',lat:10.638,lng:-71.644},
-    {name:'Valencia',lat:10.162,lng:-67.993},
-    {name:'Barquisimeto',lat:10.061,lng:-69.317},
-    {name:'Ciudad Guayana',lat:8.353,lng:-62.651}
+    {name:'Walencja',lat:10.162,lng:-67.993},
+    {name:'Barquisimeto',lat:10.061,lng:-69.317}
   ]},
-  'Wielka Brytania': {flag:'🇬🇧',cities:[
+  'Wielka Brytania': {flag:'🇬🇧',region:'Europa Zachodnia',neighbors:['Irlandia'],cities:[
     {name:'Londyn',lat:51.507,lng:-0.128},
     {name:'Birmingham',lat:52.486,lng:-1.89},
     {name:'Manchester',lat:53.483,lng:-2.244},
@@ -1206,35 +1126,24 @@ var WORLD_CITIES = {
     {name:'Coventry',lat:52.408,lng:-1.51},
     {name:'Bradford',lat:53.795,lng:-1.759},
     {name:'Hull',lat:53.745,lng:-0.336},
-    {name:'Wolverhampton',lat:52.586,lng:-2.129},
-    {name:'Plymouth',lat:50.376,lng:-4.142},
-    {name:'Derby',lat:52.922,lng:-1.474},
-    {name:'Stoke-on-Trent',lat:53.002,lng:-2.18},
     {name:'Southampton',lat:50.909,lng:-1.404},
-    {name:'Salford',lat:53.485,lng:-2.287},
+    {name:'Plymouth',lat:50.376,lng:-4.142},
     {name:'Aberdeen',lat:57.149,lng:-2.099},
     {name:'Inverness',lat:57.477,lng:-4.225},
     {name:'Brighton',lat:50.827,lng:-0.138},
     {name:'Oxford',lat:51.752,lng:-1.258},
-    {name:'Cambridge',lat:52.205,lng:0.119},
-    {name:'Exeter',lat:50.718,lng:-3.533},
-    {name:'York',lat:53.958,lng:-1.081},
-    {name:'Reading',lat:51.456,lng:-0.971},
-    {name:'Swansea',lat:51.621,lng:-3.944},
-    {name:'Portsmouth',lat:50.798,lng:-1.091}
+    {name:'Cambridge',lat:52.205,lng:0.119}
   ]},
-  'Wietnam': {flag:'🇻🇳',cities:[
+  'Wietnam': {flag:'🇻🇳',region:'Azja Południowo-Wschodnia',neighbors:['Chiny', 'Laos', 'Kambodża'],cities:[
     {name:'Hanoi',lat:21.028,lng:105.804},
     {name:'Ho Chi Minh',lat:10.762,lng:106.66},
     {name:'Hai Phong',lat:20.865,lng:106.683},
     {name:'Da Nang',lat:16.068,lng:108.212},
-    {name:'Bien Hoa',lat:10.957,lng:106.826},
     {name:'Hue',lat:16.463,lng:107.591},
     {name:'Can Tho',lat:10.034,lng:105.789},
-    {name:'Nha Trang',lat:12.239,lng:109.197},
-    {name:'Da Lat',lat:11.946,lng:108.441}
+    {name:'Nha Trang',lat:12.239,lng:109.197}
   ]},
-  'Wlochy': {flag:'🇮🇹',cities:[
+  'Wlochy': {flag:'🇮🇹',region:'Europa Południowa',neighbors:['Francja', 'Szwajcaria', 'Austria', 'Słowenia'],cities:[
     {name:'Rzym',lat:41.902,lng:12.496},
     {name:'Mediolan',lat:45.464,lng:9.19},
     {name:'Neapol',lat:40.851,lng:14.268},
@@ -1247,37 +1156,44 @@ var WORLD_CITIES = {
     {name:'Wenecja',lat:45.441,lng:12.316},
     {name:'Catania',lat:37.502,lng:15.087},
     {name:'Werona',lat:45.438,lng:10.992},
-    {name:'Messina',lat:38.192,lng:15.556},
     {name:'Triest',lat:45.648,lng:13.777},
     {name:'Padwa',lat:45.407,lng:11.877},
     {name:'Brescia',lat:45.541,lng:10.222},
     {name:'Taranto',lat:40.464,lng:17.247},
-    {name:'Reggio Calabria',lat:38.11,lng:15.661},
     {name:'Modena',lat:44.648,lng:10.925},
-    {name:'Prato',lat:43.879,lng:11.096},
     {name:'Parma',lat:44.801,lng:10.328},
-    {name:'Livorno',lat:43.548,lng:10.311},
     {name:'Cagliari',lat:39.216,lng:9.109},
     {name:'Foggia',lat:41.462,lng:15.545},
     {name:'Salerno',lat:40.681,lng:14.768},
-    {name:'Ferrara',lat:44.838,lng:11.619},
-    {name:'Rimini',lat:44.059,lng:12.566},
     {name:'Bergamo',lat:45.698,lng:9.677},
     {name:'Perugia',lat:43.11,lng:12.388},
-    {name:'Ancona',lat:43.615,lng:13.518}
+    {name:'Ancona',lat:43.615,lng:13.518},
+    {name:'Rimini',lat:44.059,lng:12.566},
+    {name:'Livorno',lat:43.548,lng:10.311},
+    {name:'Reggio Calabria',lat:38.11,lng:15.661}
   ]},
-  'Wybrzeze Kosci Sloniowej': {flag:'🇨🇮',cities:[
-    {name:'Abidzan',lat:5.355,lng:-4.008},
-    {name:'Bouake',lat:7.693,lng:-5.03},
-    {name:'Daloa',lat:6.877,lng:-6.451}
+  'Węgry': {flag:'🇭🇺',region:'Europa Środkowa',neighbors:['Austria', 'Słowacja', 'Ukraina', 'Rumunia', 'Serbia', 'Chorwacja', 'Słowenia'],cities:[
+    {name:'Budapeszt',lat:47.498,lng:19.04},
+    {name:'Debrecen',lat:47.531,lng:21.626},
+    {name:'Miskolc',lat:48.104,lng:20.779},
+    {name:'Szeged',lat:46.253,lng:20.149},
+    {name:'Pecs',lat:46.077,lng:18.232},
+    {name:'Gyor',lat:47.685,lng:17.628},
+    {name:'Nyiregyhaza',lat:47.955,lng:21.717},
+    {name:'Kecskemet',lat:46.906,lng:19.69}
   ]},
-  'ZEA': {flag:'🇦🇪',cities:[
+  'ZEA': {flag:'🇦🇪',region:'Azja Zachodnia',neighbors:['Arabia Saudyjska', 'Oman', 'Katar'],cities:[
     {name:'Dubaj',lat:25.204,lng:55.27},
     {name:'Abu Zabi',lat:24.453,lng:54.377},
     {name:'Szardza',lat:25.357,lng:55.403},
-    {name:'Adżman',lat:25.412,lng:55.435},
     {name:'Ras al-Chajma',lat:25.788,lng:55.943},
     {name:'Fujaira',lat:25.122,lng:56.336}
+  ]},
+  'Łotwa': {flag:'🇱🇻',region:'Europa Wschodnia',neighbors:['Estonia', 'Litwa', 'Białoruś', 'Rosja'],cities:[
+    {name:'Ryga',lat:56.946,lng:24.106},
+    {name:'Daugavpils',lat:55.874,lng:26.535},
+    {name:'Lipawa',lat:56.504,lng:21.011},
+    {name:'Jelgawa',lat:56.652,lng:23.721}
   ]}
 };
 
