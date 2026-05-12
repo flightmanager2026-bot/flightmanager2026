@@ -315,12 +315,12 @@ function updateRouteInfo(acId) {
 
   if(priceBox) priceBox.style.display = 'block';
 
-  // Show suggested min price
+  // Show suggested min price and SET it automatically
   var hours = info.minutes / 60;
-  var minPrice = Math.round(80 * hours);
-  if(hint) hint.textContent = 'Sugerowana minimalna cena: '+minPrice+' zł/os ('+info.timeStr+' × 80zł)';
+  var minPrice = Math.max(10, Math.round(96 * hours));
+  if(hint) hint.textContent = 'Sugerowana cena: '+minPrice+' zł/os ('+info.timeStr+' × 1.6zł/min)';
 
-  // Set default price
+  // Always set default price
   var ecoIn = document.getElementById('price-eco');
   var bizIn = document.getElementById('price-biz');
   if(ecoIn && !ecoIn.disabled) ecoIn.value = minPrice;
