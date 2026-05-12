@@ -81,7 +81,7 @@ function calcRouteRevenue(route, ac) {
   if(!minutes) minutes = 40; // fallback
 
   // Rate per passenger per minute (80-100 zł/h = 1.33-1.67 zł/min)
-  var ratePerMin = (80 + Math.random() * 20) / 60;
+  var ratePerMin = 1.6;
 
   // Seat config
   var cfg = ac.config || AC_SEATS[ac.model] || {eco: ac.seats||150, biz:0};
