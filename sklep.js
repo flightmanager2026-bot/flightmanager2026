@@ -339,7 +339,9 @@ function openCountrySlots(country) {
 
   var slots = [];
   ADB.forEach(function(ap){
-    if(ap.country !== country) return;
+    // Match by exact country name or normalized
+    var apCountry = ap.country||'';
+    if(apCountry !== country) return;
     if(G.slots.indexOf(ap.icao)>=0||(G.homeAirport&&G.homeAirport.icao===ap.icao)) return;
     slots.push(ap);
   });
