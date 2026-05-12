@@ -51,22 +51,13 @@ function renderMarkers() {
   Object.keys(AP_MARKERS).forEach(function(k){try{LMAP.removeLayer(AP_MARKERS[k]);}catch(e){}});
   AP_MARKERS={};
 
-  // Add ALL airports from ADB (Chopin, Modlin, Radom etc always visible)
-  ADB.forEach(function(ap){ addPin(ap); });
+  // Baza gracza (czerwona pinezka)
+  if(G.homeAirport) addPin(G.homeAirport);
 
-  // Add home airport at city coordinates (custom location, not from ADB)
-  if(G.homeAirport) {
-    // Remove ADB pin if it happened to have same ICAO
-    if(AP_MARKERS[G.homeAirport.icao]) {
-      try{ LMAP.removeLayer(AP_MARKERS[G.homeAirport.icao]); }catch(e){}
-      delete AP_MARKERS[G.homeAirport.icao];
-    }
-    addPin(G.homeAirport);
-  }
-
-  // Add owned slot airports
-  G.airports.forEach(function(ap){
-    if(!ap.isHome && !AP_MARKERS[ap.icao]) addPin(ap);
+  // Wszystkie prawdziwe lotniska z ADB (niebieskie)
+  ADB.forEach(function(ap){
+    if(G.homeAirport && ap.icao === G.homeAirport.icao) return;
+    addPin(ap);
   });
 }
 
