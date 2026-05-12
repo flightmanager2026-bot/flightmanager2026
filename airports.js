@@ -1,11 +1,11 @@
 var ADB=[
-{icao:'EGLL',city:'London',country:'UK',lat:51.477,lng:-0.461,cost:28000},
-{icao:'LFPG',city:'Paris',country:'France',lat:49.009,lng:2.547,cost:18000},
+{icao:'EGLL',city:'London',country:'Wielka Brytania',lat:51.477,lng:-0.461,cost:28000},
+{icao:'LFPG',city:'Paris',country:'Francja',lat:49.009,lng:2.547,cost:18000},
 {icao:'EDDF',city:'Frankfurt',country:'Niemcy',lat:50.033,lng:8.570,cost:15000},
-{icao:'EHAM',city:'Amsterdam',country:'Netherlands',lat:52.308,lng:4.764,cost:14000},
-{icao:'LEMD',city:'Madrid',country:'Spain',lat:40.472,lng:-3.560,cost:13000},
-{icao:'LIRF',city:'Rome',country:'Italy',lat:41.800,lng:12.239,cost:14000},
-{icao:'LSZH',city:'Zurich',country:'Switzerland',lat:47.458,lng:8.548,cost:13000},
+{icao:'EHAM',city:'Amsterdam',country:'Holandia',lat:52.308,lng:4.764,cost:14000},
+{icao:'LEMD',city:'Madrid',country:'Hiszpania',lat:40.472,lng:-3.560,cost:13000},
+{icao:'LIRF',city:'Rome',country:'Wlochy',lat:41.800,lng:12.239,cost:14000},
+{icao:'LSZH',city:'Zurich',country:'Szwajcaria',lat:47.458,lng:8.548,cost:13000},
 {icao:'LOWW',city:'Vienna',country:'Austria',lat:48.110,lng:16.570,cost:12000},
 {icao:'EPWA',city:'Warszawa',country:'Polska',lat:52.165,lng:20.967,cost:8000},
 {icao:'EPMO',city:'Warszawa Modlin',country:'Polska',lat:52.451,lng:20.652,cost:6000},
@@ -27,25 +27,25 @@ var ADB=[
 {icao:'EDDL',city:'Dusseldorf',country:'Niemcy',lat:51.289,lng:6.766,cost:13000},
 {icao:'EDDS',city:'Stuttgart',country:'Niemcy',lat:48.690,lng:9.221,cost:12000},
 {icao:'EDDV',city:'Hanower',country:'Niemcy',lat:52.461,lng:9.685,cost:11000},
-{icao:'LTFM',city:'Istanbul',country:'Turkey',lat:41.275,lng:28.751,cost:14000},
-{icao:'UUEE',city:'Moscow',country:'Russia',lat:55.972,lng:37.414,cost:16000},
-{icao:'OMDB',city:'Dubai',country:'UAE',lat:25.252,lng:55.364,cost:20000},
-{icao:'VABB',city:'Mumbai',country:'India',lat:19.088,lng:72.867,cost:15000},
-{icao:'VIDP',city:'New Delhi',country:'India',lat:28.556,lng:77.100,cost:14000},
-{icao:'WSSS',city:'Singapore',country:'Singapore',lat:1.359,lng:103.989,cost:19000},
-{icao:'VTBS',city:'Bangkok',country:'Thailand',lat:13.681,lng:100.747,cost:16000},
-{icao:'ZBAA',city:'Beijing',country:'China',lat:40.080,lng:116.584,cost:20000},
-{icao:'ZSPD',city:'Shanghai',country:'China',lat:31.143,lng:121.805,cost:20000},
-{icao:'RJAA',city:'Tokyo',country:'Japan',lat:35.764,lng:140.386,cost:22000},
-{icao:'RKSI',city:'Seoul',country:'Korea',lat:37.460,lng:126.440,cost:18000},
+{icao:'LTFM',city:'Istanbul',country:'Turcja',lat:41.275,lng:28.751,cost:14000},
+{icao:'UUEE',city:'Moscow',country:'Rosja',lat:55.972,lng:37.414,cost:16000},
+{icao:'OMDB',city:'Dubai',country:'ZEA',lat:25.252,lng:55.364,cost:20000},
+{icao:'VABB',city:'Mumbai',country:'Indie',lat:19.088,lng:72.867,cost:15000},
+{icao:'VIDP',city:'New Delhi',country:'Indie',lat:28.556,lng:77.100,cost:14000},
+{icao:'WSSS',city:'Singapore',country:'Singapur',lat:1.359,lng:103.989,cost:19000},
+{icao:'VTBS',city:'Bangkok',country:'Tajlandia',lat:13.681,lng:100.747,cost:16000},
+{icao:'ZBAA',city:'Beijing',country:'Chiny',lat:40.080,lng:116.584,cost:20000},
+{icao:'ZSPD',city:'Shanghai',country:'Chiny',lat:31.143,lng:121.805,cost:20000},
+{icao:'RJAA',city:'Tokyo',country:'Japonia',lat:35.764,lng:140.386,cost:22000},
+{icao:'RKSI',city:'Seoul',country:'Korea Poludniowa',lat:37.460,lng:126.440,cost:18000},
 {icao:'YSSY',city:'Sydney',country:'Australia',lat:-33.946,lng:151.177,cost:21000},
 {icao:'KJFK',city:'New York',country:'USA',lat:40.639,lng:-73.778,cost:30000},
 {icao:'KLAX',city:'Los Angeles',country:'USA',lat:33.942,lng:-118.408,cost:26000},
 {icao:'KORD',city:'Chicago',country:'USA',lat:41.974,lng:-87.907,cost:22000},
-{icao:'SBGR',city:'Sao Paulo',country:'Brazil',lat:-23.435,lng:-46.473,cost:16000},
-{icao:'HECA',city:'Cairo',country:'Egypt',lat:30.121,lng:31.405,cost:13000},
-{icao:'HAAB',city:'Addis Ababa',country:'Ethiopia',lat:8.977,lng:38.799,cost:12000},
-{icao:'FACT',city:'Cape Town',country:'S.Africa',lat:-33.964,lng:18.601,cost:14000}
+{icao:'SBGR',city:'Sao Paulo',country:'Brazylia',lat:-23.435,lng:-46.473,cost:16000},
+{icao:'HECA',city:'Cairo',country:'Egipt',lat:30.121,lng:31.405,cost:13000},
+{icao:'HAAB',city:'Addis Ababa',country:'Etiopia',lat:8.977,lng:38.799,cost:12000},
+{icao:'FACT',city:'Cape Town',country:'RPA',lat:-33.964,lng:18.601,cost:14000}
 ,{icao:'EDDF',city:'Frankfurt',country:'Niemcy',lat:50.033,lng:8.571,cost:22000},
 {icao:'EDDM',city:'Monachium',country:'Niemcy',lat:48.354,lng:11.786,cost:20000},
 {icao:'EDDB',city:'Berlin-Brandenburg',country:'Niemcy',lat:52.351,lng:13.494,cost:18000},
@@ -217,32 +217,32 @@ var ADB=[
 ,{icao:'LPAZ',city:'Santa Maria',country:'Portugalia',lat:36.971,lng:-25.171,cost:7000}
 ,{icao:'LPBJ',city:'Beja',country:'Portugalia',lat:38.079,lng:-7.932,cost:5000}
 ,{icao:'LPCS',city:'Cascais',country:'Portugalia',lat:38.725,lng:-9.355,cost:8000}
-,{icao:'EGLL',city:'Londyn-Heathrow',country:'UK',lat:51.477,lng:-0.461,cost:30000}
-,{icao:'EGKK',city:'Londyn-Gatwick',country:'UK',lat:51.148,lng:-0.190,cost:22000}
-,{icao:'EGSS',city:'Londyn-Stansted',country:'UK',lat:51.885,lng:0.235,cost:15000}
-,{icao:'EGGW',city:'Londyn-Luton',country:'UK',lat:51.874,lng:-0.368,cost:12000}
-,{icao:'EGLC',city:'Londyn-City',country:'UK',lat:51.505,lng:0.055,cost:18000}
-,{icao:'EGMC',city:'Londyn-Southend',country:'UK',lat:51.571,lng:0.696,cost:8000}
-,{icao:'EGCC',city:'Manchester',country:'UK',lat:53.354,lng:-2.275,cost:20000}
-,{icao:'EGBB',city:'Birmingham',country:'UK',lat:52.454,lng:-1.748,cost:16000}
-,{icao:'EGGD',city:'Bristol',country:'UK',lat:51.382,lng:-2.719,cost:12000}
-,{icao:'EGGP',city:'Liverpool',country:'UK',lat:53.334,lng:-2.850,cost:11000}
-,{icao:'EGNT',city:'Newcastle',country:'UK',lat:55.037,lng:-1.692,cost:11000}
-,{icao:'EGNM',city:'Leeds Bradford',country:'UK',lat:53.866,lng:-1.660,cost:10000}
-,{icao:'EGNX',city:'East Midlands',country:'UK',lat:52.831,lng:-1.328,cost:10000}
-,{icao:'EGHH',city:'Bournemouth',country:'UK',lat:50.780,lng:-1.842,cost:8000}
-,{icao:'EGHI',city:'Southampton',country:'UK',lat:50.950,lng:-1.357,cost:9000}
-,{icao:'EGSH',city:'Norwich',country:'UK',lat:52.675,lng:1.282,cost:8000}
-,{icao:'EGPH',city:'Edynburg',country:'UK',lat:55.950,lng:-3.373,cost:15000}
-,{icao:'EGPF',city:'Glasgow',country:'UK',lat:55.872,lng:-4.433,cost:14000}
-,{icao:'EGPD',city:'Aberdeen',country:'UK',lat:57.202,lng:-2.198,cost:11000}
-,{icao:'EGPE',city:'Inverness',country:'UK',lat:57.542,lng:-4.048,cost:9000}
-,{icao:'EGPK',city:'Glasgow-Prestwick',country:'UK',lat:55.509,lng:-4.587,cost:8000}
-,{icao:'EGPN',city:'Dundee',country:'UK',lat:56.452,lng:-3.026,cost:7000}
-,{icao:'EGFF',city:'Cardiff',country:'UK',lat:51.397,lng:-3.343,cost:10000}
-,{icao:'EGAA',city:'Belfast-International',country:'UK',lat:54.658,lng:-6.216,cost:11000}
-,{icao:'EGAC',city:'Belfast-City',country:'UK',lat:54.618,lng:-5.873,cost:10000}
-,{icao:'EGAE',city:'City of Derry',country:'UK',lat:55.043,lng:-7.161,cost:7000}
+,{icao:'EGLL',city:'Londyn-Heathrow',country:'Wielka Brytania',lat:51.477,lng:-0.461,cost:30000}
+,{icao:'EGKK',city:'Londyn-Gatwick',country:'Wielka Brytania',lat:51.148,lng:-0.190,cost:22000}
+,{icao:'EGSS',city:'Londyn-Stansted',country:'Wielka Brytania',lat:51.885,lng:0.235,cost:15000}
+,{icao:'EGGW',city:'Londyn-Luton',country:'Wielka Brytania',lat:51.874,lng:-0.368,cost:12000}
+,{icao:'EGLC',city:'Londyn-City',country:'Wielka Brytania',lat:51.505,lng:0.055,cost:18000}
+,{icao:'EGMC',city:'Londyn-Southend',country:'Wielka Brytania',lat:51.571,lng:0.696,cost:8000}
+,{icao:'EGCC',city:'Manchester',country:'Wielka Brytania',lat:53.354,lng:-2.275,cost:20000}
+,{icao:'EGBB',city:'Birmingham',country:'Wielka Brytania',lat:52.454,lng:-1.748,cost:16000}
+,{icao:'EGGD',city:'Bristol',country:'Wielka Brytania',lat:51.382,lng:-2.719,cost:12000}
+,{icao:'EGGP',city:'Liverpool',country:'Wielka Brytania',lat:53.334,lng:-2.850,cost:11000}
+,{icao:'EGNT',city:'Newcastle',country:'Wielka Brytania',lat:55.037,lng:-1.692,cost:11000}
+,{icao:'EGNM',city:'Leeds Bradford',country:'Wielka Brytania',lat:53.866,lng:-1.660,cost:10000}
+,{icao:'EGNX',city:'East Midlands',country:'Wielka Brytania',lat:52.831,lng:-1.328,cost:10000}
+,{icao:'EGHH',city:'Bournemouth',country:'Wielka Brytania',lat:50.780,lng:-1.842,cost:8000}
+,{icao:'EGHI',city:'Southampton',country:'Wielka Brytania',lat:50.950,lng:-1.357,cost:9000}
+,{icao:'EGSH',city:'Norwich',country:'Wielka Brytania',lat:52.675,lng:1.282,cost:8000}
+,{icao:'EGPH',city:'Edynburg',country:'Wielka Brytania',lat:55.950,lng:-3.373,cost:15000}
+,{icao:'EGPF',city:'Glasgow',country:'Wielka Brytania',lat:55.872,lng:-4.433,cost:14000}
+,{icao:'EGPD',city:'Aberdeen',country:'Wielka Brytania',lat:57.202,lng:-2.198,cost:11000}
+,{icao:'EGPE',city:'Inverness',country:'Wielka Brytania',lat:57.542,lng:-4.048,cost:9000}
+,{icao:'EGPK',city:'Glasgow-Prestwick',country:'Wielka Brytania',lat:55.509,lng:-4.587,cost:8000}
+,{icao:'EGPN',city:'Dundee',country:'Wielka Brytania',lat:56.452,lng:-3.026,cost:7000}
+,{icao:'EGFF',city:'Cardiff',country:'Wielka Brytania',lat:51.397,lng:-3.343,cost:10000}
+,{icao:'EGAA',city:'Belfast-International',country:'Wielka Brytania',lat:54.658,lng:-6.216,cost:11000}
+,{icao:'EGAC',city:'Belfast-City',country:'Wielka Brytania',lat:54.618,lng:-5.873,cost:10000}
+,{icao:'EGAE',city:'City of Derry',country:'Wielka Brytania',lat:55.043,lng:-7.161,cost:7000}
 ,{icao:'EIDW',city:'Dublin',country:'Irlandia',lat:53.421,lng:-6.270,cost:18000}
 ,{icao:'EICK',city:'Cork',country:'Irlandia',lat:51.841,lng:-8.491,cost:12000}
 ,{icao:'EINN',city:'Shannon',country:'Irlandia',lat:52.702,lng:-8.925,cost:11000}
