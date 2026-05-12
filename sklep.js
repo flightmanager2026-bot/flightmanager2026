@@ -212,39 +212,52 @@ function closeAd() {
 }
 
 /* Kraje i poziomy odblokowania */
-var COUNTRY_LEVELS = {
-  'Polska':     {lvl:1,  cost:50000,  flag:'🇵🇱'},
-  'Niemcy':     {lvl:2,  cost:80000,  flag:'🇩🇪'},
-  'Czechy':     {lvl:3,  cost:75000,  flag:'🇨🇿'},
-  'Austria':    {lvl:4,  cost:75000,  flag:'🇦🇹'},
-  'Francja':    {lvl:5,  cost:100000, flag:'🇫🇷'},
-  'Hiszpania':  {lvl:6,  cost:90000,  flag:'🇪🇸'},
-  'Portugalia': {lvl:7,  cost:85000,  flag:'🇵🇹'},
-  'UK':         {lvl:8,  cost:110000, flag:'🇬🇧'},
-  'Irlandia':   {lvl:9,  cost:100000, flag:'🇮🇪'},
-  'Wlochy':     {lvl:10, cost:95000,  flag:'🇮🇹'},
-  'Holandia':   {lvl:11, cost:95000,  flag:'🇳🇱'},
-  'Belgia':     {lvl:12, cost:90000,  flag:'🇧🇪'},
-  'Szwajcaria': {lvl:13, cost:120000, flag:'🇨🇭'},
-  'Turcja':     {lvl:14, cost:100000, flag:'🇹🇷'},
-  'Egipt':      {lvl:15, cost:120000, flag:'🇪🇬'},
-  'UAE':        {lvl:16, cost:150000, flag:'🇦🇪'},
-  'Skandynawia':{lvl:17, cost:110000, flag:'🌍'},
-  'Indie':      {lvl:18, cost:160000, flag:'🇮🇳'},
-  'Tajlandia':  {lvl:19, cost:150000, flag:'🇹🇭'},
-  'Singapore':  {lvl:20, cost:200000, flag:'🇸🇬'},
-  'Japonia':    {lvl:21, cost:190000, flag:'🇯🇵'},
-  'Korea':      {lvl:22, cost:180000, flag:'🇰🇷'},
-  'Chiny':      {lvl:23, cost:200000, flag:'🇨🇳'},
-  'Etiopia':    {lvl:24, cost:150000, flag:'🇪🇹'},
-  'RPA':        {lvl:25, cost:170000, flag:'🇿🇦'},
-  'Australia':  {lvl:26, cost:220000, flag:'🇦🇺'},
-  'Kanada':     {lvl:27, cost:180000, flag:'🇨🇦'},
-  'Brazylia':   {lvl:28, cost:200000, flag:'🇧🇷'},
-  'USA':        {lvl:29, cost:200000, flag:'🇺🇸'},
-};
+/* System ekspansji geograficznej */
+function getUnlockedCountries() {
+  if(!G.homeAirport) return [];
+  var homeCountry = G.homeAirport.country || 'Polska';
+  var lvl = G.level || 1;
+  var unlocked = [homeCountry];
+  
+  // Get neighbors from WORLD_CITIES
+  function addNeighbors(country, depth) {
+    if(depth <= 0) return;
+    if(!WORLD_CITIES || !WORLD_CITIES[country]) return;
+    var neighbors = WORLD_CITIES[country].neighbors || [];
+    neighbors.forEach(function(n) {
+      if(unlocked.indexOf(n) < 0) {
+        unlocked.push(n);
+        if(depth > 1) addNeighbors(n, depth-1);
+      }
+    });
+  }
+  
+  // Each level unlocks one more ring of neighbors
+  // LVL 1: home country only
+  // LVL 2: direct neighbors
+  // LVL 3: neighbors of neighbors
+  // etc.
+  if(lvl >= 2) addNeighbors(homeCountry, 1);
+  if(lvl >= 4) addNeighbors(homeCountry, 2);
+  if(lvl >= 6) addNeighbors(homeCountry, 3);
+  if(lvl >= 8) addNeighbors(homeCountry, 4);
+  if(lvl >= 12) {
+    // All countries with airports
+    if(WORLD_CITIES) Object.keys(WORLD_CITIES).forEach(function(c){ if(unlocked.indexOf(c)<0) unlocked.push(c); });
+  }
+  
+  return unlocked;
+}
 
-/* Mapowanie country z ADB na klucze COUNTRY_LEVELS */
+function getSlotCost(country) {
+  var homeCountry = G.homeAirport ? (G.homeAirport.country || 'Polska') : 'Polska';
+  if(country === homeCountry) return 50000;
+  if(!WORLD_CITIES || !WORLD_CITIES[homeCountry]) return 100000;
+  var neighbors = WORLD_CITIES[homeCountry].neighbors || [];
+  if(neighbors.indexOf(country) >= 0) return 80000;
+  return 150000;
+}
+
 function getCountryKey(country) {
   var map = {
     'Niemcy':'Niemcy','Francja':'Francja','UK':'UK','Hiszpania':'Hiszpania',
@@ -261,85 +274,93 @@ function getCountryKey(country) {
 
 function openSlotShop() {
   var lvl = G.level || 1;
+  var unlocked = getUnlockedCountries();
   
-  // Get all unique countries from ADB
+  // Get all countries from ADB
   var countries = {};
   ADB.forEach(function(ap){
-    var key = getCountryKey(ap.country);
-    if(!countries[key]) countries[key] = {key:key, country:ap.country, airports:[]};
-    countries[key].airports.push(ap);
+    var c = ap.country;
+    if(!countries[c]) countries[c] = {name:c, airports:[], unlocked:false};
+    countries[c].airports.push(ap);
+  });
+  
+  // Mark unlocked
+  Object.keys(countries).forEach(function(c){
+    countries[c].unlocked = unlocked.indexOf(c) >= 0;
+  });
+  
+  // Sort: unlocked first, then by name
+  var sorted = Object.keys(countries).sort(function(a,b){
+    if(countries[a].unlocked && !countries[b].unlocked) return -1;
+    if(!countries[a].unlocked && countries[b].unlocked) return 1;
+    return a.localeCompare(b);
   });
 
-  var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
+  var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">'
     +'<button onclick="openShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:20px;">&#8592;</button>'
     +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">KUP SLOT</div></div>'
-    +'<div style="font-size:11px;color:#5580a0;margin-bottom:12px;">Twoj poziom: <span style="color:#f5a623;font-weight:700;">'+lvl+'</span></div>';
+    +'<div style="font-size:11px;color:#5580a0;margin-bottom:10px;">Poziom <span style="color:#f5a623;font-weight:700;">'+lvl+'</span> &bull; Odblokowane: <span style="color:#00e676;font-weight:700;">'+unlocked.length+'</span> krajów</div>';
 
-  // Sort by required level
-  var sorted = Object.keys(countries).sort(function(a,b){
-    var la = (COUNTRY_LEVELS[a]||{lvl:9}).lvl;
-    var lb = (COUNTRY_LEVELS[b]||{lvl:9}).lvl;
-    return la-lb;
-  });
-
-  sorted.forEach(function(key){
-    var info = COUNTRY_LEVELS[key] || {lvl:3, cost:100000, flag:'🌍'};
-    var unlocked = lvl >= info.lvl;
-    var c = countries[key];
-    // Count available slots
-    var available = c.airports.filter(function(ap){
+  sorted.forEach(function(c){
+    var info = countries[c];
+    var isUnlocked = info.unlocked;
+    var available = info.airports.filter(function(ap){
       return G.slots.indexOf(ap.icao)<0 && !(G.homeAirport&&G.homeAirport.icao===ap.icao);
     }).length;
-
-    html += '<div '+(unlocked?'data-ckey="'+key+'" onclick="openCountrySlots(this.dataset.ckey)"':'')
-      +' style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;background:'+(unlocked?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.02)')+';border:1px solid '+(unlocked?'rgba(255,255,255,0.08)':'rgba(255,255,255,0.03)')+';margin-bottom:6px;cursor:'+(unlocked?'pointer':'default')+';opacity:'+(unlocked?'1':'0.5')+'">'
-      +'<div style="font-size:22px;">'+info.flag+'</div>'
+    var cost = getSlotCost(c);
+    var flag = (WORLD_CITIES && WORLD_CITIES[c]) ? WORLD_CITIES[c].flag : '🌍';
+    
+    html += '<div '+(isUnlocked?'data-c="'+c+'" onclick="openCountrySlots(this.dataset.c)"':'')
+      +' style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;'
+      +'background:'+(isUnlocked?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.01)')+';'
+      +'border:1px solid '+(isUnlocked?'rgba(255,255,255,0.08)':'rgba(255,255,255,0.03)')+';'
+      +'margin-bottom:5px;cursor:'+(isUnlocked?'pointer':'default')+';opacity:'+(isUnlocked?'1':'0.4')+'">'
+      +'<span style="font-size:20px;">'+flag+'</span>'
       +'<div style="flex:1;">'
-      +'<div style="font-size:13px;font-weight:700;color:'+(unlocked?'#e0f0ff':'#5580a0')+';">'+key+'</div>'
-      +'<div style="font-size:10px;color:#5580a0;">'+available+' lotnisk &bull; $'+info.cost.toLocaleString()+'/slot</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+(isUnlocked?'#e0f0ff':'#5580a0')+';">'+c+'</div>'
+      +'<div style="font-size:10px;color:#5580a0;">'+available+' lotnisk &bull; $'+cost.toLocaleString()+'/slot</div>'
       +'</div>'
-      +(unlocked
-        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5580a0" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
-        : '<div style="font-size:10px;color:#e63946;font-weight:700;">LVL '+info.lvl+'</div>'
-      )
-      +'</div>';
+      +(isUnlocked
+        ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5580a0" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
+        : '<span style="font-size:10px;color:#e63946;">&#128274;</span>'
+      )+'</div>';
   });
 
   document.getElementById('modal-body').innerHTML = html;
   document.getElementById('modal').style.display = 'flex';
 }
 
-function openCountrySlots(countryKey) {
-  var info = COUNTRY_LEVELS[countryKey] || {lvl:1, cost:100000, flag:'🌍'};
-  var lvl = G.level || 1;
-  if(lvl < info.lvl) { showMsg('Wymagany poziom '+info.lvl+'!'); return; }
+
+function openCountrySlots(country) {
+  var unlocked = getUnlockedCountries();
+  if(unlocked.indexOf(country) < 0) { showMsg('Ten kraj jest zablokowany!'); return; }
+  var cost = getSlotCost(country);
+  var flag = (WORLD_CITIES && WORLD_CITIES[country]) ? WORLD_CITIES[country].flag : '🌍';
 
   var slots = [];
   ADB.forEach(function(ap){
-    var key = getCountryKey(ap.country);
-    if(key !== countryKey) return;
+    if(ap.country !== country) return;
     if(G.slots.indexOf(ap.icao)>=0||(G.homeAirport&&G.homeAirport.icao===ap.icao)) return;
     slots.push(ap);
   });
 
   var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
     +'<button onclick="openSlotShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:20px;">&#8592;</button>'
-    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">'+info.flag+' '+countryKey+'</div></div>';
+    +'<span style="font-size:20px;">'+flag+'</span>'
+    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">'+country+'</div></div>';
 
   if(!slots.length) {
     html += '<div style="padding:20px;text-align:center;color:#5580a0;">Brak dostepnych lotnisk lub wszystkie kupione</div>';
   } else {
     slots.forEach(function(ap){
       html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);">'
-        +'<div>'
-        +'<div style="font-size:13px;font-weight:600;color:#e0f0ff;">'+ap.icao+' - '+ap.city+'</div>'
-        +'<div style="font-size:10px;color:#5580a0;">$'+info.cost.toLocaleString()+'</div>'
-        +'</div>'
-        +'<button data-icao="'+ap.icao+'" data-cost="'+info.cost+'" onclick="buySlotByEl(this)" style="padding:6px 14px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Kup</button>'
+        +'<div><div style="font-size:13px;font-weight:600;color:#e0f0ff;">'+ap.icao+' - '+ap.city+'</div>'
+        +'<div style="font-size:10px;color:#5580a0;">$'+cost.toLocaleString()+'</div></div>'
+        +'<button data-icao="'+ap.icao+'" data-cost="'+cost+'" onclick="buySlotByEl(this)" '
+        +'style="padding:6px 14px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Kup</button>'
         +'</div>';
     });
   }
-
   document.getElementById('modal-body').innerHTML = html;
 }
 
