@@ -340,14 +340,27 @@ function confirmAddRoute(acId) {
   if(G.homeAirport) owned[G.homeAirport.icao]=true;
   if(!owned[toIcao]){ showMsg('Brak slotu na tym lotnisku!'); return; }
 
-  var info = getRouteInfo(fromIcao, toIcao, ac.model);
-  if(!info){ showMsg('Blad danych lotniska!'); return; }
+  // Try getRouteInfo, fallback to manual calc
+  var info = null;
+  if(typeof getRouteInfo === 'function') info = getRouteInfo(fromIcao, toIcao, ac.model);
+  if(!info) {
+    var fromAp=null, toAp2=null;
+    ADB.forEach(function(a){ if(a.icao===fromIcao) fromAp=a; if(a.icao===toIcao) toAp2=a; });
+    if(!fromAp && G.homeAirport) fromAp=G.homeAirport;
+    if(!toAp2) { showMsg('Nieznane lotnisko docelowe!'); return; }
+    var dist2 = typeof calcDistance==='function' ? Math.round(calcDistance(fromAp.lat,fromAp.lng,toAp2.lat,toAp2.lng)) : 500;
+    info = {dist:dist2, minutes:Math.round(dist2/800*60)+20, timeStr:Math.round(dist2/800)+'h', inRange:true, range:99999, fromAp:fromAp, toAp:toAp2};
+  }
   if(!info.inRange){ showMsg('Zbyt duzy dystans dla '+ac.model+'!'); return; }
 
   var ecoIn = document.getElementById('price-eco');
   var bizIn = document.getElementById('price-biz');
-  var ecoPrice = ecoIn && !ecoIn.disabled ? parseInt(ecoIn.value)||0 : 0;
-  var bizPrice = bizIn && !bizIn.disabled ? parseInt(bizIn.value)||0 : 0;
+  var hours = info.minutes / 60;
+  var defaultPrice = Math.round(85 * hours);
+  var ecoPrice = ecoIn && !ecoIn.disabled ? (parseInt(ecoIn.value)||defaultPrice) : 0;
+  var bizPrice = bizIn && !bizIn.disabled ? (parseInt(bizIn.value)||(defaultPrice*2)) : 0;
+  // Ensure minimum price
+  if(ecoPrice < 1 && (ac.config ? ac.config.eco : ac.seats) > 0) ecoPrice = defaultPrice;
 
   var toAp = info.toAp;
   var routeId = 'rt_'+Date.now();
