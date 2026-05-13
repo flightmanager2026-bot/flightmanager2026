@@ -91,7 +91,7 @@ function departSingle(el) {
     var _eco=free.config?(free.config.eco||0):(free.seats||150);
     var _biz=free.config?(free.config.biz||0):0;
     var _rate=1.6;
-    r.revenue=Math.round(_eco*_mins*_rate+_biz*_mins*_rate*2.5);
+    r.revenue=Math.round(_eco*_mins*_rate+_biz*_mins*2.0);
     G.cash+=r.revenue; updateHUD();
     if(!r.fromLat&&G.homeAirport){r.fromLat=G.homeAirport.lat;r.fromLng=G.homeAirport.lng;}
     removeFlightLayer(r.id); drawFlightLayer(r);
@@ -130,7 +130,7 @@ function departAll() {
     var _eco=free.config?(free.config.eco||0):(free.seats||150);
     var _biz=free.config?(free.config.biz||0):0;
     var _rate=1.6;
-    r.revenue=Math.round(_eco*_mins*_rate+_biz*_mins*_rate*2.5);
+    r.revenue=Math.round(_eco*_mins*_rate+_biz*_mins*2.0);
     G.cash+=r.revenue; updateHUD();
       if(!r.fromLat&&G.homeAirport){r.fromLat=G.homeAirport.lat;r.fromLng=G.homeAirport.lng;}
       removeFlightLayer(r.id); drawFlightLayer(r);
