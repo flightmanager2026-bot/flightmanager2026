@@ -1,4 +1,14 @@
 /* -- TRASY -- */
+function getApName(icao) {
+  // Check home airport
+  if(G.homeAirport && G.homeAirport.icao === icao) return G.homeAirport.city;
+  // Check ADB
+  var ap = null;
+  ADB.forEach(function(a){ if(a.icao===icao) ap=a; });
+  if(ap) return ap.city;
+  return icao;
+}
+
 function renderTrasy(body) {
   if(!G.routes.length){
     body.innerHTML='<div style="padding:20px;color:#5580a0;text-align:center;">Brak tras. Dodaj trase w Flocie.</div>';
@@ -39,7 +49,8 @@ function renderTrasy(body) {
       +'<div style="display:flex;align-items:center;gap:10px;">'
       +'<div style="flex:1;min-width:0;">'
       +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap;">'
-      +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+r.from+' &#8594; '+r.to+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+getApName(r.from)+' &#8594; '+getApName(r.to)+'</div>'
+      +'<div style="font-size:10px;color:#5580a0;">'+r.from+' &#8594; '+r.to+'</div>'
       +'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.07);color:'+sc+';">'+st+'</div>'
       +'</div>'
       +'<div style="font-size:11px;color:#5580a0;margin-bottom:6px;">'+(ac?ac.model+' ('+ac.reg+')':'Brak samolotu')+' &bull; '+(r.durationMin?r.durationMin+'min':'?')+' &bull; <span style="color:#00e676;">$'+r.revenue.toLocaleString()+'</span></div>'
