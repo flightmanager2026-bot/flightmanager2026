@@ -17,7 +17,7 @@ var FLIGHT_LAYERS={}, TICK_INTERVAL=null;
 /* -- SAVE/LOAD -- */
 function save() {
   try {
-    var sv={cash:G.cash,airports:G.airports,routes:G.routes,slots:G.slots,
+    var sv={cash:G.cash,airports:G.airports,routes:G.routes,slots:G.slots,departurelog:G.departurelog||[],
       homeAirport:G.homeAirport,fleet:G.fleet,airline:G.airline,
       points:G.points||0,level:G.level||1,totalFlights:G.totalFlights||0};
     localStorage.setItem('sb_v3',JSON.stringify(sv));
