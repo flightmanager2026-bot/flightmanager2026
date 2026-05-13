@@ -102,16 +102,30 @@ function departSingle(el) {
     r.distKm = d;
   }
   r.duration = (r.durationMin||40)*60000;
+
+  // Sprawdz limit terminala
+  var mins = r.durationMin||40;
+  var eco = ac.config?(ac.config.eco||0):(ac.seats||150);
+  var biz = ac.config?(ac.config.biz||0):0;
+  var totalPax = eco + biz;
+
+  if(typeof canDepart === 'function' && !canDepart(totalPax)) {
+    var cap = typeof getTerminalCapacity==='function' ? getTerminalCapacity() : 1000;
+    var used = typeof getPassengersLast2h==='function' ? getPassengersLast2h() : 0;
+    showMsg('Terminal pelny! Uzyte: '+used+'/'+cap+' pasazerow. Ulepsz terminal!');
+    return;
+  }
+
   r.startTime = Date.now();
   ac.status = 'flying';
 
   // Kasa za odlot
-  var mins = r.durationMin||40;
-  var eco = ac.config?(ac.config.eco||0):(ac.seats||150);
-  var biz = ac.config?(ac.config.biz||0):0;
   r.revenue = Math.round(eco*mins*1.6 + biz*mins*2.0);
   G.cash += r.revenue;
   updateHUD();
+
+  // Zapisz odlot do logu terminala
+  if(typeof logDeparture === 'function') logDeparture(totalPax);
 
   removeFlightLayer(r.id);
   drawFlightLayer(r);
@@ -145,14 +159,22 @@ function departAll() {
       r.distKm = d;
     }
     r.duration = (r.durationMin||40)*60000;
-    r.startTime = Date.now();
-    ac.status = 'flying';
 
     var mins = r.durationMin||40;
     var eco = ac.config?(ac.config.eco||0):(ac.seats||150);
     var biz = ac.config?(ac.config.biz||0):0;
+    var totalPax = eco + biz;
+
+    // Sprawdz limit terminala
+    if(typeof canDepart==='function' && !canDepart(totalPax)) {
+      return; // Pominij ten samolot
+    }
+
+    r.startTime = Date.now();
+    ac.status = 'flying';
     r.revenue = Math.round(eco*mins*1.6 + biz*mins*2.0);
     G.cash += r.revenue;
+    if(typeof logDeparture==='function') logDeparture(totalPax);
 
     removeFlightLayer(r.id);
     drawFlightLayer(r);
