@@ -172,6 +172,9 @@ function buyAircraft(model) {
   if(!ac) return;
   if(G.cash < ac.price){ showMsg('Za malo gotowki!'); return; }
   if(G.level < (ac.level||1)){ showMsg('Za niski poziom!'); return; }
+  // Sprawdz pojemnosc hangaru
+  var hangarCap = typeof getHangarCapacity==='function' ? getHangarCapacity() : 10;
+  if(G.fleet.length >= hangarCap){ showMsg('Hangar pelny! ('+G.fleet.length+'/'+hangarCap+') Ulepsz hangar w Lotnisku!'); return; }
   G.cash -= ac.price;
   G.fleet.push({id:'ac_'+Date.now(),model:ac.model,reg:'VS-'+(100+G.fleet.length),seats:ac.seats,status:'ground',routeId:null});
   save(); updateHUD(); closeModal();
