@@ -235,7 +235,7 @@ function openAddRoute(acId) {
 
     // Destination select
     +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-bottom:6px;">LOTNISKO DOCELOWE</div>'
-    +'<select id="route-dest" style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:13px;font-family:Arial,sans-serif;margin-bottom:8px;outline:none;box-sizing:border-box;">'
+    +'<select id="route-dest" data-acid="'+acId+'" onchange="updateRouteInfo(this.dataset.acid,this.value)" style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:13px;font-family:Arial,sans-serif;margin-bottom:8px;outline:none;box-sizing:border-box;">'
     +opts+'</select>'
 
     // Route info (updated on change)
@@ -262,19 +262,18 @@ function openAddRoute(acId) {
 
   document.getElementById('modal').style.display = 'flex';
 
-  // Attach onchange after render
-  setTimeout(function(){
-    var sel = document.getElementById('route-dest');
-    if(sel) sel.onchange = function(){ updateRouteInfo(_pendingAcId); };
-  }, 50);
+  // onchange attached directly on select element
 }
 
 
-function updateRouteInfo(acId) {
+function updateRouteInfo(acId, toIcaoParam) {
   var ac = G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
-  var dest = document.getElementById('route-dest');
-  if(!dest || !dest.value) return;
-  var toIcao = dest.value;
+  var toIcao = toIcaoParam;
+  if(!toIcao) {
+    var dest = document.getElementById('route-dest');
+    if(!dest || !dest.value) return;
+    toIcao = dest.value;
+  }
   var fromIcao = G.homeAirport ? G.homeAirport.icao : '';
 
   // Build info manually if flight_calc not loaded
@@ -286,7 +285,9 @@ function updateRouteInfo(acId) {
     // Fallback - basic info without distance calc
     var toAp = null; ADB.forEach(function(a){if(a.icao===toIcao)toAp=a;});
     var fromAp = null; ADB.forEach(function(a){if(a.icao===fromIcao)fromAp=a;});
-    if(!toAp||!fromAp) return;
+    // Fallback: use homeAirport coordinates if fromAp not in ADB
+    if(!fromAp && G.homeAirport) fromAp = G.homeAirport;
+    if(!toAp) return;
     var dist = 500; // default
     if(typeof calcDistance==='function') dist=Math.round(calcDistance(fromAp.lat,fromAp.lng,toAp.lat,toAp.lng));
     info = {dist:dist, minutes:Math.round(dist/800*60)+20, timeStr:Math.round(dist/800)+'h', inRange:true, range:99999, fromAp:fromAp, toAp:toAp};
