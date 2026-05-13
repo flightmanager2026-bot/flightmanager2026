@@ -317,15 +317,16 @@ function updateRouteInfo(acId, toIcaoParam) {
   if(priceBox) priceBox.style.display = 'block';
 
   // Show suggested min price and SET it automatically
-  var hours = info.minutes / 60;
-  var minPrice = Math.max(10, Math.round(96 * hours));
-  if(hint) hint.textContent = 'Sugerowana cena: '+minPrice+' zł/os ('+info.timeStr+' × 1.6zł/min)';
+  // 1.6 zł × minuty lotu = cena biletu
+  var mins = info.minutes || 40;
+  var minPrice = Math.max(10, Math.round(1.6 * mins));
+  if(hint) hint.textContent = 'Cena: '+minPrice+' zł/os ('+mins+' min × 1.6 zł)';
 
-  // Always set default price
+  // Zawsze ustaw cene od razu
   var ecoIn = document.getElementById('price-eco');
   var bizIn = document.getElementById('price-biz');
-  if(ecoIn && !ecoIn.disabled) ecoIn.value = minPrice;
-  if(bizIn && !bizIn.disabled) bizIn.value = Math.round(minPrice * 2.5);
+  if(ecoIn) { ecoIn.disabled = false; ecoIn.value = minPrice; }
+  if(bizIn) { bizIn.value = Math.round(minPrice * 2.5); }
 }
 
 function confirmAddRoute(acId) {
@@ -365,6 +366,12 @@ function confirmAddRoute(acId) {
 
   var toAp = info.toAp;
   var routeId = 'rt_'+Date.now();
+  // Oblicz przychod od razu
+  var _mins = info.minutes || 40;
+  var _eco = ac.config ? (ac.config.eco||0) : (ac.seats||150);
+  var _biz = ac.config ? (ac.config.biz||0) : 0;
+  var _rev = Math.round(_eco * _mins * 1.6 + _biz * _mins * 1.6 * 2.5);
+
   var route = {
     id: routeId,
     acId: acId,
@@ -376,10 +383,10 @@ function confirmAddRoute(acId) {
     toLng: toAp.lng,
     distKm: info.dist,
     durationMin: info.minutes,
-    duration: info.minutes * 60000, // ms
+    duration: info.minutes * 60000,
     ticketPriceEco: ecoPrice,
     ticketPriceBiz: bizPrice,
-    revenue: 0,
+    revenue: _rev,
     startTime: null
   };
 
