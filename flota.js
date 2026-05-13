@@ -209,6 +209,11 @@ var _pendingAcId=null;
 function openAddRoute(acId) {
   var ac = G.fleet.filter(function(a){return a.id===acId;})[0];
   if(!ac) return;
+  // Sprawdz czy samolot juz ma trase
+  if(ac.routeId) {
+    var existing = G.routes.filter(function(r){return r.id===ac.routeId;})[0];
+    if(existing) { showMsg('Ten samolot juz ma trase '+existing.from+' - '+existing.to+'!'); return; }
+  }
   _pendingAcId = acId;
 
   var owned = {};
