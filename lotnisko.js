@@ -83,6 +83,39 @@ function renderLotnisko(body) {
         parkCost[u.parking+1]||0, u.parking, 4);
 }
 
+function getTerminalCost(level) {
+  // Kazdy poziom terminala kosztuje wiecej: 300k * level
+  return 300000 * level;
+}
+
+function getTerminalCapacity() {
+  var ap = G.homeAirport;
+  if(!ap || !ap.upgrades) return 1000;
+  return (ap.upgrades.terminal || 1) * 1000;
+}
+
+function getPassengersLast2h() {
+  // Zlicz pasazerow ktorzy odlecieli w ostatnich 2h
+  var now = Date.now();
+  var twoHours = 2 * 60 * 60 * 1000;
+  if(!G.departurelog) G.departurelog = [];
+  // Usun stare wpisy
+  G.departurelog = G.departurelog.filter(function(e){ return now - e.time < twoHours; });
+  return G.departurelog.reduce(function(sum, e){ return sum + e.pax; }, 0);
+}
+
+function canDepart(paxCount) {
+  var cap = getTerminalCapacity();
+  var used = getPassengersLast2h();
+  return used + paxCount <= cap;
+}
+
+function logDeparture(paxCount) {
+  if(!G.departurelog) G.departurelog = [];
+  G.departurelog.push({time: Date.now(), pax: paxCount});
+  save();
+}
+
 function upgradeAirport(key) {
   var ap = G.homeAirport;
   if(!ap) return;
