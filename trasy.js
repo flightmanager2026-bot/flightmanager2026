@@ -42,7 +42,7 @@ function renderTrasy(body) {
       +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+r.from+' &#8594; '+r.to+'</div>'
       +'<div style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.07);color:'+sc+';">'+st+'</div>'
       +'</div>'
-      +'<div style="font-size:11px;color:#5580a0;margin-bottom:6px;">'+(ac?ac.model+' ('+ac.reg+')':'Brak samolotu')+' &bull; '+(r.durationMin?r.durationMin+'min':'?')+' &bull; $'+r.revenue.toLocaleString()+'</div>'
+      +'<div style="font-size:11px;color:#5580a0;margin-bottom:6px;">'+(ac?ac.model+' ('+ac.reg+')':'Brak samolotu')+' &bull; '+(r.durationMin?r.durationMin+'min':'?')+' &bull; <span style="color:#00e676;">$'+r.revenue.toLocaleString()+'</span></div>'
       +'<div style="height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;">'
       +'<div style="height:100%;width:'+prog+'%;background:linear-gradient(90deg,#1a56db,#00d4ff);border-radius:2px;"></div>'
       +'</div>'
