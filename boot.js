@@ -19,6 +19,33 @@ window.addEventListener('load',function(){
       return ADB.some(function(a){return a.icao===ap.icao;});
     });
   }catch(e){}}
+  // Napraw niespojnosci miedzy flotą a trasami
+  G.fleet.forEach(function(ac){
+    if(ac.routeId) {
+      var route = G.routes.filter(function(r){return r.id===ac.routeId;})[0];
+      if(!route) {
+        // Trasa nie istnieje - zwolnij samolot
+        ac.routeId = null;
+        ac.status = 'ground';
+      }
+    }
+    // Napraw status - jesli trasa skonczyla sie ale status flying
+    if(ac.status==='flying' && ac.routeId) {
+      var r = G.routes.filter(function(x){return x.id===ac.routeId;})[0];
+      if(r && r.startTime && r.duration) {
+        var elapsed = Date.now() - r.startTime;
+        if(elapsed >= r.duration) {
+          ac.status = 'landed';
+        }
+      }
+    }
+  });
+
+  // Usun trasy bez samolotu
+  G.routes = G.routes.filter(function(r){
+    return G.fleet.some(function(ac){return ac.id===r.acId;});
+  });
+
   if(G.homeAirport){
     initMap();
     setTimeout(function(){
