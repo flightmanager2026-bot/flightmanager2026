@@ -80,7 +80,10 @@ function renderLotnisko(body) {
   var resetMs = getTerminalResetTime();
   var barColor = pct >= 100 ? '#e63946' : pct >= 75 ? '#f5a623' : '#00e676';
 
-  var incomePerMin = (u.terminal*2000)+(u.shops*3000)+(u.parking*1000)+(u.runways*500);
+  // Dochod pasywny: tylko sklepy (per h) i parking
+  var shopsPerMin = (u.shops||0) * 1000 / 60; // 1000 zł/h = ~16.7/min
+  var parkingPerMin = (u.parking||0) * 500 / 60;
+  var incomePerMin = Math.round(shopsPerMin + parkingPerMin);
 
   function upgradeCard(key, icon, label, desc, cost, level, maxLevel) {
     var isUnlimited = maxLevel >= 9999;
@@ -123,7 +126,7 @@ function renderLotnisko(body) {
     +'<div style="font-size:11px;color:#5580a0;">'+ap.icao+' &bull; '+ap.country+'</div>'
     +'</div>'
     +'<div style="margin-left:auto;text-align:right;">'
-    +'<div style="font-size:12px;color:#00e676;font-weight:700;">$'+incomePerMin.toLocaleString()+'/min</div>'
+    +'<div style="font-size:12px;color:'+(incomePerMin>0?'#00e676':'#5580a0')+';font-weight:700;">'+(incomePerMin>0?'$'+incomePerMin.toLocaleString()+'/min':'Brak dochodu')+'</div>'
     +'<div style="font-size:10px;color:#5580a0;">dochod pasywny</div>'
     +'</div></div>'
     +'<div style="display:flex;justify-content:space-between;font-size:11px;color:#5580a0;margin-bottom:3px;">'
@@ -229,9 +232,10 @@ function tickAirportIncome() {
   if(!ap || !ap.upgrades) return;
   var u = ap.upgrades;
   // Shops: 1000 zł/h per level = 1000/3600 per second
+  // Tylko sklepy i parking generuja pasywny dochod
   var shopsPerSec = (u.shops||0) * 1000 / 3600;
-  var otherPerSec = ((u.parking||0)*1000 + (u.runways||0)*500) / 60;
-  var perTick = shopsPerSec + otherPerSec;
+  var parkingPerSec = (u.parking||0) * 500 / 3600;
+  var perTick = shopsPerSec + parkingPerSec;
   G.cash += perTick;
   if(!ap.income) ap.income = 0;
   ap.income += perTick;
