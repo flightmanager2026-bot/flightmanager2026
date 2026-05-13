@@ -66,9 +66,11 @@ function renderLotnisko(body) {
         'Wiecej pasow = wiecej startow naraz (max 5)',
         runwayCost[u.runways]||0, u.runways, 5)
 
-    + upgradeRow('terminal','Terminal','&#127963;',
-        'Wiekszy terminal = wiecej pasazerow = wieksze przychody',
-        termCost[u.terminal]||0, u.terminal, 5)
+    + upgradeRow('terminal',
+        'Terminal (LVL '+u.terminal+')',
+        '&#127963;',
+        'Przepustowosc: '+(u.terminal*1000)+' pax/2h &bull; Uzyte: '+getPassengersLast2h()+'/'+getTerminalCapacity()+' &bull; Kolejne LVL: '+(u.terminal+1)*1000+' pax/2h',
+        300000*u.terminal, u.terminal, 9999)
 
     + upgradeRow('hangar','Hangar','&#128295;',
         'Lepszy hangar = szybsze naprawy i konserwacja',
