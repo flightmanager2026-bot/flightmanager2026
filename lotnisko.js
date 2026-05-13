@@ -45,6 +45,28 @@ function formatTimer(ms) {
   return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
 }
 
+function upgradeCardPkt(key, icon, label, desc, costPkt, level, maxLevel) {
+  var canUp = level < maxLevel;
+  var afford = (G.points||0) >= costPkt;
+  var pct = Math.round(level/maxLevel*100);
+  return '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:8px;">'    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'    +'<div style="width:40px;height:40px;border-radius:10px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">'+icon+'</div>'    +'<div style="flex:1;">'    +'<div style="display:flex;align-items:center;gap:8px;">'    +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+label+'</div>'    +'<div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(245,166,35,0.15);color:#f5a623;">LVL '+level+'/'+maxLevel+'</div>'    +'</div>'    +'<div style="font-size:11px;color:#5580a0;margin-top:2px;">'+desc+'</div>'    +'</div></div>'    +'<div style="height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;margin-bottom:8px;">'    +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#f5a623,#ffd700);border-radius:2px;"></div>'    +'</div>'    +(canUp      ?'<button onclick="upgradeShops()" style="width:100%;padding:9px;background:'+(afford?'linear-gradient(135deg,#b8860b,#f5a623)':'rgba(255,255,255,0.05)')+';border:none;border-radius:9px;color:'+(afford?'#fff':'#5580a0')+';font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:'+(afford?'pointer':'not-allowed')+';">&#11088; Ulepsz za '+costPkt+' PKT (masz '+(G.points||0)+')</button>'      :'<div style="padding:9px;text-align:center;font-size:12px;color:#f5a623;font-weight:700;background:rgba(245,166,35,0.06);border-radius:9px;">&#10003; Maks. poziom (LVL 10)</div>'    )    +'</div>';
+}
+
+function upgradeShops() {
+  var ap = G.homeAirport;
+  if(!ap || !ap.upgrades) return;
+  var lvl = ap.upgrades.shops || 0;
+  if(lvl >= 10) { showMsg('Maks. poziom sklepow!'); return; }
+  var cost = 1000;
+  if((G.points||0) < cost) { showMsg('Za malo PKT! Potrzebujesz '+cost+' PKT'); return; }
+  G.points = (G.points||0) - cost;
+  ap.upgrades.shops = lvl + 1;
+  save(); updateHUD();
+  showMsg('Sklepy ulepszone do LVL '+(lvl+1)+'! Dochod: '+((lvl+1)*1000)+' zł/h');
+  var body = document.getElementById('panel-body');
+  if(body) renderLotnisko(body);
+}
+
 function renderLotnisko(body) {
   var ap = G.homeAirport;
   if(!ap) { body.innerHTML='<div style="padding:20px;color:#5580a0;text-align:center;">Brak bazy</div>'; return; }
@@ -139,8 +161,9 @@ function renderLotnisko(body) {
     + upgradeCard('hangar','&#128295;','Hangar','Szybsze naprawy i konserwacja samolotow',
         [0,200000,600000,1500000,4000000][u.hangar]||0, u.hangar, 5)
 
-    + upgradeCard('shops','&#128722;','Sklepy lotniskowe','Pasywny dochod z lotniska',
-        [0,400000,1200000,3000000,8000000][u.shops+1]||0, u.shops, 4)
+    + upgradeCardPkt('shops','&#128722;','Sklepy lotniskowe',
+        'Dochod: '+(u.shops*1000)+' zł/h &bull; Kolejny LVL: '+((u.shops+1)*1000)+' zł/h',
+        1000, u.shops, 10)
 
     + upgradeCard('parking','&#128664;','Parking','Dodatkowy dochod pasywny',
         [0,150000,450000,1200000,3000000][u.parking+1]||0, u.parking, 4);
@@ -173,7 +196,6 @@ function upgradeAirport(key) {
   var costs = {
     runways: [0,500000,1500000,4000000,10000000],
     hangar:  [0,200000,600000,1500000,4000000],
-    shops:   [0,400000,1200000,3000000,8000000],
     parking: [0,150000,450000,1200000,3000000]
   };
   var maxLevels = {runways:5, hangar:5, shops:4, parking:4};
@@ -206,7 +228,10 @@ function tickAirportIncome() {
   var ap = G.homeAirport;
   if(!ap || !ap.upgrades) return;
   var u = ap.upgrades;
-  var perTick = ((u.terminal*2000)+(u.shops*3000)+(u.parking*1000)+(u.runways*500)) / 60;
+  // Shops: 1000 zł/h per level = 1000/3600 per second
+  var shopsPerSec = (u.shops||0) * 1000 / 3600;
+  var otherPerSec = ((u.parking||0)*1000 + (u.runways||0)*500) / 60;
+  var perTick = shopsPerSec + otherPerSec;
   G.cash += perTick;
   if(!ap.income) ap.income = 0;
   ap.income += perTick;
