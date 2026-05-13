@@ -81,7 +81,10 @@ function showBrandModal(brand) {
         +'<div><div style="font-size:12px;font-weight:700;color:#e0f0ff;">'+ac.reg+'</div>'
         +'<div style="font-size:10px;color:#5580a0;">Eko:'+cfg.eco+' Biz:'+(cfg.biz||0)+(route?' | '+route.from+'->'+route.to:'')+'</div></div>'
         +'<div style="display:flex;gap:6px;">'
-        +'<button data-id="'+ac.id+'" onclick="closeModal();openModAc(this.dataset.id)" style="padding:5px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);border-radius:6px;color:#00d4ff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Konfig</button>'
+        +(ac.status==='ground'
+          ? '<button data-id="'+ac.id+'" onclick="closeModal();openModAc(this.dataset.id)" style="padding:5px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);border-radius:6px;color:#00d4ff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Konfig</button>'
+          : '<div style="padding:5px 8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;color:#5580a0;font-size:10px;font-weight:700;">W locie</div>'
+        )
         +(ac.routeId
           ? '<div style="padding:5px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#5580a0;font-size:10px;font-weight:700;text-align:center;">Ma trasę</div>'
           : '<button data-id="'+ac.id+'" onclick="closeModal();openAddRoute(this.dataset.id)" style="padding:5px 8px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:6px;color:#fff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">+Trasa</button>'
@@ -512,6 +515,8 @@ function openModGroup(el) { var model=el.dataset?el.dataset.model:el;
 
 function openModAc(el) { var acId=el&&el.dataset?el.dataset.id:el;
   var ac=G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
+  if(ac.status !== 'ground') { showMsg('Konfiguracja mozliwa tylko na ziemi!'); return; }
+  window._modAcId = acId;
   var def=AC_DEFS[ac.model]; if(!def){showMsg('Brak konfiguracji');return;}
   var bizRows=ac.bizRows||0;
   var biz=bizRows*def.bizRowSeats;
@@ -528,6 +533,10 @@ function openModAc(el) { var acId=el&&el.dataset?el.dataset.id:el;
     +'<div style="text-align:center;flex:1;"><div style="font-size:26px;font-weight:900;color:#f5a623;" id="md-biz">'+biz+'</div><div style="font-size:10px;color:#5580a0;">BIZNES</div></div>'
     +'<div style="text-align:center;flex:1;"><div style="font-size:26px;font-weight:900;color:#00d4ff;" id="md-eco">'+eco+'</div><div style="font-size:10px;color:#5580a0;">EKONOMIA</div></div>'
     +'<div style="text-align:center;flex:1;"><div style="font-size:26px;font-weight:900;color:#e0f0ff;" id="md-tot">'+(biz+eco)+'</div><div style="font-size:10px;color:#5580a0;">RAZEM</div></div>'
+    +'</div>'
+    +'<div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:8px;padding:8px 12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">'
+    +'<div style="font-size:11px;color:#5580a0;">Eko: 1.6 zł/min &bull; Biz: 2.0 zł/min</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#00e676;" id="md-rev">$'+(function(){var r=G.routes.filter(function(x){return x.id===ac.routeId;})[0];var m=r?r.durationMin||40:40;return Math.round(eco*m*1.6+biz*m*2.0).toLocaleString();})()+'/lot</div>'
     +'</div>'
     +'<div style="display:flex;justify-content:space-between;font-size:10px;color:#2a4a6a;margin-bottom:4px;"><span>Tylko Eco</span><span>Tylko Biz</span></div>'
     +'<input type="range" id="md-slider" min="0" max="'+def.maxBizRows+'" value="'+bizRows+'" step="1" '
@@ -550,6 +559,16 @@ function liveModSlider(val,brs,ers,brc,rows) {
   var r=parseInt(val),biz=r*brs,eco=Math.max(0,rows-r*brc)*ers;
   var b=document.getElementById('md-biz'),e=document.getElementById('md-eco'),t=document.getElementById('md-tot');
   if(b)b.textContent=biz; if(e)e.textContent=eco; if(t)t.textContent=biz+eco;
+  
+  // Update estimated revenue per flight
+  var rev = document.getElementById('md-rev');
+  if(rev) {
+    var ac = G.fleet.filter(function(a){return a.id===window._modAcId;})[0];
+    var route = ac ? G.routes.filter(function(r){return r.id===ac.routeId;})[0] : null;
+    var mins = route ? (route.durationMin||40) : 40;
+    var revVal = Math.round(eco*mins*1.6 + biz*mins*2.0);
+    rev.textContent = '$'+revVal.toLocaleString()+'/lot';
+  }
 }
 
 function applySeats(el) {
@@ -565,9 +584,17 @@ function applySeats(el) {
   var eco = Math.max(0, def.rows - bizRows*def.bizRowCost) * def.ecoRowSeats;
   ac.config = {eco:eco, biz:biz, prem:0, first:0, total:eco+biz};
   G.cash -= 30000;
+
+  // Zaktualizuj przychod na istniejacej trasie
+  var route = G.routes.filter(function(r){return r.id===ac.routeId;})[0];
+  if(route) {
+    var mins = route.durationMin || 40;
+    route.revenue = Math.round(eco*mins*1.6 + biz*mins*2.0);
+  }
+
   save(); updateHUD();
   closeModal();
-  showMsg('Konfiguracja zapisana! Biznes:'+biz+' Eko:'+eco);
+  showMsg('Konfiguracja zapisana! Eko:'+eco+' Biz:'+biz+(route?' | Nowy przychod: $'+route.revenue.toLocaleString():''));
 }
 
 
