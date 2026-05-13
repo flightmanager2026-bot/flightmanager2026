@@ -82,7 +82,10 @@ function showBrandModal(brand) {
         +'<div style="font-size:10px;color:#5580a0;">Eko:'+cfg.eco+' Biz:'+(cfg.biz||0)+(route?' | '+route.from+'->'+route.to:'')+'</div></div>'
         +'<div style="display:flex;gap:6px;">'
         +'<button data-id="'+ac.id+'" onclick="closeModal();openModAc(this.dataset.id)" style="padding:5px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);border-radius:6px;color:#00d4ff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Konfig</button>'
-        +'<button data-id="'+ac.id+'" onclick="closeModal();openAddRoute(this.dataset.id)" style="padding:5px 8px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:6px;color:#fff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">+Trasa</button>'
+        +(ac.routeId
+          ? '<div style="padding:5px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#5580a0;font-size:10px;font-weight:700;text-align:center;">Ma trasę</div>'
+          : '<button data-id="'+ac.id+'" onclick="closeModal();openAddRoute(this.dataset.id)" style="padding:5px 8px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:6px;color:#fff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">+Trasa</button>'
+        )
         +'</div></div>';
     });
     out += '</div>';
