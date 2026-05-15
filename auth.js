@@ -174,10 +174,21 @@ function doRegister() {
 
 function doGoogleLogin() {
   var provider = new firebase.auth.GoogleAuthProvider();
-  // Zapisz ze uzywamy Google redirect
-  sessionStorage.setItem('googleRedirect','1');
-  _fbAuth.signInWithRedirect(provider)
-    .catch(function(e) { showAuthError(getAuthError(e.code)); });
+  provider.addScope('email');
+  provider.addScope('profile');
+  _fbAuth.signInWithPopup(provider)
+    .then(function(result) {
+      var isNew = result.additionalUserInfo && result.additionalUserInfo.isNewUser;
+      onAuthSuccess(result.user, isNew);
+    })
+    .catch(function(e) {
+      // Jesli popup zablokowany - sprobuj redirect
+      if(e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user') {
+        _fbAuth.signInWithRedirect(provider);
+      } else {
+        showAuthError(getAuthError(e.code));
+      }
+    });
 }
 
 function checkGoogleRedirect() {
@@ -185,12 +196,13 @@ function checkGoogleRedirect() {
     .then(function(result) {
       if(result && result.user) {
         var isNew = result.additionalUserInfo && result.additionalUserInfo.isNewUser;
-        sessionStorage.removeItem('googleRedirect');
         onAuthSuccess(result.user, isNew);
       }
     })
     .catch(function(e) {
-      if(e.code) showAuthError(getAuthError(e.code));
+      if(e.code && e.code !== 'auth/no-auth-event') {
+        console.warn('Redirect error:', e.code);
+      }
     });
 }
 
