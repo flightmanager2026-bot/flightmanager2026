@@ -34,4 +34,3 @@ function closePanel() {
     if(el){el.style.color='#4a6070';el.style.borderTop='2.5px solid transparent';}
   });
 }
-
