@@ -1,273 +1,295 @@
 /* -- LOTNISKO -- */
 
-function getTerminalCost(level) {
-  return 300000 * level;
-}
-
+function getTerminalCost(level) { return 300000 * level; }
 function getTerminalCapacity() {
   var ap = G.homeAirport;
-  if(!ap || !ap.upgrades) return 1000;
-  return (ap.upgrades.terminal || 1) * 1000;
+  if(!ap||!ap.upgrades) return 1000;
+  return (ap.upgrades.terminal||1)*1000;
 }
-
 function getPassengersLast2h() {
-  var now = Date.now();
-  var twoHours = 2 * 60 * 60 * 1000;
-  if(!G.departurelog) G.departurelog = [];
-  G.departurelog = G.departurelog.filter(function(e){ return now - e.time < twoHours; });
-  return G.departurelog.reduce(function(sum, e){ return sum + e.pax; }, 0);
+  var now=Date.now(), two=7200000;
+  if(!G.departurelog) G.departurelog=[];
+  G.departurelog=G.departurelog.filter(function(e){return now-e.time<two;});
+  return G.departurelog.reduce(function(s,e){return s+e.pax;},0);
 }
-
 function getTerminalResetTime() {
-  if(!G.departurelog || !G.departurelog.length) return 0;
-  var oldest = G.departurelog[0].time;
-  var resetAt = oldest + 2 * 60 * 60 * 1000;
-  return Math.max(0, resetAt - Date.now());
+  if(!G.departurelog||!G.departurelog.length) return 0;
+  return Math.max(0, G.departurelog[0].time+7200000-Date.now());
 }
-
-function canDepart(paxCount) {
-  return getPassengersLast2h() + paxCount <= getTerminalCapacity();
+function canDepart(pax) { return getPassengersLast2h()+pax<=getTerminalCapacity(); }
+function logDeparture(pax) {
+  if(!G.departurelog) G.departurelog=[];
+  G.departurelog.push({time:Date.now(),pax:pax}); save();
 }
-
-function logDeparture(paxCount) {
-  if(!G.departurelog) G.departurelog = [];
-  G.departurelog.push({time: Date.now(), pax: paxCount});
-  save();
-}
-
 function formatTimer(ms) {
-  if(ms <= 0) return '00:00';
-  var totalSec = Math.ceil(ms / 1000);
-  var h = Math.floor(totalSec / 3600);
-  var m = Math.floor((totalSec % 3600) / 60);
-  var s = totalSec % 60;
-  if(h > 0) return h+'h '+String(m).padStart(2,'0')+'min';
-  return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  if(ms<=0) return '00:00';
+  var s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
+  if(h>0) return h+'h '+String(m).padStart(2,'0')+'min';
+  return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
 }
-
 function getHangarCapacity() {
-  var ap = G.homeAirport;
-  if(!ap || !ap.upgrades) return 10;
-  return 10 + ((ap.upgrades.hangar||1) - 1) * 5;
-}
-
-function upgradeCardHangar(key, icon, label, desc, cost, level) {
-  var afford = G.cash >= cost;
-  var current = getHangarCapacity();
-  var html = '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:8px;">'
-    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'
-    +'<div style="width:40px;height:40px;border-radius:10px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">'+icon+'</div>'
-    +'<div style="flex:1;">'
-    +'<div style="display:flex;align-items:center;gap:8px;">'
-    +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+label+'</div>'
-    +'<div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(0,212,255,0.15);color:#00d4ff;">LVL '+level+'</div>'
-    +'</div>'
-    +'<div style="font-size:11px;color:#5580a0;margin-top:2px;">'+desc+'</div>'
-    +'</div></div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
-    +'<div style="font-size:11px;color:#5580a0;">Flota: <span style="color:'+(G.fleet.length>=current?'#e63946':'#00e676')+';font-weight:700;">'+G.fleet.length+'/'+current+'</span></div>'
-    +'</div>'
-    +'<button onclick="upgradeAirport(\"hangar\")" style="width:100%;padding:9px;background:'+(afford?'linear-gradient(135deg,#1a56db,#00d4ff)':'rgba(255,255,255,0.05)')+';border:none;border-radius:9px;color:'+(afford?'#fff':'#5580a0')+';font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:'+(afford?'pointer':'not-allowed')+';">Ulepsz za $'+cost.toLocaleString()+'</button>'
-    +'</div>';
-  return html;
-}
-
-function upgradeCardPkt(key, icon, label, desc, costPkt, level, maxLevel) {
-  var canUp = level < maxLevel;
-  var afford = (G.points||0) >= costPkt;
-  var pct = Math.round(level/maxLevel*100);
-  return '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:8px;">'    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'    +'<div style="width:40px;height:40px;border-radius:10px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">'+icon+'</div>'    +'<div style="flex:1;">'    +'<div style="display:flex;align-items:center;gap:8px;">'    +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+label+'</div>'    +'<div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(245,166,35,0.15);color:#f5a623;">LVL '+level+'/'+maxLevel+'</div>'    +'</div>'    +'<div style="font-size:11px;color:#5580a0;margin-top:2px;">'+desc+'</div>'    +'</div></div>'    +'<div style="height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;margin-bottom:8px;">'    +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#f5a623,#ffd700);border-radius:2px;"></div>'    +'</div>'    +(canUp      ?'<button onclick="upgradeShops()" style="width:100%;padding:9px;background:'+(afford?'linear-gradient(135deg,#b8860b,#f5a623)':'rgba(255,255,255,0.05)')+';border:none;border-radius:9px;color:'+(afford?'#fff':'#5580a0')+';font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:'+(afford?'pointer':'not-allowed')+';">&#11088; Ulepsz za '+costPkt+' PKT (masz '+(G.points||0)+')</button>'      :'<div style="padding:9px;text-align:center;font-size:12px;color:#f5a623;font-weight:700;background:rgba(245,166,35,0.06);border-radius:9px;">&#10003; Maks. poziom (LVL 10)</div>'    )    +'</div>';
-}
-
-function upgradeShops() {
-  var ap = G.homeAirport;
-  if(!ap || !ap.upgrades) return;
-  var lvl = ap.upgrades.shops || 0;
-  if(lvl >= 10) { showMsg('Maks. poziom sklepow!'); return; }
-  var cost = 1000;
-  if((G.points||0) < cost) { showMsg('Za malo PKT! Potrzebujesz '+cost+' PKT'); return; }
-  G.points = (G.points||0) - cost;
-  ap.upgrades.shops = lvl + 1;
-  save(); updateHUD();
-  showMsg('Sklepy ulepszone do LVL '+(lvl+1)+'! Dochod: '+((lvl+1)*1000)+' zł/h');
-  var body = document.getElementById('panel-body');
-  if(body) renderLotnisko(body);
+  var ap=G.homeAirport;
+  if(!ap||!ap.upgrades) return 10;
+  return 10+((ap.upgrades.hangar||1)-1)*5;
 }
 
 function renderLotnisko(body) {
-  var ap = G.homeAirport;
-  if(!ap) { body.innerHTML='<div style="padding:20px;color:#5580a0;text-align:center;">Brak bazy</div>'; return; }
-  if(!ap.upgrades) ap.upgrades = {runways:1, terminal:1, hangar:1, shops:0, parking:0};
-  if(!ap.income) ap.income = 0;
-  var u = ap.upgrades;
+  var ap=G.homeAirport;
+  if(!ap){body.innerHTML='<div style="padding:20px;color:#5580a0;text-align:center;">Brak bazy</div>';return;}
+  if(!ap.upgrades) ap.upgrades={runways:1,terminal:1,hangar:1,shops:0};
+  var u=ap.upgrades;
+  var used=getPassengersLast2h(), cap=getTerminalCapacity();
+  var pct=Math.min(100,Math.round(used/cap*100));
+  var barColor=pct>=100?'#e63946':pct>=75?'#f5a623':'#00d4ff';
+  var resetMs=getTerminalResetTime();
+  var shopIncome=(u.shops||0)*1000;
+  var nextPayout=G.lastShopPayout?Math.max(0,G.lastShopPayout+3600000-Date.now()):0;
+  var hangarCap=getHangarCapacity();
+  var fleetUsed=G.fleet.length;
 
-  var used = getPassengersLast2h();
-  var cap = getTerminalCapacity();
-  var pct = Math.min(100, Math.round(used/cap*100));
-  var resetMs = getTerminalResetTime();
-  var barColor = pct >= 100 ? '#e63946' : pct >= 75 ? '#f5a623' : '#00e676';
+  body.innerHTML=
 
-  // Dochod pasywny: tylko sklepy (per h) i parking
-  var incomePerHour = (u.shops||0) * 1000;
-  var incomePerMin = 0; // Displayed as per hour now
+  // ── HEADER CARD ──────────────────────────────────────────
+  '<div style="position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(0,212,255,0.12) 0%,rgba(26,86,219,0.18) 100%);border:1px solid rgba(0,212,255,0.25);border-radius:18px;padding:18px;margin-bottom:10px;">'
+  +'<div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,0.15),transparent 70%);pointer-events:none;"></div>'
+  +'<div style="display:flex;align-items:flex-start;gap:14px;">'
+  +'<div style="width:52px;height:52px;border-radius:14px;background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.3);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">&#9992;</div>'
+  +'<div style="flex:1;">'
+  +'<div style="font-size:18px;font-weight:900;color:#fff;letter-spacing:0.5px;">'+ap.city+'</div>'
+  +'<div style="font-size:11px;color:rgba(0,212,255,0.7);font-weight:600;letter-spacing:2px;margin-top:2px;">'+ap.icao+' &nbsp;•&nbsp; '+ap.country+'</div>'
+  +'</div>'
+  +'<div style="text-align:right;">'
+  +(shopIncome>0
+    ?'<div style="font-size:16px;font-weight:900;color:#00e676;">$'+shopIncome.toLocaleString()+'<span style="font-size:10px;font-weight:500;color:rgba(0,230,118,0.6);">/h</span></div>'
+    +'<div style="font-size:10px;color:#5580a0;margin-top:1px;">dochód ze sklepów</div>'
+    :'<div style="font-size:11px;color:#5580a0;">brak dochodu</div>'
+  )
+  +'</div></div>'
+  +'<div style="display:flex;gap:16px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07);">'
+  +'<div style="flex:1;text-align:center;"><div style="font-size:20px;font-weight:900;color:#f5a623;">LVL '+u.terminal+'</div><div style="font-size:9px;color:#5580a0;letter-spacing:1px;margin-top:1px;">TERMINAL</div></div>'
+  +'<div style="width:1px;background:rgba(255,255,255,0.07);"></div>'
+  +'<div style="flex:1;text-align:center;"><div style="font-size:20px;font-weight:900;color:#00d4ff;">'+fleetUsed+'/'+hangarCap+'</div><div style="font-size:9px;color:#5580a0;letter-spacing:1px;margin-top:1px;">HANGAR</div></div>'
+  +'<div style="width:1px;background:rgba(255,255,255,0.07);"></div>'
+  +'<div style="flex:1;text-align:center;"><div style="font-size:20px;font-weight:900;color:#a78bfa;">'+u.runways+'/5</div><div style="font-size:9px;color:#5580a0;letter-spacing:1px;margin-top:1px;">PASY</div></div>'
+  +'<div style="width:1px;background:rgba(255,255,255,0.07);"></div>'
+  +'<div style="flex:1;text-align:center;"><div style="font-size:20px;font-weight:900;color:#00e676;">'+(u.shops||0)+'/10</div><div style="font-size:9px;color:#5580a0;letter-spacing:1px;margin-top:1px;">SKLEPY</div></div>'
+  +'</div></div>'
 
-  function upgradeCard(key, icon, label, desc, cost, level, maxLevel) {
-    var isUnlimited = maxLevel >= 9999;
-    var canUp = isUnlimited || level < maxLevel;
-    var afford = G.cash >= cost;
-    var lvlDisplay = isUnlimited ? 'LVL '+level : level+'/'+maxLevel;
+  // ── TERMINAL CAPACITY ────────────────────────────────────
+  +'<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;margin-bottom:10px;">'
+  +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'
+  +'<div style="display:flex;align-items:center;gap:8px;">'
+  +'<div style="width:8px;height:8px;border-radius:50%;background:'+barColor+';box-shadow:0 0 6px '+barColor+';"></div>'
+  +'<div style="font-size:12px;font-weight:700;color:#e0f0ff;">Przepustowość terminala</div>'
+  +'</div>'
+  +'<div style="font-size:13px;font-weight:900;color:'+barColor+';">'+used+' / '+cap+' pax</div>'
+  +'</div>'
+  +'<div style="height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;margin-bottom:10px;">'
+  +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,'+barColor+',rgba(0,212,255,0.5));border-radius:4px;transition:width 0.4s ease;box-shadow:0 0 8px '+barColor+'44;"></div>'
+  +'</div>'
+  +'<div style="display:flex;justify-content:space-between;align-items:center;">'
+  +'<div style="font-size:10px;color:#5580a0;">Okno: 2 godziny</div>'
+  +(resetMs>0
+    ?'<div style="font-size:11px;font-weight:700;color:#f5a623;background:rgba(245,166,35,0.08);padding:3px 10px;border-radius:20px;border:1px solid rgba(245,166,35,0.2);" id="terminal-timer">&#8987; '+formatTimer(resetMs)+'</div>'
+    :'<div style="font-size:11px;color:#00e676;font-weight:700;">&#10003; Limit wolny</div>'
+  )
+  +'</div>'
+  +(pct>=100?'<div style="margin-top:8px;padding:8px 12px;background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.2);border-radius:8px;font-size:11px;color:#e63946;display:flex;align-items:center;gap:6px;"><span>&#9888;</span><span>Terminal pełny — ulepsz aby wysłać więcej samolotów</span></div>':'')
+  +'</div>'
 
-    var stars = '';
-    if(!isUnlimited) {
-      for(var i=0;i<maxLevel;i++)
-        stars += '<div style="width:8px;height:8px;border-radius:50%;background:'+(i<level?'#f5a623':'rgba(255,255,255,0.1)+')+';flex-shrink:0;"></div>';
-    }
+  // ── SECTION LABEL ─────────────────────────────────────────
+  +'<div style="font-size:9px;font-weight:700;color:#5580a0;letter-spacing:3px;margin:14px 0 8px;padding-left:2px;">ULEPSZENIA INFRASTRUKTURY</div>'
 
-    return '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:8px;">'
-      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'
-      +'<div style="width:40px;height:40px;border-radius:10px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">'+icon+'</div>'
-      +'<div style="flex:1;">'
-      +'<div style="display:flex;align-items:center;gap:8px;">'
-      +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+label+'</div>'
-      +'<div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(245,166,35,0.15);color:#f5a623;">'+lvlDisplay+'</div>'
-      +'</div>'
-      +'<div style="font-size:11px;color:#5580a0;margin-top:2px;">'+desc+'</div>'
-      +'</div>'
-      +(!isUnlimited?'<div style="display:flex;gap:3px;">'+stars+'</div>':'')
-      +'</div>'
-      +(canUp
-        ?'<button onclick="upgradeAirport(\''+key+'\')" style="width:100%;padding:9px;background:'+(afford?'linear-gradient(135deg,#1a56db,#00d4ff)':'rgba(255,255,255,0.05)')+';border:none;border-radius:9px;color:'+(afford?'#fff':'#5580a0')+';font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:'+(afford?'pointer':'not-allowed')+';">Ulepsz za $'+cost.toLocaleString()+'</button>'
-        :'<div style="padding:9px;text-align:center;font-size:12px;color:#00e676;font-weight:700;background:rgba(0,230,118,0.06);border-radius:9px;">&#10003; Maks. poziom</div>'
-      )
-      +'</div>';
-  }
+  // ── TERMINAL ──────────────────────────────────────────────
+  +buildCard({
+    icon:'&#127963;', label:'Terminal', sublabel:'LVL '+u.terminal,
+    desc:'Przepustowość: <b style="color:#e0f0ff">'+(u.terminal*1000)+' pax/2h</b> &nbsp;→&nbsp; '+(u.terminal+1)*1000+' po ulepszeniu',
+    cost:'$'+(getTerminalCost(u.terminal)).toLocaleString(), costRaw:getTerminalCost(u.terminal),
+    key:'terminal', afford:G.cash>=getTerminalCost(u.terminal),
+    maxed:false, accentColor:'#00d4ff'
+  })
 
-  body.innerHTML =
-    // Header - info o lotnisku
-    '<div style="background:linear-gradient(135deg,rgba(0,212,255,0.08),rgba(26,86,219,0.08));border:1px solid rgba(0,212,255,0.2);border-radius:14px;padding:14px;margin-bottom:12px;">'
-    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'
-    +'<div style="font-size:28px;">&#9992;</div>'
-    +'<div>'
-    +'<div style="font-size:15px;font-weight:700;color:#e0f0ff;">'+ap.city+'</div>'
-    +'<div style="font-size:11px;color:#5580a0;">'+ap.icao+' &bull; '+ap.country+'</div>'
+  // ── HANGAR ────────────────────────────────────────────────
+  +buildCard({
+    icon:'&#128295;', label:'Hangar', sublabel:'LVL '+u.hangar,
+    desc:'Miejsca: <b style="color:#e0f0ff">'+hangarCap+' samolotów</b> &nbsp;→&nbsp; '+(hangarCap+5)+' po ulepszeniu',
+    extra:'<div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:10px;color:#5580a0;margin-bottom:4px;"><span>Flota</span><span style="color:'+(fleetUsed>=hangarCap?'#e63946':'#00e676')+';font-weight:700;">'+fleetUsed+'/'+hangarCap+'</span></div>'
+      +'<div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;">'
+      +'<div style="height:100%;width:'+Math.min(100,Math.round(fleetUsed/hangarCap*100))+'%;background:'+(fleetUsed>=hangarCap?'#e63946':'linear-gradient(90deg,#00d4ff,#1a56db)')+';border-radius:2px;"></div>'
+      +'</div></div>',
+    cost:'$'+((u.hangar*200000)).toLocaleString(), costRaw:u.hangar*200000,
+    key:'hangar', afford:G.cash>=u.hangar*200000,
+    maxed:false, accentColor:'#a78bfa'
+  })
+
+  // ── PASY STARTOWE ─────────────────────────────────────────
+  +(u.runways<5
+    ?buildCard({
+      icon:'&#128747;', label:'Pas startowy', sublabel:u.runways+'/5',
+      desc:'Więcej pasów = więcej równoczesnych startów',
+      cost:'$'+([0,500000,1500000,4000000,10000000][u.runways]||0).toLocaleString(),
+      costRaw:[0,500000,1500000,4000000,10000000][u.runways]||0,
+      key:'runways', afford:G.cash>=([0,500000,1500000,4000000,10000000][u.runways]||0),
+      maxed:false, accentColor:'#a78bfa'
+    })
+    :'<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;">'
+    +'<div style="width:40px;height:40px;border-radius:10px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;">&#128747;</div>'
+    +'<div><div style="font-size:13px;font-weight:700;color:#e0f0ff;">Pas startowy <span style="color:#00e676;font-size:10px;">MAX</span></div><div style="font-size:11px;color:#5580a0;margin-top:2px;">5/5 pasów — pełna przepustowość startów</div></div>'
     +'</div>'
-    +'<div style="margin-left:auto;text-align:right;">'
-    +'<div style="font-size:12px;color:'+(incomePerHour>0?'#00e676':'#5580a0')+';font-weight:700;">'+(incomePerHour>0?'$'+incomePerHour.toLocaleString()+'/h':'Brak dochodu')+'</div>'
-    +'<div style="font-size:10px;color:#5580a0;">dochod pasywny</div>'
-    +'</div></div>'
-    +'<div style="display:flex;justify-content:space-between;font-size:11px;color:#5580a0;margin-bottom:3px;">'
-    +'<span>Zarobiono lacznie:</span><span style="color:#f5a623;font-weight:700;">$'+Math.round(ap.income||0).toLocaleString()+'</span>'
-    +'</div>'
-    +'</div>'
+  )
 
-    // Terminal capacity panel
-    +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:12px;">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
-    +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">&#127963; Przepustowosc terminala</div>'
-    +'<div style="font-size:11px;font-weight:700;color:'+barColor+';">'+used+' / '+cap+' pax</div>'
-    +'</div>'
-    +'<div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;margin-bottom:8px;">'
-    +'<div style="height:100%;width:'+pct+'%;background:'+barColor+';border-radius:3px;transition:width 0.3s;"></div>'
-    +'</div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;">'
-    +'<div style="font-size:11px;color:#5580a0;">Okno czasowe: 2 godziny</div>'
-    +(resetMs>0
-      ?'<div style="font-size:11px;font-weight:700;color:#f5a623;" id="terminal-timer">Reset za: '+formatTimer(resetMs)+'</div>'
-      :'<div style="font-size:11px;color:#00e676;">&#10003; Wolny limit</div>'
+  // ── SKLEPY (PKT) ──────────────────────────────────────────
+  +'<div style="font-size:9px;font-weight:700;color:#5580a0;letter-spacing:3px;margin:14px 0 8px;padding-left:2px;">DOCHÓD PASYWNY</div>'
+  +'<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(245,166,35,0.2);border-radius:14px;padding:14px;margin-bottom:8px;">'
+  +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">'
+  +'<div style="width:44px;height:44px;border-radius:12px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">&#128722;</div>'
+  +'<div style="flex:1;">'
+  +'<div style="display:flex;align-items:center;gap:8px;">'
+  +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">Sklepy lotniskowe</div>'
+  +'<div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(245,166,35,0.15);color:#f5a623;">LVL '+(u.shops||0)+'/10</div>'
+  +'</div>'
+  +'<div style="font-size:11px;color:#5580a0;margin-top:2px;">'
+  +(u.shops>0
+    ?'Dochód: <b style="color:#00e676">$'+shopIncome.toLocaleString()+'/h</b>'
+    +'&nbsp;•&nbsp;Następny LVL: $'+((u.shops+1)*1000)+'/h'
+    :'Brak — ulepsz aby generować dochód co godzinę'
+  )
+  +'</div></div></div>'
+  // Shop payout timer
+  +(u.shops>0
+    ?'<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">'
+    +'<div style="font-size:11px;color:#5580a0;">Następna wypłata</div>'
+    +(nextPayout>0
+      ?'<div style="font-size:13px;font-weight:900;color:#f5a623;" id="shop-timer">'+formatTimer(nextPayout)+'</div>'
+      :'<div style="font-size:12px;font-weight:700;color:#00e676;" id="shop-timer">&#10003; Gotowe!</div>'
     )
     +'</div>'
-    +(pct>=100?'<div style="margin-top:8px;padding:8px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;font-size:11px;color:#e63946;text-align:center;">&#9888; Terminal pelny! Ulepsz aby wyslac wiecej samolotow.</div>':'')
-    +'</div>'
+    :''
+  )
+  // Progress bar shops
+  +'<div style="margin-bottom:10px;">'
+  +'<div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;">'
+  +'<div style="height:100%;width:'+Math.round((u.shops||0)/10*100)+'%;background:linear-gradient(90deg,#f5a623,#ffd700);border-radius:2px;"></div>'
+  +'</div></div>'
+  +(u.shops<10
+    ?'<button onclick="upgradeShops()" style="width:100%;padding:10px;background:'
+    +((G.points||0)>=1000?'linear-gradient(135deg,#b8860b,#f5a623)':'rgba(255,255,255,0.04)')
+    +';border:none;border-radius:10px;color:'
+    +((G.points||0)>=1000?'#fff':'#5580a0')
+    +';font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:'
+    +((G.points||0)>=1000?'pointer':'not-allowed')
+    +';">&#11088; Ulepsz za 1000 PKT &nbsp;<span style="opacity:0.7;">(masz '+(G.points||0)+')</span></button>'
+    :'<div style="padding:10px;text-align:center;font-size:12px;color:#f5a623;font-weight:700;background:rgba(245,166,35,0.06);border-radius:10px;">&#10003; Maks. poziom sklepów (LVL 10)</div>'
+  )
+  +'</div>';
 
-    +'<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.07);">ULEPSZENIA</div>'
-
-    + upgradeCard('terminal','&#127963;','Terminal','Przepustowosc: '+(u.terminal*1000)+' pax/2h | Kolejny LVL: '+((u.terminal+1)*1000)+' pax/2h',
-        300000*u.terminal, u.terminal, 9999)
-
-    + upgradeCard('runways','&#128747;','Pas startowy','Wiecej pasow = wiecej startow naraz',
-        [0,500000,1500000,4000000,10000000][u.runways]||0, u.runways, 5)
-
-    + upgradeCardHangar('hangar','&#128295;','Hangar',
-        'Miejsca: '+(10+(u.hangar-1)*5)+' samolotow &bull; Kolejny LVL: '+(10+u.hangar*5)+' miejsc',
-        [200000,400000,700000,1100000,1600000,2200000,3000000,4000000,5200000,6600000][u.hangar-1]||200000*u.hangar, u.hangar)
-
-    + (function(){
-        var nextPayout = G.lastShopPayout ? Math.max(0, G.lastShopPayout + 3600000 - Date.now()) : 0;
-        var timerStr = nextPayout > 0 ? ' &bull; Wyplata za: '+formatTimer(nextPayout) : (u.shops>0?' &bull; <span style="color:#00e676;">Wyplata gotowa!</span>':'');
-        return upgradeCardPkt('shops','&#128722;','Sklepy lotniskowe',
-          'Dochod: '+(u.shops*1000)+' zł/h'+timerStr+' &bull; Kolejny LVL: '+((u.shops+1)*1000)+' zł/h',
-          1000, u.shops, 10);
-      })()
-
-    + upgradeCard('parking','&#128664;','Parking','Dodatkowy dochod pasywny',
-        [0,150000,450000,1200000,3000000][u.parking+1]||0, u.parking, 4);
-
-  // Start timer update if needed
-  if(resetMs > 0) {
-    clearInterval(window._termTimer);
-    window._termTimer = setInterval(function(){
-      var el = document.getElementById('terminal-timer');
-      if(!el) { clearInterval(window._termTimer); return; }
-      var ms = getTerminalResetTime();
-      if(ms <= 0) {
-        clearInterval(window._termTimer);
-        var b = document.getElementById('panel-body');
-        if(b && _activeTab==='lotnisko') renderLotnisko(b);
-      } else {
-        el.textContent = 'Reset za: '+formatTimer(ms);
-      }
-    }, 1000);
+  // Start timers
+  clearInterval(window._termTimer);
+  clearInterval(window._shopTimer);
+  if(resetMs>0) {
+    window._termTimer=setInterval(function(){
+      var el=document.getElementById('terminal-timer');
+      if(!el){clearInterval(window._termTimer);return;}
+      var ms=getTerminalResetTime();
+      if(ms<=0){clearInterval(window._termTimer);var b=document.getElementById('panel-body');if(b&&_activeTab==='lotnisko')renderLotnisko(b);}
+      else el.innerHTML='&#8987; '+formatTimer(ms);
+    },1000);
+  }
+  if(u.shops>0) {
+    window._shopTimer=setInterval(function(){
+      var el=document.getElementById('shop-timer');
+      if(!el){clearInterval(window._shopTimer);return;}
+      var ms=G.lastShopPayout?Math.max(0,G.lastShopPayout+3600000-Date.now()):0;
+      if(ms<=0) el.innerHTML='&#10003; Gotowe!';
+      else el.textContent=formatTimer(ms);
+    },1000);
   }
 }
 
+function buildCard(o) {
+  var icon=o.icon,label=o.label,sublabel=o.sublabel,desc=o.desc,extra=o.extra||'',cost=o.cost,key=o.key,afford=o.afford,accentColor=o.accentColor||'#00d4ff';
+  return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;margin-bottom:8px;">'
+    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">'
+    +'<div style="width:44px;height:44px;border-radius:12px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">'+icon+'</div>'
+    +'<div style="flex:1;">'
+    +'<div style="display:flex;align-items:center;gap:8px;">'
+    +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+label+'</div>'
+    +'<div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,0.07);color:'+accentColor+';">'+sublabel+'</div>'
+    +'</div>'
+    +'<div style="font-size:11px;color:#5580a0;margin-top:2px;">'+desc+'</div>'
+    +'</div></div>'
+    +extra
+    +'<button data-key="'+key+'" onclick="upgradeAirport(this.dataset.key)" '
+    +'style="width:100%;padding:10px;background:'+(afford?'linear-gradient(135deg,#1a56db,'+accentColor+')':'rgba(255,255,255,0.04)')+';'
+    +'border:none;border-radius:10px;color:'+(afford?'#fff':'#5580a0')+';font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:'+(afford?'pointer':'not-allowed')+';">'
+    +(afford?'':'&#128274; ')+'Ulepsz za '+cost
+    +'</button>'
+    +'</div>';
+}
+
+function upgradeShops() {
+  var ap=G.homeAirport;
+  if(!ap||!ap.upgrades) return;
+  var lvl=ap.upgrades.shops||0;
+  if(lvl>=10){showMsg('Maks. poziom sklepów!');return;}
+  if((G.points||0)<1000){showMsg('Za mało PKT! Potrzebujesz 1000 PKT');return;}
+  G.points=(G.points||0)-1000;
+  ap.upgrades.shops=lvl+1;
+  if(!G.lastShopPayout) G.lastShopPayout=Date.now();
+  save(); updateHUD();
+  showMsg('Sklepy LVL '+(lvl+1)+'! Dochód: $'+((lvl+1)*1000)+'/h');
+  var body=document.getElementById('panel-body');
+  if(body) renderLotnisko(body);
+}
+
 function upgradeAirport(key) {
-  var ap = G.homeAirport;
+  var ap=G.homeAirport;
   if(!ap) return;
-  if(!ap.upgrades) ap.upgrades = {runways:1, terminal:1, hangar:1, shops:0, parking:0};
-  if(!ap.income) ap.income = 0;
-  var u = ap.upgrades;
+  if(!ap.upgrades) ap.upgrades={runways:1,terminal:1,hangar:1,shops:0};
+  var u=ap.upgrades;
+  var lvl=u[key]||0;
 
-  var costs = {
-    runways: [0,500000,1500000,4000000,10000000],
-    hangar:  [0,200000,600000,1500000,4000000],
-    parking: [0,150000,450000,1200000,3000000]
-  };
-  var maxLevels = {runways:5, hangar:5, shops:4, parking:4};
-
-  var lvl = u[key]||0;
-
-  if(key === 'terminal') {
-    var cost = getTerminalCost(lvl);
-    if(G.cash < cost) { showMsg('Za malo gotowki! Potrzebujesz $'+cost.toLocaleString()); return; }
-    G.cash -= cost;
-    u.terminal = lvl + 1;
+  if(key==='terminal') {
+    var cost=getTerminalCost(lvl);
+    if(G.cash<cost){showMsg('Za mało gotówki! $'+cost.toLocaleString());return;}
+    G.cash-=cost; u.terminal=lvl+1;
     save(); updateHUD();
-    showMsg('Terminal ulepszony do LVL '+u.terminal+'! Przepustowosc: '+(u.terminal*1000)+' pax/2h');
-  } else {
-    var maxLvl = maxLevels[key]||5;
-    if(lvl >= maxLvl) { showMsg('Maks. poziom!'); return; }
-    var cost2 = (costs[key]||[])[lvl+1]||0;
-    if(G.cash < cost2) { showMsg('Za malo gotowki!'); return; }
-    G.cash -= cost2;
-    u[key] = lvl + 1;
+    showMsg('Terminal LVL '+u.terminal+'! Przepustowość: '+(u.terminal*1000)+' pax/2h');
+  } else if(key==='hangar') {
+    var hcost=lvl*200000;
+    if(G.cash<hcost){showMsg('Za mało gotówki!');return;}
+    G.cash-=hcost; u.hangar=lvl+1;
     save(); updateHUD();
-    showMsg('Ulepszono do LVL '+(lvl+1)+'!');
+    showMsg('Hangar LVL '+u.hangar+'! Miejsca: '+getHangarCapacity());
+  } else if(key==='runways') {
+    var rcosts=[0,500000,1500000,4000000,10000000];
+    if(lvl>=5){showMsg('Maks. poziom!');return;}
+    var rcost=rcosts[lvl]||0;
+    if(G.cash<rcost){showMsg('Za mało gotówki!');return;}
+    G.cash-=rcost; u.runways=lvl+1;
+    save(); updateHUD();
+    showMsg('Pas startowy LVL '+u.runways+'!');
   }
-
-  var body = document.getElementById('panel-body');
+  var body=document.getElementById('panel-body');
   if(body) renderLotnisko(body);
 }
 
 function tickAirportIncome() {
-  var ap = G.homeAirport;
-  if(!ap || !ap.upgrades) return;
-  var u = ap.upgrades;
-  // Shops: 1000 zł/h per level = 1000/3600 per second
-  // Tylko sklepy i parking generuja pasywny dochod
-  var shopsPerSec = (u.shops||0) * 1000 / 3600;
-  var parkingPerSec = (u.parking||0) * 500 / 3600;
-  var perTick = shopsPerSec + parkingPerSec;
-  G.cash += perTick;
-  if(!ap.income) ap.income = 0;
-  ap.income += perTick;
+  var ap=G.homeAirport;
+  if(!ap||!ap.upgrades||!ap.upgrades.shops) return;
+  var now=Date.now();
+  if(!G.lastShopPayout) G.lastShopPayout=now;
+  if(now-G.lastShopPayout>=3600000) {
+    var payout=ap.upgrades.shops*1000;
+    G.cash+=payout;
+    if(!ap.income) ap.income=0;
+    ap.income+=payout;
+    G.lastShopPayout=now;
+    save();
+    showMsg('&#128722; Sklepy wypłaciły $'+payout.toLocaleString()+'!');
+    if(typeof _activeTab!=='undefined'&&_activeTab==='lotnisko'){
+      var body=document.getElementById('panel-body');
+      if(body) renderLotnisko(body);
+    }
+  }
 }
