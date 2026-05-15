@@ -110,7 +110,7 @@ function onApClick(ap) {
   var sc=hasSlot?'#00e676':'#666';
   var st=isHome?'Twoja baza':hasSlot?'Masz slot':'Brak slotu';
   var btn='';
-  if(isHome) btn='<button onclick="upgradeHome()" style="'+BS('#f5a623')+'">Ulepsz baze</button>';
+  if(isHome) btn=''; // Ulepszenia tylko w zakładce Lotnisko
   else if(hasSlot) btn='<button onclick="doAddRouteFromMap(this)" data-icao="'+ap.icao+'" style="'+BS('#00e676')+'">+ Otworz trase</button>';
   else btn='<div style="font-size:12px;color:#555;margin-top:8px;">Kup slot w Sklepie</div>';
   document.getElementById('modal-body').innerHTML=
