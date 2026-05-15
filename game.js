@@ -18,6 +18,11 @@ var FLIGHT_LAYERS={}, TICK_INTERVAL=null;
 function save() {
   // Zapisz do chmury Firebase
   if(typeof saveToCloud === 'function') saveToCloud();
+  // Aktualizuj ranking co 5 zapisów
+  if(typeof updateRankingValue === 'function') {
+    window._saveCount = (window._saveCount||0) + 1;
+    if(window._saveCount % 5 === 0) updateRankingValue();
+  }
   try {
     var sv={cash:G.cash,airports:G.airports,routes:G.routes,slots:G.slots,departurelog:G.departurelog||[],lastShopPayout:G.lastShopPayout||0,
       homeAirport:G.homeAirport,fleet:G.fleet,airline:G.airline,
