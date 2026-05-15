@@ -1417,3 +1417,92 @@ function doSetupFinish(c, airlineName, airlineCode) {
     showMsg('Baza w '+c.name+' gotowa!');
   }, 50);
 }
+
+
+function showStarterPlaneScreen() {
+  var el = document.createElement('div');
+  el.id = 'starterScreen';
+  el.style.cssText = 'position:fixed;inset:0;z-index:500;background:#060d1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;font-family:Arial,sans-serif;overflow-y:auto;';
+
+  var planes = [
+    {model:'737-800', seats:189, range:5435, desc:'Popularny i niezawodny narrowbody. Idealne do tras europejskich.'},
+    {model:'A320 Neo', seats:194, range:6300, desc:'Nowoczesny i ekonomiczny. Świetna wydajność paliwowa.'}
+  ];
+
+  var html = '<div style="text-align:center;margin-bottom:28px;">'
+    +'<div style="font-size:11px;color:rgba(0,212,255,0.6);letter-spacing:4px;margin-bottom:8px;">WITAJ W</div>'
+    +'<div style="font-size:28px;font-weight:900;color:#fff;">'+G.airline.name+'</div>'
+    +'<div style="font-size:13px;color:#5580a0;margin-top:6px;">Wybierz swój pierwszy samolot</div>'
+    +'</div>';
+
+  planes.forEach(function(p, i) {
+    html += '<div onclick="pickStarterPlane('+i+')" id="starter-'+i+'" '
+      +'style="width:100%;max-width:400px;background:rgba(255,255,255,0.04);border:1px solid rgba(0,212,255,0.15);'
+      +'border-radius:16px;padding:18px;margin-bottom:12px;cursor:pointer;transition:all 0.2s;">'
+      +'<div style="display:flex;align-items:center;gap:14px;">'
+      +'<div style="width:48px;height:48px;border-radius:12px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);'
+      +'display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">&#9992;</div>'
+      +'<div style="flex:1;">'
+      +'<div style="font-size:16px;font-weight:800;color:#e0f0ff;">'+p.model+'</div>'
+      +'<div style="font-size:11px;color:#5580a0;margin-top:3px;">'+p.seats+' miejsc &bull; Zasięg: '+p.range.toLocaleString()+' km</div>'
+      +'<div style="font-size:11px;color:#5580a0;margin-top:2px;">'+p.desc+'</div>'
+      +'</div>'
+      +'<div id="check-'+i+'" style="width:24px;height:24px;border-radius:50%;border:2px solid rgba(0,212,255,0.3);flex-shrink:0;"></div>'
+      +'</div></div>';
+  });
+
+  html += '<button id="starter-btn" onclick="confirmStarterPlane()" disabled '
+    +'style="width:100%;max-width:400px;padding:14px;background:linear-gradient(135deg,#1a56db,#00d4ff);'
+    +'border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;'
+    +'font-family:Arial,sans-serif;cursor:not-allowed;opacity:0.4;margin-top:8px;">Rozpocznij grę &#9992;</button>';
+
+  el.innerHTML = html;
+  document.body.appendChild(el);
+  window._starterPicked = null;
+  window._starterPlanes = planes;
+}
+
+function pickStarterPlane(i) {
+  window._starterPicked = i;
+  var planes = window._starterPlanes;
+  planes.forEach(function(p, j) {
+    var card = document.getElementById('starter-'+j);
+    var check = document.getElementById('check-'+j);
+    if(card) card.style.border = j===i ? '2px solid #00d4ff' : '1px solid rgba(0,212,255,0.15)';
+    if(card) card.style.background = j===i ? 'rgba(0,212,255,0.08)' : 'rgba(255,255,255,0.04)';
+    if(check) {
+      check.style.background = j===i ? '#00d4ff' : 'transparent';
+      check.style.border = j===i ? '2px solid #00d4ff' : '2px solid rgba(0,212,255,0.3)';
+      check.innerHTML = j===i ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : '';
+    }
+  });
+  var btn = document.getElementById('starter-btn');
+  if(btn) { btn.disabled=false; btn.style.opacity='1'; btn.style.cursor='pointer'; }
+}
+
+function confirmStarterPlane() {
+  var i = window._starterPicked;
+  if(i === null || i === undefined) return;
+  var p = window._starterPlanes[i];
+
+  // Dodaj samolot do floty
+  var ac = {
+    id: 'AC_' + Date.now(),
+    model: p.model,
+    seats: p.seats,
+    range: p.range,
+    reg: G.airline.iata + '-001',
+    status: 'ground',
+    routeId: null,
+    config: {eco: p.seats, biz: 0, total: p.seats}
+  };
+  G.fleet.push(ac);
+  save();
+
+  // Usuń ekran
+  var el = document.getElementById('starterScreen');
+  if(el) document.body.removeChild(el);
+
+  startGame();
+  showMsg('Witaj! Twój '+p.model+' czeka na pierwszą trasę!');
+}
