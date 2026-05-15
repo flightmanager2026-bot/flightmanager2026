@@ -153,10 +153,17 @@ function showAuthError(msg) {
   if(el) { el.textContent = msg; el.style.display = 'block'; }
 }
 
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 function doLogin() {
   var email = document.getElementById('auth-email').value.trim();
   var pass = document.getElementById('auth-pass').value;
-  if(!email || !pass) { showAuthError('Wpisz email i hasło'); return; }
+  if(!email) { showAuthError('Wpisz adres email'); return; }
+  if(!isValidEmail(email)) { showAuthError('Nieprawidłowy format emaila (np. jan@gmail.com)'); return; }
+  if(!pass) { showAuthError('Wpisz hasło'); return; }
+  if(pass.length < 6) { showAuthError('Hasło musi mieć min. 6 znaków'); return; }
   _fbAuth.signInWithEmailAndPassword(email, pass)
     .then(function(result) { onAuthSuccess(result.user, false); })
     .catch(function(e) { showAuthError(getAuthError(e.code)); });
@@ -166,9 +173,12 @@ function doRegister() {
   var email = document.getElementById('reg-email').value.trim();
   var pass = document.getElementById('reg-pass').value;
   var pass2 = document.getElementById('reg-pass2').value;
-  if(!email || !pass) { showAuthError('Wpisz email i hasło'); return; }
-  if(pass !== pass2) { showAuthError('Hasła nie są identyczne'); return; }
+  if(!email) { showAuthError('Wpisz adres email'); return; }
+  if(!isValidEmail(email)) { showAuthError('Nieprawidłowy format emaila (np. jan@gmail.com)'); return; }
+  if(!pass) { showAuthError('Wpisz hasło'); return; }
   if(pass.length < 6) { showAuthError('Hasło musi mieć min. 6 znaków'); return; }
+  if(pass !== pass2) { showAuthError('Hasła nie są identyczne'); return; }
+  if(!/[A-Z]/.test(pass) && !/[0-9]/.test(pass)) { showAuthError('Hasło powinno zawierać wielką literę lub cyfrę'); return; }
   _fbAuth.createUserWithEmailAndPassword(email, pass)
     .then(function(result) { onAuthSuccess(result.user, true); })
     .catch(function(e) { showAuthError(getAuthError(e.code)); });
