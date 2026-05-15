@@ -132,9 +132,31 @@ function logoutPlayer() {
 
 function confirmReset() {
   if(confirm('Na pewno chcesz zresetowac postepy? Tego nie mozna cofnac!')) {
+    // Wyczysc lokalne dane
     localStorage.removeItem('sb_v3');
     localStorage.removeItem('fm_player');
-    location.reload();
+    // Wyczysc dane Firebase
+    if(typeof _fbDb !== 'undefined' && _fbDb && typeof _currentUser !== 'undefined' && _currentUser) {
+      _fbDb.collection('players').doc(_currentUser.uid).delete().then(function(){
+        // Reset stanu gry
+        G.cash=500000; G.fleet=[]; G.routes=[]; G.slots=[]; G.airports=[];
+        G.homeAirport=null; G.points=0; G.level=1; G.totalFlights=0;
+        G.departurelog=[]; G.lastShopPayout=0;
+        G.airline={name:'',iata:'',color:'#00d4ff'};
+        // Zamknij modal i pokaz setup
+        document.getElementById('modal').style.display='none';
+        // Usun mape jesli jest
+        if(typeof LMAP !== 'undefined' && LMAP) { LMAP.remove(); window.LMAP=null; }
+        showSetupScreen();
+      }).catch(function(){ location.reload(); });
+    } else {
+      G.cash=500000; G.fleet=[]; G.routes=[]; G.slots=[]; G.airports=[];
+      G.homeAirport=null; G.points=0; G.level=1; G.totalFlights=0;
+      G.airline={name:'',iata:'',color:'#00d4ff'};
+      document.getElementById('modal').style.display='none';
+      if(typeof LMAP !== 'undefined' && LMAP) { LMAP.remove(); window.LMAP=null; }
+      showSetupScreen();
+    }
   }
 }
 
