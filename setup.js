@@ -1304,17 +1304,33 @@ function setupPick(j) {
 
 function setupGo() {
   var c=_setupPicked; if(!c) return;
+  var airlineNameEl = document.getElementById('setup-airline-name');
+  var airlineCodeEl = document.getElementById('setup-airline-code');
+  var airlineName = airlineNameEl ? airlineNameEl.value.trim() : '';
+  var airlineCode = airlineCodeEl ? airlineCodeEl.value.trim().toUpperCase() : '';
+  if(!airlineName) {
+    airlineNameEl.style.border='1px solid #e63946';
+    airlineNameEl.placeholder='Wpisz nazwe linii!';
+    return;
+  }
+  if(!airlineCode || airlineCode.length < 2) {
+    airlineCodeEl.style.border='1px solid #e63946';
+    airlineCodeEl.placeholder='Min. 2 litery!';
+    return;
+  }
   var cleanName = c.name.replace(/[^a-zA-Z]/g,'').toUpperCase().substring(0,2);
   var prefix = _setupCountry==='Polska'?'EP':_setupCountry==='Niemcy'?'ED':_setupCountry==='Francja'?'LF':_setupCountry==='UK'?'EG':'ZZ';
   var icao = prefix+cleanName;
   var ap={id:'AP_HOME',name:'Port Lotniczy '+c.name,icao:icao,city:c.name,country:_setupCountry||'Polska',lat:c.lat,lng:c.lng,isHome:true,level:1,maxSlots:10,usedSlots:0,upgrades:{runways:1,terminal:1,hangar:1,shops:0,parking:0},income:0};
   G.airports.push(ap); G.homeAirport=ap;
-  var airlineName = (document.getElementById('setup-airline-name') && document.getElementById('setup-airline-name').value.trim()) || 'My Airlines';
-  var airlineCode = (document.getElementById('setup-airline-code') && document.getElementById('setup-airline-code').value.trim().toUpperCase()) || 'MA';
-  if(!airlineCode || airlineCode.length < 2) airlineCode = 'MA';
   G.airline.name = airlineName;
   G.airline.iata = airlineCode;
+  // Zapisz lokalnie
   save();
+  // Wymuś natychmiastowy zapis do Firebase
+  if(typeof saveToCloud === 'function') {
+    setTimeout(function(){ saveToCloud(); }, 500);
+  }
   var _ss=document.getElementById('setupScreen');
   if(_ss) document.body.removeChild(_ss);
   initMap();
