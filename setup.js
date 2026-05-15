@@ -1408,14 +1408,9 @@ function doSetupFinish(c, airlineName, airlineCode) {
   }
   var _ss=document.getElementById('setupScreen');
   if(_ss) document.body.removeChild(_ss);
-  initMap();
-  setTimeout(function(){
-    LMAP.invalidateSize({animate:false});
-    LMAP.setView([c.lat,c.lng],7);
-    renderMarkers(); renderRoutes();
-    restoreFlights(); startTick(); updateHUD();
-    showMsg('Baza w '+c.name+' gotowa!');
-  }, 50);
+
+  // Pokaz wybor samolotu startowego
+  showStarterPlaneScreen();
 }
 
 
@@ -1503,6 +1498,13 @@ function confirmStarterPlane() {
   var el = document.getElementById('starterScreen');
   if(el) document.body.removeChild(el);
 
-  startGame();
-  showMsg('Witaj! Twój '+p.model+' czeka na pierwszą trasę!');
+  // Inicjuj mape i startuj gre
+  initMap();
+  setTimeout(function(){
+    LMAP.invalidateSize({animate:false});
+    LMAP.setView([G.homeAirport.lat, G.homeAirport.lng], 6);
+    renderMarkers(); renderRoutes();
+    restoreFlights(); startTick(); updateHUD();
+    showMsg('Witaj! Twój '+p.model+' czeka na pierwszą trasę! ✈');
+  }, 50);
 }
