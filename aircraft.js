@@ -1,17 +1,93 @@
-var AC_DEFS={
-  'Boeing 737-800':{rows:26,bizRowSeats:6,ecoRowSeats:6,bizRowCost:2,maxBizRows:13},
-  'Airbus A320neo':{rows:28,bizRowSeats:6,ecoRowSeats:6,bizRowCost:2,maxBizRows:14},
-  'Airbus A321neo':{rows:36,bizRowSeats:6,ecoRowSeats:6,bizRowCost:2,maxBizRows:18},
-  'ATR-72':{rows:18,bizRowSeats:4,ecoRowSeats:4,bizRowCost:2,maxBizRows:9},
-  'Boeing 787-9':{rows:36,bizRowSeats:6,ecoRowSeats:9,bizRowCost:2,maxBizRows:18}
+var AIRCRAFT_CATALOG = {
+  'Airbus': [
+    {model:'A220-100', seats:135, range:6390, price:89000000, img:'', level:1},
+    {model:'A220-300', seats:160, range:6297, price:104000000, img:'', level:2},
+    {model:'A220-500', seats:180, range:6100, price:125000000, img:'', level:3},
+    {model:'A318', seats:136, range:5750, price:77000000, img:'', level:1},
+    {model:'A319', seats:156, range:6950, price:92000000, img:'', level:2},
+    {model:'A319 Neo', seats:160, range:6850, price:101000000, img:'', level:2},
+    {model:'A320', seats:186, range:6100, price:101000000, img:'', level:2},
+    {model:'A320 Neo', seats:194, range:6300, price:110000000, img:'', level:3},
+    {model:'A321', seats:220, range:5930, price:118000000, img:'', level:3},
+    {model:'A321 Neo', seats:244, range:7400, price:130000000, img:'', level:4},
+    {model:'A300', seats:345, range:7500, price:145000000, img:'', level:5},
+    {model:'A310', seats:280, range:9540, price:135000000, img:'', level:5},
+    {model:'A330-200', seats:406, range:13450, price:238000000, img:'', level:6},
+    {model:'A330-300', seats:440, range:11750, price:264000000, img:'', level:6},
+    {model:'A340-200', seats:420, range:12400, price:250000000, img:'', level:7},
+    {model:'A340-300', seats:440, range:13500, price:270000000, img:'', level:7},
+    {model:'A340-500', seats:440, range:16670, price:290000000, img:'', level:8},
+    {model:'A340-600', seats:475, range:14450, price:310000000, img:'', level:8},
+    {model:'A350-800', seats:375, range:15400, price:305000000, img:'', level:8},
+    {model:'A350-900', seats:440, range:15000, price:318000000, img:'', level:9},
+    {model:'A350-1000', seats:480, range:16100, price:366000000, img:'', level:9},
+    {model:'A380-800', seats:835, range:15200, price:445000000, img:'', level:10},
+  ],
+  'Boeing': [
+    {model:'717-200', seats:134, range:3820, price:72000000, img:'', level:1},
+    {model:'727-100', seats:131, range:4300, price:65000000, img:'', level:1},
+    {model:'727-200', seats:189, range:4450, price:78000000, img:'', level:2},
+    {model:'737-100', seats:115, range:2850, price:55000000, img:'', level:1},
+    {model:'737-200', seats:130, range:4260, price:62000000, img:'', level:1},
+    {model:'737-300', seats:149, range:4175, price:68000000, img:'', level:1},
+    {model:'737-400', seats:188, range:3850, price:75000000, img:'', level:2},
+    {model:'737-500', seats:132, range:4440, price:65000000, img:'', level:1},
+    {model:'737-600', seats:149, range:5640, price:72000000, img:'', level:2},
+    {model:'737-700', seats:149, range:6010, price:80000000, img:'', level:2},
+    {model:'737-800', seats:189, range:5435, price:96000000, img:'', level:2},
+    {model:'737-900', seats:189, range:5080, price:99000000, img:'', level:2},
+    {model:'737-900ER', seats:220, range:5460, price:105000000, img:'', level:3},
+    {model:'737 MAX 7', seats:172, range:7040, price:99000000, img:'', level:3},
+    {model:'737 MAX 8', seats:189, range:6480, price:121000000, img:'', level:3},
+    {model:'737 MAX 8-200', seats:200, range:6480, price:128000000, img:'', level:3},
+    {model:'737 MAX 9', seats:220, range:6020, price:134000000, img:'', level:4},
+    {model:'737 MAX 10', seats:230, range:5740, price:140000000, img:'', level:4},
+    {model:'707-120', seats:174, range:6820, price:60000000, img:'', level:2},
+    {model:'707-320', seats:189, range:9300, price:72000000, img:'', level:3},
+    {model:'720', seats:149, range:7040, price:58000000, img:'', level:2},
+    {model:'747SP', seats:400, range:12325, price:220000000, img:'', level:6},
+    {model:'747-100', seats:452, range:8560, price:230000000, img:'', level:6},
+    {model:'747-200', seats:490, range:12150, price:255000000, img:'', level:7},
+    {model:'747-300', seats:565, range:12400, price:280000000, img:'', level:7},
+    {model:'747-400', seats:660, range:13450, price:320000000, img:'', level:8},
+    {model:'747-8', seats:605, range:14320, price:368000000, img:'', level:9},
+    {model:'757-200', seats:239, range:7222, price:150000000, img:'', level:4},
+    {model:'757-300', seats:295, range:6287, price:170000000, img:'', level:5},
+    {model:'767-200', seats:290, range:7300, price:165000000, img:'', level:5},
+    {model:'767-200ER', seats:290, range:12200, price:180000000, img:'', level:5},
+    {model:'767-300', seats:350, range:7300, price:195000000, img:'', level:5},
+    {model:'767-300ER', seats:351, range:11070, price:210000000, img:'', level:6},
+    {model:'767-400ER', seats:375, range:10415, price:225000000, img:'', level:6},
+    {model:'777-200', seats:440, range:9700, price:260000000, img:'', level:7},
+    {model:'777-200ER', seats:440, range:13080, price:285000000, img:'', level:7},
+    {model:'777-200LR', seats:440, range:15843, price:320000000, img:'', level:8},
+    {model:'777-300', seats:550, range:11165, price:320000000, img:'', level:8},
+    {model:'777-300ER', seats:550, range:13650, price:345000000, img:'', level:8},
+    {model:'777-8', seats:395, range:16170, price:375000000, img:'', level:9},
+    {model:'777-9', seats:426, range:13500, price:408000000, img:'', level:9},
+    {model:'787-8', seats:359, range:13530, price:248000000, img:'', level:6},
+    {model:'787-9', seats:420, range:14010, price:292000000, img:'', level:7},
+    {model:'787-10', seats:440, range:11730, price:338000000, img:'', level:8},
+  ]
 };
 
-function getAcSeats(ac) {
-  var def=AC_DEFS[ac.model];
-  if(!def) return {biz:0,eco:ac.seats||150,total:ac.seats||150};
-  var bizRows=ac.bizRows||0;
-  var ecoRows=def.rows-bizRows*def.bizRowCost;
-  var biz=bizRows*def.bizRowSeats;
-  var eco=Math.max(0,ecoRows)*def.ecoRowSeats;
-  return {biz:biz,eco:eco,total:biz+eco};
-}
+var AC_SPEEDS = {
+  'A220-100':871,'A220-300':871,'A220-500':871,
+  'A318':840,'A319':840,'A319 Neo':840,'A320':840,'A320 Neo':840,'A321':840,'A321 Neo':840,
+  'A300':875,'A310':875,
+  'A330-200':871,'A330-300':871,
+  'A340-200':880,'A340-300':880,'A340-500':880,'A340-600':880,
+  'A350-800':903,'A350-900':903,'A350-1000':903,
+  'A380-800':903,
+  '717-200':817,'727-100':873,'727-200':873,
+  '737-100':850,'737-200':850,'737-300':850,'737-400':850,'737-500':850,
+  '737-600':850,'737-700':850,'737-800':842,'737-900':842,'737-900ER':842,
+  '737 MAX 7':839,'737 MAX 8':839,'737 MAX 8-200':839,'737 MAX 9':839,'737 MAX 10':839,
+  '707-120':945,'707-320':945,'720':945,
+  '747SP':939,'747-100':939,'747-200':939,'747-300':939,'747-400':939,'747-8':988,
+  '757-200':870,'757-300':870,
+  '767-200':851,'767-200ER':851,'767-300':851,'767-300ER':851,'767-400ER':851,
+  '777-200':905,'777-200ER':905,'777-200LR':905,'777-300':905,'777-300ER':905,
+  '777-8':905,'777-9':905,
+  '787-8':903,'787-9':903,'787-10':903
+};
