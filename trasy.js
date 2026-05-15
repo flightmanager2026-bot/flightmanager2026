@@ -122,15 +122,28 @@ function departSingle(el) {
   // Kasa za odlot
   r.revenue = Math.round(eco*mins*1.6 + biz*mins*2.0);
   G.cash += r.revenue;
+
+  // +1 lot i sprawdz LVL
+  G.totalFlights = (G.totalFlights||0) + 1;
+  var newLevel = Math.floor(G.totalFlights / 10) + 1;
+  if(newLevel > (G.level||1)) {
+    G.level = newLevel;
+    showMsg('&#127881; POZIOM '+G.level+'! Odblokowano nowe możliwości!');
+  }
+
   updateHUD();
 
   // Zapisz odlot do logu terminala
   if(typeof logDeparture === 'function') logDeparture(totalPax);
 
+  // Aktualizuj ranking
+  if(typeof updateRankingValue === 'function') updateRankingValue();
+
   removeFlightLayer(r.id);
   drawFlightLayer(r);
   save();
-  showMsg('Odlecial '+ac.model+'! +$'+r.revenue.toLocaleString());
+  if(G.level === newLevel || newLevel <= (G.level||1))
+    showMsg('Odlecial '+ac.model+'! +$'+r.revenue.toLocaleString()+' | Lot #'+G.totalFlights);
 
   var body=document.getElementById('panel-body');
   if(body) renderTrasy(body);
@@ -174,8 +187,10 @@ function departAll() {
     ac.status = 'flying';
     r.revenue = Math.round(eco*mins*1.6 + biz*mins*2.0);
     G.cash += r.revenue;
+    G.totalFlights = (G.totalFlights||0) + 1;
+    var _newLvl = Math.floor(G.totalFlights/10)+1;
+    if(_newLvl > (G.level||1)) { G.level=_newLvl; }
     if(typeof logDeparture==='function') logDeparture(totalPax);
-
     removeFlightLayer(r.id);
     drawFlightLayer(r);
     departed++;
