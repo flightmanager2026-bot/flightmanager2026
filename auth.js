@@ -18,6 +18,8 @@ function initFirebase() {
     _fbAuth = firebase.auth();
     _fbDb = firebase.firestore();
     console.log('Firebase OK');
+    // Sprawdz czy wracamy z Google redirect
+    checkGoogleRedirect();
   } catch(e) {
     console.error('Firebase error:', e);
   }
@@ -122,12 +124,24 @@ function doRegister() {
 
 function doGoogleLogin() {
   var provider = new firebase.auth.GoogleAuthProvider();
-  _fbAuth.signInWithPopup(provider)
-    .then(function(result) {
-      var isNew = result.additionalUserInfo && result.additionalUserInfo.isNewUser;
-      onAuthSuccess(result.user, isNew);
-    })
+  // Zapisz ze uzywamy Google redirect
+  sessionStorage.setItem('googleRedirect','1');
+  _fbAuth.signInWithRedirect(provider)
     .catch(function(e) { showAuthError(getAuthError(e.code)); });
+}
+
+function checkGoogleRedirect() {
+  _fbAuth.getRedirectResult()
+    .then(function(result) {
+      if(result && result.user) {
+        var isNew = result.additionalUserInfo && result.additionalUserInfo.isNewUser;
+        sessionStorage.removeItem('googleRedirect');
+        onAuthSuccess(result.user, isNew);
+      }
+    })
+    .catch(function(e) {
+      if(e.code) showAuthError(getAuthError(e.code));
+    });
 }
 
 function getAuthError(code) {
