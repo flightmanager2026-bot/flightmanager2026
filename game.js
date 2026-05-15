@@ -16,6 +16,8 @@ var FLIGHT_LAYERS={}, TICK_INTERVAL=null;
 
 /* -- SAVE/LOAD -- */
 function save() {
+  // Zapisz do chmury Firebase
+  if(typeof saveToCloud === 'function') saveToCloud();
   try {
     var sv={cash:G.cash,airports:G.airports,routes:G.routes,slots:G.slots,departurelog:G.departurelog||[],lastShopPayout:G.lastShopPayout||0,
       homeAirport:G.homeAirport,fleet:G.fleet,airline:G.airline,
