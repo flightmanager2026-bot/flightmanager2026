@@ -1420,8 +1420,8 @@ function showStarterPlaneScreen() {
   el.style.cssText = 'position:fixed;inset:0;z-index:500;background:#060d1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;font-family:Arial,sans-serif;overflow-y:auto;';
 
   var planes = [
-    {model:'737-800', seats:189, range:5435, desc:'Popularny i niezawodny narrowbody. Idealne do tras europejskich.'},
-    {model:'A320 Neo', seats:194, range:6300, desc:'Nowoczesny i ekonomiczny. Świetna wydajność paliwowa.'}
+    {model:'737-800', brand:'Boeing', seats:189, range:5435, desc:'Popularny i niezawodny narrowbody. Idealne do tras europejskich.'},
+    {model:'A320 Neo', brand:'Airbus', seats:194, range:6300, desc:'Nowoczesny i ekonomiczny. Świetna wydajność paliwowa.'}
   ];
 
   var html = '<div style="text-align:center;margin-bottom:28px;">'
@@ -1484,6 +1484,7 @@ function confirmStarterPlane() {
   var ac = {
     id: 'AC_' + Date.now(),
     model: p.model,
+    brand: p.brand,
     seats: p.seats,
     range: p.range,
     reg: G.airline.iata + '-001',
