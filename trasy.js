@@ -120,7 +120,13 @@ function departSingle(el) {
   ac.status = 'flying';
 
   // Kasa za odlot
-  r.revenue = Math.round(eco*mins*1.6 + biz*mins*2.0);
+  var cfg = ac.config || {first:0,prem:0,biz:biz,eco:eco};
+  r.revenue = Math.round(
+    (cfg.first||0)*mins*4.0 +
+    (cfg.prem||0)*mins*3.0 +
+    (cfg.biz||biz)*mins*2.0 +
+    (cfg.eco||eco)*mins*1.6
+  );
   G.cash += r.revenue;
 
   // +1 lot i sprawdz LVL
@@ -185,7 +191,13 @@ function departAll() {
 
     r.startTime = Date.now();
     ac.status = 'flying';
-    r.revenue = Math.round(eco*mins*1.6 + biz*mins*2.0);
+    var cfg = ac.config || {first:0,prem:0,biz:biz,eco:eco};
+  r.revenue = Math.round(
+    (cfg.first||0)*mins*4.0 +
+    (cfg.prem||0)*mins*3.0 +
+    (cfg.biz||biz)*mins*2.0 +
+    (cfg.eco||eco)*mins*1.6
+  );
     G.cash += r.revenue;
     G.totalFlights = (G.totalFlights||0) + 1;
     var _newLvl = Math.floor(G.totalFlights/10)+1;
