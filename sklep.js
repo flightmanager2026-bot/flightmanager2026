@@ -11,77 +11,7 @@ if(typeof showMsg === 'undefined') {
 
 function closeModal(){ document.getElementById("modal").style.display="none"; }
 
-var AIRCRAFT_CATALOG = {
-  'Airbus': [
-    {model:'Airbus A220-100',img:null,seats:108,range:6300,price:89000000,desc:'Nowoczesny waski kadlub, 108 miejsc',engines:'PW1500G',level:1},
-    {model:'Airbus A320neo',img:null,seats:180,range:6300,price:110000000,desc:'Najpopularniejszy samolot swiata, 180 miejsc',engines:'CFM LEAP-1A / PW1100G',level:1},
-    {model:'Airbus A321neo',img:'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A321_Neo.png',seats:244,range:7400,price:130000000,desc:'Wydluzony A320, 244 miejsca, zasieg 7400km',engines:'CFM LEAP-1A / PW1100G',level:1},
-    {model:'Airbus A330-300',img:null,seats:335,range:11750,price:230000000,desc:'Szeroki kadlub sredniodystansowy, 335 miejsc',engines:'CF6-80E / PW4000 / Trent 700',level:3},
-    {model:'Airbus A340-300',img:'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A340-300-removebg-preview.png',seats:295,range:13500,price:250000000,desc:'Czteroslilnikowy dlugi zasieg, 295 miejsc',engines:'CFM56-5C4',level:4},
-    {model:'Airbus A350-900',img:'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A350-900_XWB-removebg-preview.png',seats:369,range:15000,price:320000000,desc:'Nowoczesny szeroki kadlub, 369 miejsc',engines:'Rolls-Royce Trent XWB',level:4},
-    {model:'Airbus A380-800',img:'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png',seats:555,range:15200,price:450000000,desc:'Dwupokladowy gigant, 555 miejsc',engines:'Rolls-Royce Trent 970',level:5}
-  ],
-  'Boeing': [
-    {model:'Boeing 737-800',img:'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',seats:162,range:5765,price:90000000,desc:'Klasyczny waski kadlub, 162 miejsca',engines:'CFM56-7B',level:1},
-    {model:'Boeing 737 MAX 8',img:'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',seats:178,range:6570,price:105000000,desc:'Nowa generacja 737, 178 miejsc',engines:'CFM LEAP-1B',level:2},
-    {model:'Boeing 767-300ER',img:null,seats:218,range:11090,price:190000000,desc:'Sredni szeroki kadlub, 218 miejsc',engines:'CF6-80C2 / PW4000',level:3},
-    {model:'Boeing 777-300ER',img:null,seats:396,range:13650,price:350000000,desc:'Dlugi zasieg, 396 miejsc',engines:'GE90-115B',level:4},
-    {model:'Boeing 787-9',img:null,seats:296,range:14140,price:280000000,desc:'Dreamliner, 296 miejsc, zasieg 14140km',engines:'GEnx-1B / RR Trent 1000',level:3},
-    {model:'Boeing 787-10',img:null,seats:336,range:11910,price:310000000,desc:'Dluzszy Dreamliner, 336 miejsc',engines:'GEnx-1B / RR Trent 1000',level:4}
-  ],
-  'Embraer': [
-    {model:'Embraer E175',img:null,seats:80,range:3735,price:42000000,desc:'Regionalny odrzutowiec, 80 miejsc',engines:'CF34-8E',level:1},
-    {model:'Embraer E190',img:null,seats:100,range:4537,price:55000000,desc:'Popularny regionalny, 100 miejsc',engines:'CF34-10E',level:1},
-    {model:'Embraer E195-E2',img:null,seats:146,range:4315,price:70000000,desc:'Nowa generacja E-Jet, 146 miejsc',engines:'PW1900G',level:2}
-  ],
-  'Bombardier': [
-    {model:'Bombardier CRJ-200',img:null,seats:50,range:3148,price:22000000,desc:'Maly regionalny odrzutowiec, 50 miejsc',engines:'CF34-3B1',level:1},
-    {model:'Bombardier CRJ-900',img:null,seats:90,range:2956,price:45000000,desc:'Wiekszy regionalny, 90 miejsc',engines:'CF34-8C5',level:1},
-    {model:'Bombardier Q400',img:null,seats:78,range:2040,price:32000000,desc:'Turbosmiglowiec, 78 miejsc',engines:'PW150A',level:1}
-  ],
-  'ATR': [
-    {model:'ATR-42',img:null,seats:48,range:1326,price:18000000,desc:'Maly turbosmiglowiec, 48 miejsc',engines:'PW120',level:1},
-    {model:'ATR-72',img:null,seats:72,range:1528,price:25000000,desc:'Turbosmiglowiec regionalny, 72 miejsca',engines:'PW127M',level:1}
-  ],
-  'Suchoj': [
-    {model:'Superjet 100',img:null,seats:98,range:4578,price:35000000,desc:'Rosyjski odrzutowiec regionalny, 98 miejsc',engines:'SaM146',level:1}
-  ],
-  'Iliuszyn': [
-    {model:'Iliuszyn Il-96-300',img:null,seats:300,range:11500,price:80000000,desc:'Rosyjski szeroki kadlub, 300 miejsc',engines:'PS-90A',level:3}
-  ],
-  'Tupolew': [
-    {model:'Tupolew Tu-204',img:null,seats:210,range:6500,price:45000000,desc:'Rosyjski waski kadlub, 210 miejsc',engines:'PS-90A',level:2}
-  ],
-  'Havilland Canada': [
-    {model:'DHC-8 Q400',img:null,seats:78,range:2040,price:30000000,desc:'Turbosmiglowiec De Havilland, 78 miejsc',engines:'PW150A',level:1},
-    {model:'DHC-6 Twin Otter',img:null,seats:19,range:1705,price:7000000,desc:'Maly turbosmiglowiec, 19 miejsc',engines:'PT6A-27',level:1}
-  ],
-  'Dornier': [
-    {model:'Dornier 328',img:null,seats:32,range:1850,price:12000000,desc:'Maly odrzutowiec regionalny, 32 miejsca',engines:'PW306B',level:1}
-  ],
-  'McDonnell Douglas': [
-    {model:'MD-82',img:null,seats:155,range:4635,price:20000000,desc:'Klasyczny waski kadlub, 155 miejsc',engines:'JT8D-217',level:1},
-    {model:'MD-11',img:null,seats:323,range:12455,price:35000000,desc:'Szeroki kadlub dlugi zasieg, 323 miejsca',engines:'CF6-80C2 / PW4460',level:2}
-  ],
-  'Fokker': [
-    {model:'Fokker 70',img:null,seats:79,range:2010,price:15000000,desc:'Holenderski regionalny, 79 miejsc',engines:'Tay 620',level:1},
-    {model:'Fokker 100',img:null,seats:107,range:3170,price:20000000,desc:'Holenderski sredni, 107 miejsc',engines:'Tay 650',level:1}
-  ],
-  'British Aerospace': [
-    {model:'BAe 146-300',img:null,seats:128,range:2965,price:18000000,desc:'Cichy odrzutowiec, 128 miejsc',engines:'ALF502R-5',level:1},
-    {model:'ATP',img:null,seats:68,range:1610,price:12000000,desc:'Turbosmiglowiec British Aerospace, 68 miejsc',engines:'PW126A',level:1}
-  ],
-  'Cessna': [
-    {model:'Cessna 208 Caravan',img:null,seats:14,range:1982,price:2500000,desc:'Maly turbosmiglowiec, 14 miejsc',engines:'PT6A-114A',level:1}
-  ],
-  'Dassault': [
-    {model:'Dassault Falcon 7X',img:null,seats:16,range:11020,price:55000000,desc:'Luksusowy biznesjet, 16 miejsc',engines:'PW307A',level:2}
-  ],
-  'Antonow': [
-    {model:'Antonow An-24',img:null,seats:50,range:2400,price:5000000,desc:'Radziecki turbosmiglowiec, 50 miejsc',engines:'AI-24',level:1},
-    {model:'Antonow An-148',img:null,seats:75,range:5100,price:28000000,desc:'Ukrainski odrzutowiec, 75 miejsc',engines:'D-436-148',level:1}
-  ]
-};
+// AIRCRAFT_CATALOG loaded from aircraft.js
 
 function openShop() {
   function sec(title, rows) {
