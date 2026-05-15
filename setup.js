@@ -1267,7 +1267,7 @@ function selectCountry(country) {
     +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:14px;font-family:Arial,sans-serif;margin-bottom:8px;outline:none;box-sizing:border-box;">'
     +'<div id="slist" style="max-height:260px;overflow-y:auto;border-radius:8px;border:1px solid rgba(255,255,255,0.07);margin-bottom:10px;"></div>'
     +'<div id="spicked" style="display:none;margin-bottom:10px;padding:10px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:8px;font-size:13px;color:#00d4ff;font-weight:700;"></div>'
-    +'<button id="sbtn" onclick="setupGo()" disabled style="width:100%;padding:13px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;opacity:0.4;">Rozpocznij</button>';
+    +'<div style="margin-bottom:10px;">'    +'<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:6px;">NAZWA LINII LOTNICZEJ</div>'    +'<input id="setup-airline-name" type="text" placeholder="np. Sky Airlines" maxlength="30" '    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:14px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;">'    +'</div>'    +'<div style="margin-bottom:14px;">'    +'<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:6px;">KOD LINII (2-3 litery, np. SK)</div>'    +'<input id="setup-airline-code" type="text" placeholder="np. SK" maxlength="3" oninput="this.value=this.value.toUpperCase()" '    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:14px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;">'    +'</div>'    +'<button id="sbtn" onclick="setupGo()" disabled style="width:100%;padding:13px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;opacity:0.4;">Rozpocznij</button>';
 
   renderSetupList();
   setTimeout(function(){ var sq=document.getElementById('sq'); if(sq) sq.focus(); },100);
@@ -1309,7 +1309,11 @@ function setupGo() {
   var icao = prefix+cleanName;
   var ap={id:'AP_HOME',name:'Port Lotniczy '+c.name,icao:icao,city:c.name,country:_setupCountry||'Polska',lat:c.lat,lng:c.lng,isHome:true,level:1,maxSlots:10,usedSlots:0,upgrades:{runways:1,terminal:1,hangar:1,shops:0,parking:0},income:0};
   G.airports.push(ap); G.homeAirport=ap;
-  G.airline.name='VIS Airlines'; G.airline.iata='VS';
+  var airlineName = (document.getElementById('setup-airline-name') && document.getElementById('setup-airline-name').value.trim()) || 'My Airlines';
+  var airlineCode = (document.getElementById('setup-airline-code') && document.getElementById('setup-airline-code').value.trim().toUpperCase()) || 'MA';
+  if(!airlineCode || airlineCode.length < 2) airlineCode = 'MA';
+  G.airline.name = airlineName;
+  G.airline.iata = airlineCode;
   save();
   var _ss=document.getElementById('setupScreen');
   if(_ss) document.body.removeChild(_ss);
