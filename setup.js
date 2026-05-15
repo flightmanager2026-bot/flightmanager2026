@@ -1267,7 +1267,7 @@ function selectCountry(country) {
     +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:14px;font-family:Arial,sans-serif;margin-bottom:8px;outline:none;box-sizing:border-box;">'
     +'<div id="slist" style="max-height:260px;overflow-y:auto;border-radius:8px;border:1px solid rgba(255,255,255,0.07);margin-bottom:10px;"></div>'
     +'<div id="spicked" style="display:none;margin-bottom:10px;padding:10px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:8px;font-size:13px;color:#00d4ff;font-weight:700;"></div>'
-    +'<div style="margin-bottom:10px;">'    +'<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:6px;">NAZWA LINII LOTNICZEJ</div>'    +'<input id="setup-airline-name" type="text" placeholder="np. Sky Airlines" maxlength="30" '    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:14px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;">'    +'</div>'    +'<div style="margin-bottom:14px;">'    +'<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:6px;">KOD LINII (2-3 litery, np. SK)</div>'    +'<input id="setup-airline-code" type="text" placeholder="np. SK" maxlength="3" oninput="this.value=this.value.toUpperCase()" '    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:14px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;">'    +'</div>'    +'<button id="sbtn" onclick="setupGo()" disabled style="width:100%;padding:13px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;opacity:0.4;">Rozpocznij</button>';
+    +'<div style="margin-bottom:10px;">'    +'<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:6px;">NAZWA LINII LOTNICZEJ</div>'    +'<input id="setup-airline-name" type="text" placeholder="np. Sky Airlines" maxlength="30" oninput="checkSetupReady()" '    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:14px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;">'    +'</div>'    +'<div style="margin-bottom:14px;">'    +'<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:6px;">KOD LINII (2-3 litery, np. SK)</div>'    +'<input id="setup-airline-code" type="text" placeholder="np. SK" maxlength="3" oninput="this.value=this.value.toUpperCase();checkSetupReady()" '    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:14px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;">'    +'</div>'    +'<div id="setup-msg" style="display:none;padding:10px;border-radius:8px;font-size:12px;margin-bottom:10px;text-align:center;"></div>'    +'<button id="sbtn" onclick="setupGo()" disabled style="width:100%;padding:13px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;opacity:0.4;">Rozpocznij</button>';
 
   renderSetupList();
   setTimeout(function(){ var sq=document.getElementById('sq'); if(sq) sq.focus(); },100);
@@ -1298,8 +1298,24 @@ function setupPick(j) {
   _setupPicked=_setupFiltered[j]; if(!_setupPicked) return;
   var sp=document.getElementById('spicked');
   if(sp){ sp.textContent='📍 '+_setupPicked.name+', '+_setupPicked.voiv; sp.style.display='block'; }
-  var btn=document.getElementById('sbtn'); if(btn){ btn.disabled=false; btn.style.opacity='1'; }
+  checkSetupReady();
   renderSetupList();
+}
+
+function checkSetupReady() {
+  var name = (document.getElementById('setup-airline-name')||{}).value||'';
+  var code = (document.getElementById('setup-airline-code')||{}).value||'';
+  var ready = _setupPicked && name.trim().length >= 2 && code.trim().length >= 2;
+  var btn = document.getElementById('sbtn');
+  if(btn){ btn.disabled=!ready; btn.style.opacity=ready?'1':'0.4'; }
+}
+
+var BAD_WORDS = ['kurwa','chuj','pizda','jebać','pierdol','skurwiel','kurwy','jebany','pierdolony',
+  'fuck','shit','bitch','ass','dick','pussy','cock','nigger','faggot','cunt'];
+
+function containsBadWord(text) {
+  var t = text.toLowerCase().replace(/[^a-z0-9]/g,'');
+  return BAD_WORDS.some(function(w){ return t.indexOf(w.replace(/[^a-z]/g,'')) >= 0; });
 }
 
 function setupGo() {
@@ -1308,20 +1324,79 @@ function setupGo() {
   var airlineCodeEl = document.getElementById('setup-airline-code');
   var airlineName = airlineNameEl ? airlineNameEl.value.trim() : '';
   var airlineCode = airlineCodeEl ? airlineCodeEl.value.trim().toUpperCase() : '';
-  if(!airlineName) {
+
+  if(!airlineName || airlineName.length < 2) {
     airlineNameEl.style.border='1px solid #e63946';
-    airlineNameEl.placeholder='Wpisz nazwe linii!';
-    return;
+    showSetupMsg('Wpisz nazwę linii lotniczej!', 'error'); return;
+  }
+  if(containsBadWord(airlineName)) {
+    airlineNameEl.style.border='1px solid #e63946';
+    showSetupMsg('Nazwa zawiera niedozwolone słowa!', 'error'); return;
   }
   if(!airlineCode || airlineCode.length < 2) {
     airlineCodeEl.style.border='1px solid #e63946';
-    airlineCodeEl.placeholder='Min. 2 litery!';
-    return;
+    showSetupMsg('Wpisz kod linii (min. 2 litery)!', 'error'); return;
   }
+  if(containsBadWord(airlineCode)) {
+    airlineCodeEl.style.border='1px solid #e63946';
+    showSetupMsg('Kod zawiera niedozwolone słowa!', 'error'); return;
+  }
+
+  // Sprawdz czy nazwa jest zajęta w Firebase
+  var btn = document.getElementById('sbtn');
+  if(btn){ btn.disabled=true; btn.textContent='Sprawdzanie...'; }
+
+  if(typeof _fbDb !== 'undefined' && _fbDb) {
+    _fbDb.collection('airlines').where('name','==',airlineName).get()
+      .then(function(snap){
+        if(!snap.empty) {
+          showSetupMsg('Nazwa "'+airlineName+'" jest już zajęta!', 'error');
+          if(btn){ btn.disabled=false; btn.textContent='Rozpocznij'; }
+          airlineNameEl.style.border='1px solid #e63946';
+          return;
+        }
+        // Sprawdz kod
+        return _fbDb.collection('airlines').where('code','==',airlineCode).get();
+      })
+      .then(function(snap2){
+        if(!snap2) return;
+        if(!snap2.empty) {
+          showSetupMsg('Kod "'+airlineCode+'" jest już zajęty!', 'error');
+          if(btn){ btn.disabled=false; btn.textContent='Rozpocznij'; }
+          airlineCodeEl.style.border='1px solid #e63946';
+          return;
+        }
+        // Wszystko OK - zapisz i startuj
+        doSetupFinish(c, airlineName, airlineCode);
+      })
+      .catch(function(){ doSetupFinish(c, airlineName, airlineCode); });
+  } else {
+    doSetupFinish(c, airlineName, airlineCode);
+  }
+}
+
+function showSetupMsg(msg, type) {
+  var el = document.getElementById('setup-msg');
+  if(!el) return;
+  el.style.display='block';
+  el.style.color = type==='error' ? '#e63946' : '#00e676';
+  el.style.background = type==='error' ? 'rgba(230,57,70,0.1)' : 'rgba(0,230,118,0.1)';
+  el.style.border = type==='error' ? '1px solid rgba(230,57,70,0.3)' : '1px solid rgba(0,230,118,0.3)';
+  el.textContent = msg;
+}
+
+function doSetupFinish(c, airlineName, airlineCode) {
   var cleanName = c.name.replace(/[^a-zA-Z]/g,'').toUpperCase().substring(0,2);
   var prefix = _setupCountry==='Polska'?'EP':_setupCountry==='Niemcy'?'ED':_setupCountry==='Francja'?'LF':_setupCountry==='UK'?'EG':'ZZ';
   var icao = prefix+cleanName;
   var ap={id:'AP_HOME',name:'Port Lotniczy '+c.name,icao:icao,city:c.name,country:_setupCountry||'Polska',lat:c.lat,lng:c.lng,isHome:true,level:1,maxSlots:10,usedSlots:0,upgrades:{runways:1,terminal:1,hangar:1,shops:0,parking:0},income:0};
+  // Zapisz nazwe linii w Firebase
+  if(typeof _fbDb !== 'undefined' && _fbDb && typeof _currentUser !== 'undefined' && _currentUser) {
+    _fbDb.collection('airlines').doc(_currentUser.uid).set({
+      name: airlineName, code: airlineCode, uid: _currentUser.uid, createdAt: Date.now()
+    }).catch(function(){});
+  }
+
   G.airports.push(ap); G.homeAirport=ap;
   G.airline.name = airlineName;
   G.airline.iata = airlineCode;
