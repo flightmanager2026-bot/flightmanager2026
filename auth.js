@@ -131,7 +131,7 @@ function doPasswordReset() {
         msg.style.background='rgba(0,230,118,0.1)';
         msg.style.border='1px solid rgba(0,230,118,0.3)';
         msg.style.color='#00e676';
-        msg.textContent='Link wysłany! Sprawdź skrzynkę email.';
+        msg.textContent='Link wysłany! Sprawdź skrzynkę email — jeśli nie widzisz, zajrzyj do folderu SPAM.';
       }
     })
     .catch(function(e) {
