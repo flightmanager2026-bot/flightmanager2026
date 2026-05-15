@@ -7,6 +7,17 @@ function getPlayer() {
 function savePlayer(p) { localStorage.setItem('fm_player', JSON.stringify(p)); }
 
 function openAccount() {
+  // Jeśli zalogowany przez Firebase - pokaż panel konta
+  if(typeof _currentUser !== 'undefined' && _currentUser) {
+    var player = {
+      name: _currentUser.displayName || _currentUser.email || 'Gracz',
+      email: _currentUser.email,
+      airline: G.airline ? G.airline.name : 'VIS Airlines'
+    };
+    renderAccountPanel(player);
+    return;
+  }
+  // Fallback - stary system
   var player = getPlayer();
   if(!player) { openLogin(); return; }
   renderAccountPanel(player);
@@ -109,9 +120,13 @@ function registerPlayer() {
 
 function logoutPlayer() {
   if(confirm('Na pewno chcesz sie wylogowac?')) {
-    localStorage.removeItem('fm_player');
     closeModal();
-    showMsg('Wylogowano!');
+    if(typeof _fbAuth !== 'undefined' && _fbAuth) {
+      _fbAuth.signOut().then(function(){ location.reload(); });
+    } else {
+      localStorage.removeItem('sb_v3');
+      location.reload();
+    }
   }
 }
 
