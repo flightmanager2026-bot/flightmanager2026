@@ -9,8 +9,27 @@ function renderFlotaMain(body) {
     return;
   }
   var manufacturers = {};
+
+  function getBrandForModel(model) {
+    if(typeof AIRCRAFT_CATALOG !== 'undefined') {
+      var found = null;
+      Object.keys(AIRCRAFT_CATALOG).forEach(function(b){
+        AIRCRAFT_CATALOG[b].forEach(function(a){ if(a.model===model) found=b; });
+      });
+      if(found) return found;
+    }
+    // Fallback
+    if(model.indexOf('737')>=0||model.indexOf('747')>=0||model.indexOf('757')>=0||
+       model.indexOf('767')>=0||model.indexOf('777')>=0||model.indexOf('787')>=0||
+       model.indexOf('707')>=0||model.indexOf('717')>=0||model.indexOf('727')>=0||
+       model.indexOf('720')>=0) return 'Boeing';
+    if(model.indexOf('A2')>=0||model.indexOf('A3')>=0||model.indexOf('A4')>=0) return 'Airbus';
+    return model.split(' ')[0];
+  }
+
   G.fleet.forEach(function(ac) {
-    var brand = ac.model.indexOf(' ')>0 ? ac.model.split(' ')[0] : ac.model;
+    var brand = ac.brand || getBrandForModel(ac.model);
+    ac.brand = brand; // cache
     if(!manufacturers[brand]) manufacturers[brand]=[];
     manufacturers[brand].push(ac);
   });
@@ -54,7 +73,15 @@ function showBrandModal(brand) {
     'Airbus A350-900':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A350-900_XWB-removebg-preview.png',
     'Airbus A380-800':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png'
   };
-  var planes = G.fleet.filter(function(ac){ return ac.model.split(' ')[0]===brand; });
+  var planes = G.fleet.filter(function(ac){
+    var b = ac.brand || (function(model){
+      if(typeof AIRCRAFT_CATALOG!=='undefined'){
+        var f=null; Object.keys(AIRCRAFT_CATALOG).forEach(function(br){ AIRCRAFT_CATALOG[br].forEach(function(a){if(a.model===model)f=br;}); }); if(f) return f;
+      }
+      return model.split(' ')[0];
+    })(ac.model);
+    return b===brand;
+  });
   var models = {};
   planes.forEach(function(ac){ if(!models[ac.model])models[ac.model]=[]; models[ac.model].push(ac); });
 
