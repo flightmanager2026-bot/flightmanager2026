@@ -56,7 +56,8 @@ function showAuthScreen() {
     +'<input id="auth-email" type="email" placeholder="twoj@email.com" style="width:100%;background:#0a1628;border:1px solid rgba(0,212,255,0.2);border-radius:10px;padding:12px;color:#fff;font-size:14px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;margin-bottom:12px;">'
     +'<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:6px;">HASŁO</div>'
     +'<input id="auth-pass" type="password" placeholder="••••••••" style="width:100%;background:#0a1628;border:1px solid rgba(0,212,255,0.2);border-radius:10px;padding:12px;color:#fff;font-size:14px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;margin-bottom:16px;">'
-    +'<button onclick="doLogin()" style="width:100%;padding:13px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-bottom:12px;">Zaloguj się</button>'
+    +'<button onclick="doLogin()" style="width:100%;padding:13px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-bottom:8px;">Zaloguj się</button>'
+    +'<div style="text-align:right;margin-bottom:12px;"><span onclick="showForgotPassword()" style="font-size:11px;color:#5580a0;cursor:pointer;text-decoration:underline;">Zapomniałem hasła</span></div>'
     +'<div style="text-align:center;color:#5580a0;font-size:11px;margin-bottom:12px;">lub</div>'
     +'<button onclick="doGoogleLogin()" style="width:100%;padding:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;color:#e0f0ff;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">'
     +'<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>'
@@ -94,6 +95,55 @@ function switchAuthTab(tab) {
   document.getElementById('tab-register').style.background = isLogin ? 'transparent' : 'linear-gradient(135deg,#1a56db,#00d4ff)';
   document.getElementById('tab-register').style.color = isLogin ? '#5580a0' : '#fff';
   document.getElementById('auth-error').style.display = 'none';
+}
+
+function showForgotPassword() {
+  var el = document.getElementById('authScreen');
+  if(!el) return;
+  var card = el.querySelector('div[style*="max-width:400px"]');
+  if(!card) return;
+  card.innerHTML =
+    '<div style="text-align:center;margin-bottom:20px;">'
+    +'<div style="font-size:16px;font-weight:900;color:#e0f0ff;">Resetuj hasło</div>'
+    +'<div style="font-size:11px;color:#5580a0;margin-top:4px;">Wyślemy link na Twój email</div>'
+    +'</div>'
+    +'<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:6px;">EMAIL</div>'
+    +'<input id="reset-email" type="email" placeholder="twoj@email.com" style="width:100%;background:#0a1628;border:1px solid rgba(0,212,255,0.2);border-radius:10px;padding:12px;color:#fff;font-size:14px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;margin-bottom:16px;">'
+    +'<button onclick="doPasswordReset()" style="width:100%;padding:13px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-bottom:12px;">Wyślij link</button>'
+    +'<button onclick="showAuthScreen2()" style="width:100%;padding:10px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#5580a0;font-size:13px;font-family:Arial,sans-serif;cursor:pointer;">Wróć do logowania</button>'
+    +'<div id="reset-msg" style="display:none;margin-top:12px;padding:10px 14px;border-radius:10px;font-size:12px;text-align:center;"></div>';
+}
+
+function showAuthScreen2() {
+  var el = document.getElementById('authScreen');
+  if(el) document.body.removeChild(el);
+  showAuthScreen();
+}
+
+function doPasswordReset() {
+  var email = document.getElementById('reset-email').value.trim();
+  if(!email) return;
+  _fbAuth.sendPasswordResetEmail(email)
+    .then(function() {
+      var msg = document.getElementById('reset-msg');
+      if(msg) {
+        msg.style.display='block';
+        msg.style.background='rgba(0,230,118,0.1)';
+        msg.style.border='1px solid rgba(0,230,118,0.3)';
+        msg.style.color='#00e676';
+        msg.textContent='Link wysłany! Sprawdź skrzynkę email.';
+      }
+    })
+    .catch(function(e) {
+      var msg = document.getElementById('reset-msg');
+      if(msg) {
+        msg.style.display='block';
+        msg.style.background='rgba(230,57,70,0.1)';
+        msg.style.border='1px solid rgba(230,57,70,0.3)';
+        msg.style.color='#e63946';
+        msg.textContent=getAuthError(e.code);
+      }
+    });
 }
 
 function showAuthError(msg) {
