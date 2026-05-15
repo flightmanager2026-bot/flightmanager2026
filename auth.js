@@ -234,7 +234,8 @@ function onAuthSuccess(user, isNewUser) {
 function loadPlayerData(uid, callback) {
   _fbDb.collection('players').doc(uid).get()
     .then(function(doc) {
-      if(doc.exists) {
+      console.log('Firebase load - doc exists:', doc.exists, 'uid:', uid);
+    if(doc.exists) {
         var data = doc.data();
         // Zaladuj dane do G
         if(data.cash) G.cash = data.cash;
@@ -279,7 +280,8 @@ function saveToCloud() {
     updatedAt: Date.now()
   };
   _fbDb.collection('players').doc(uid).set(data)
-    .catch(function(e) { console.error('Save error:', e); });
+    .then(function(){ console.log('Saved to Firebase OK, uid:', uid); })
+    .catch(function(e) { console.error('Save error:', e.code, e.message); });
 }
 
 function startGame() {
