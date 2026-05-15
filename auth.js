@@ -206,6 +206,18 @@ function checkGoogleRedirect() {
     });
 }
 
+function doAppleLogin() {
+  // Pokazuje komunikat że wkrótce
+  var err = document.getElementById('auth-error');
+  if(err) {
+    err.style.display='block';
+    err.style.background='rgba(245,166,35,0.1)';
+    err.style.border='1px solid rgba(245,166,35,0.3)';
+    err.style.color='#f5a623';
+    err.textContent='Logowanie przez Apple — wkrótce dostępne!';
+  }
+}
+
 function getAuthError(code) {
   var errors = {
     'auth/user-not-found': 'Nie znaleziono konta z tym emailem',
