@@ -254,6 +254,11 @@ function openAddRoute(acId) {
   }
   _pendingAcId = acId;
 
+  var hasEco   = true; // always
+  var hasBiz   = ac.config && ac.config.biz > 0;
+  var hasPrem  = ac.config && ac.config.prem > 0;
+  var hasFirst = ac.config && ac.config.first > 0;
+
   var owned = {};
   G.slots.forEach(function(s){owned[s]=true;});
   if(G.homeAirport) owned[G.homeAirport.icao] = true;
