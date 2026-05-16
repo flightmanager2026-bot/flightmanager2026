@@ -103,6 +103,15 @@ function departSingle(el) {
   }
   r.duration = (r.durationMin||40)*60000;
 
+  // Sprawdz konserwacje
+  if(ac.status === 'maintenance') {
+    showMsg('✋ '+ac.model+' jest w konserwacji! Poczekaj aż zakończy.');
+    return;
+  }
+  if(typeof needsMaintenance==='function' && needsMaintenance(ac)) {
+    if(!confirm('Samolot wymaga konserwacji! Czy na pewno chcesz odlecieć?')) return;
+  }
+
   // Sprawdz personel
   if(typeof canAircraftDepart === 'function') {
     var crewCheck = canAircraftDepart(ac);
