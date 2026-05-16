@@ -322,10 +322,20 @@ function doAssign(type, empId, acId) {
 }
 
 function canAircraftDepart(ac) {
-  if(!G.staff) return {ok:true}; // brak systemu personelu
-  var crew=ac.crew||{};
-  if((crew.pilot||[]).length<2) return {ok:false,reason:'Brak pilotów ('+(crew.pilot||[]).length+'/2) — Personel → Piloci'};
-  if((crew.steward||[]).length<2) return {ok:false,reason:'Brak stewardów ('+(crew.steward||[]).length+'/2) — Personel → Stewardzi'};
-  if((crew.mechanic||[]).length<1) return {ok:false,reason:'Brak mechanika (0/1) — Personel → Mechanicy'};
+  // Sprawdz czy system personelu jest aktywny (czy ktokolwiek jest zatrudniony)
+  if(!G.staff) return {ok:true};
+  var totalHired = 0;
+  Object.keys(G.staff).forEach(function(t){ totalHired += (G.staff[t]||[]).length; });
+  if(totalHired === 0) return {ok:true}; // nikt nie zatrudniony = system nieaktywny
+
+  // Sprawdz crew samolotu
+  var crew = ac.crew || {};
+  var pilots   = (crew.pilot||[]).length;
+  var stewards = (crew.steward||[]).length;
+  var mechs    = (crew.mechanic||[]).length;
+
+  if(pilots < 2)   return {ok:false, reason:'Brak pilotów ('+pilots+'/2) — Personel → Piloci'};
+  if(stewards < 2) return {ok:false, reason:'Brak stewardów ('+stewards+'/2) — Personel → Stewardzi'};
+  if(mechs < 1)    return {ok:false, reason:'Brak mechanika (0/1) — Personel → Mechanicy'};
   return {ok:true};
 }
