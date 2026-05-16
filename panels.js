@@ -2,7 +2,7 @@
 var _activeTab=null;
 
 function tabClick(name) {
-  var tabs=['lotnisko','trasy','flota','bonus','personel','ranking'];
+  var tabs=['lotnisko','trasy','flota','personel','ranking'];
   tabs.forEach(function(t){
     var el=document.getElementById('tab-'+t);
     if(!el) return;
@@ -31,7 +31,7 @@ function openPanel(name) {
 function closePanel() {
   _activeTab=null;
   document.getElementById('panel').style.transform='translateY(100%)';
-  ['lotnisko','trasy','flota','bonus','personel','ranking'].forEach(function(t){
+  ['lotnisko','trasy','flota','personel','ranking'].forEach(function(t){
     var el=document.getElementById('tab-'+t);
     if(el){el.style.color='#4a6070';el.style.borderTop='2.5px solid transparent';}
   });
