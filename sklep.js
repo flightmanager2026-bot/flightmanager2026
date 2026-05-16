@@ -106,7 +106,18 @@ function buyAircraft(model) {
   var hangarCap = typeof getHangarCapacity==='function' ? getHangarCapacity() : 10;
   if(G.fleet.length >= hangarCap){ showMsg('Hangar pelny! ('+G.fleet.length+'/'+hangarCap+') Ulepsz hangar w Lotnisku!'); return; }
   G.cash -= ac.price;
-  G.fleet.push({id:'ac_'+Date.now(),model:ac.model,reg:'VS-'+(100+G.fleet.length),seats:ac.seats,status:'ground',routeId:null});
+  // Znajdz producenta
+  var acBrand = 'Unknown';
+  Object.keys(AIRCRAFT_CATALOG).forEach(function(b){
+    AIRCRAFT_CATALOG[b].forEach(function(a){ if(a.model===model) acBrand=b; });
+  });
+  var reg = G.airline.iata + '-' + String(G.fleet.length+1).padStart(3,'0');
+  G.fleet.push({
+    id:'ac_'+Date.now(), model:ac.model, brand:acBrand,
+    reg:reg, seats:ac.seats, range:ac.range||5000,
+    status:'ground', routeId:null,
+    config:{eco:ac.seats, biz:0, total:ac.seats}
+  });
   save(); updateHUD(); closeModal();
   showMsg('Kupiono '+model+'!');
 }
