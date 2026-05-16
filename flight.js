@@ -33,6 +33,8 @@ function updateFlightPositions() {
     if(t>=1) {
       ac.status='landed';
       G.totalFlights=(G.totalFlights||0)+1;
+      // Track flight hours for maintenance
+      if(typeof tickFlightHours==='function') tickFlightHours(ac, route.durationMin||40);
       checkLevelUp(); save();
       showMsg('Wyladowal '+ac.model+'!');
       if(_activeTab==='trasy'){var pb=document.getElementById('panel-body');if(pb)renderTrasy(pb);}
