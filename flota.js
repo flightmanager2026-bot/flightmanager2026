@@ -53,7 +53,9 @@ function renderFlotaMain(body) {
     if(!imgSrc) planes.forEach(function(ac){ if(!imgSrc && AC_IMAGES[ac.model]) imgSrc=AC_IMAGES[ac.model]; });
     out += '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;" data-b="'+brand+'" onclick="showBrandModal(this.dataset.b)">'
       +(imgSrc?'<img src="'+imgSrc+'" style="width:90px;height:48px;object-fit:contain;background:#000;border-radius:8px;flex-shrink:0;">':'<div style="width:90px;height:48px;background:#0d1b2a;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;">&#9992;</div>')
-      +'<div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#e0f0ff;margin-bottom:4px;">'+brand+'</div>'
+      +'<div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#e0f0ff;margin-bottom:4px;">'
+      +(brand==='Airbus'?'<img src="img/AIRBUS_Blue.png" style="height:14px;margin-right:6px;vertical-align:middle;">':brand==='Embraer'?'<img src="img/embraer-vector-logo-removebg-preview.png" style="height:14px;margin-right:6px;vertical-align:middle;">':'')
+      +brand+'</div>'
       +'<div style="font-size:11px;color:#5580a0;">'+planes.length+' samolot'+(planes.length>1?'y':'')+'</div>'
       +'<div style="display:flex;gap:8px;margin-top:4px;">'
       +(flying?'<span style="font-size:10px;color:#00e676;font-weight:700;">&#9992; '+flying+' w locie</span>':'')
@@ -282,20 +284,27 @@ function openAddRoute(acId) {
     // Route info (updated on change)
     +'<div id="route-info" style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:10px;margin-bottom:12px;font-size:12px;color:#5580a0;">Wybierz lotnisko aby zobaczyc informacje o trasie</div>'
 
-    // Ticket prices - always visible
-    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-bottom:6px;">CENA BILETU (zł/pasażer)</div>'
-    +'<div style="display:flex;gap:8px;margin-bottom:6px;">'
-    +'<div style="flex:1;">'
-    +'<div style="font-size:10px;color:'+(hasEco?'#a0b8cc':'#2a3a4a')+';margin-bottom:4px;">EKONOMIA</div>'
-    +'<input id="price-eco" type="number" min="0" max="9999" value="0" '+(hasEco?'':'disabled ')
-    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,'+(hasEco?'0.3':'0.08')+');border-radius:6px;padding:8px;color:'+(hasEco?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;" placeholder="'+(hasEco?'np. 250':'Brak')+'"></div>'
+    // Ticket prices - all 4 classes
+    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-bottom:8px;">CENY BILETÓW (zł/pasażer)</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">'
+    +'<div>'
+    +'<div style="font-size:10px;color:#00d4ff;margin-bottom:3px;">💺 EKONOMIA</div>'
+    +'<input id="price-eco" type="number" min="0" max="9999" value="0" '
+    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:6px;padding:8px;color:#fff;font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
+    +'<div>'
+    +'<div style="font-size:10px;color:#f5a623;margin-bottom:3px;">🎩 BIZNES</div>'
+    +'<input id="price-biz" type="number" min="0" max="99999" value="0" '+(hasBiz?'':' disabled ')
+    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(245,166,35,'+(hasBiz?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasBiz?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
+    +'<div>'
+    +'<div style="font-size:10px;color:#a78bfa;margin-bottom:3px;">💎 PREMIUM</div>'
+    +'<input id="price-prem" type="number" min="0" max="99999" value="0" '+(hasPrem?'':' disabled ')
+    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(168,139,250,'+(hasPrem?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasPrem?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
+    +'<div>'
+    +'<div style="font-size:10px;color:#ffd700;margin-bottom:3px;">⭐ PIERWSZA</div>'
+    +'<input id="price-first" type="number" min="0" max="99999" value="0" '+(hasFirst?'':' disabled ')
+    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(255,215,0,'+(hasFirst?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasFirst?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
     +'</div>'
-    +'<div style="flex:1;">'
-    +'<div style="font-size:10px;color:'+(hasBiz?'#a0b8cc':'#2a3a4a')+';margin-bottom:4px;">BIZNES</div>'
-    +'<input id="price-biz" type="number" min="0" max="99999" value="0" '+(hasBiz?'':'disabled ')
-    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,'+(hasBiz?'0.3':'0.08')+');border-radius:6px;padding:8px;color:'+(hasBiz?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;" placeholder="'+(hasBiz?'np. 800':'Brak')+'"></div>'
-    +'</div></div>'
-    +'<div id="price-hint" style="font-size:11px;color:#5580a0;margin-bottom:14px;">Wybierz lotnisko aby zobaczyc sugerowana cene</div>'
+    +'<div id="price-hint" style="font-size:11px;color:#5580a0;margin-bottom:14px;">Wybierz lotnisko aby zobaczyc sugerowane ceny</div>'
 
     // Buttons
     +'<button onclick="confirmRouteGlobal()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:9px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-bottom:6px;">Dodaj trase</button>'
@@ -550,74 +559,89 @@ function openModAc(el) {
   if(ac.status !== 'ground') { showMsg('Konfiguracja możliwa tylko na ziemi!'); return; }
   window._modAcId = acId;
 
-  // Pobierz dane samolotu z katalogu
   var totalSeats = ac.seats || 150;
   var cfg = ac.config || {first:0, prem:0, biz:0, eco:totalSeats};
+  // totalSlots = total eco-equivalent slots
+  // 1 first=4, 1 prem=3, 1 biz=2, 1 eco=1
+  var usedSlots = (cfg.first||0)*4 + (cfg.prem||0)*3 + (cfg.biz||0)*2 + (cfg.eco||0);
+  if(usedSlots===0) usedSlots = totalSeats;
+
+  function slotsUsed(f,p,b,e){ return f*4+p*3+b*2+e; }
+  var maxFirst = Math.floor(totalSeats/4);
+  var maxPrem  = Math.floor(totalSeats/3);
+  var maxBiz   = Math.floor(totalSeats/2);
 
   document.getElementById('modal-body').innerHTML =
-    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
-    +'<button onclick="closeModal()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:24px;padding:0;">&#8592;</button>'
-    +'<div>'
-    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">'+ac.model+'</div>'
-    +'<div style="font-size:11px;color:#5580a0;">'+ac.reg+' &bull; '+totalSeats+' miejsc łącznie</div>'
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">'
+    +'<button onclick="closeModal()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;padding:0;">&#8592;</button>'
+    +'<div><div style="font-size:15px;font-weight:700;color:#00d4ff;">'+ac.model+'</div>'
+    +'<div style="font-size:11px;color:#5580a0;">'+ac.reg+' &bull; '+totalSeats+' miejsc fizycznych</div></div></div>'
+
+    // Legend
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;">'
+    +'<div style="padding:8px;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:8px;text-align:center;">'
+    +'<div style="font-size:11px;font-weight:700;color:#ffd700;">⭐ Pierwsza</div>'
+    +'<div style="font-size:10px;color:#5580a0;">4.0 zł/min &bull; zajmuje 4 eco</div></div>'
+    +'<div style="padding:8px;background:rgba(168,139,250,0.08);border:1px solid rgba(168,139,250,0.2);border-radius:8px;text-align:center;">'
+    +'<div style="font-size:11px;font-weight:700;color:#a78bfa;">💎 Premium</div>'
+    +'<div style="font-size:10px;color:#5580a0;">3.0 zł/min &bull; zajmuje 3 eco</div></div>'
+    +'<div style="padding:8px;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:8px;text-align:center;">'
+    +'<div style="font-size:11px;font-weight:700;color:#f5a623;">🎩 Biznes</div>'
+    +'<div style="font-size:10px;color:#5580a0;">2.0 zł/min &bull; zajmuje 2 eco</div></div>'
+    +'<div style="padding:8px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:8px;text-align:center;">'
+    +'<div style="font-size:11px;font-weight:700;color:#00d4ff;">💺 Ekonomia</div>'
+    +'<div style="font-size:10px;color:#5580a0;">1.6 zł/min &bull; zajmuje 1 eco</div></div>'
+    +'</div>'
+
+    // Capacity bar
+    +'<div style="margin-bottom:14px;">'
+    +'<div style="display:flex;justify-content:space-between;font-size:10px;color:#5580a0;margin-bottom:4px;">'
+    +'<span>Zajęte miejsca</span><span id="md-slots-used">0</span><span>/ '+totalSeats+'</span></div>'
+    +'<div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;">'
+    +'<div id="md-slots-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#ffd700,#00d4ff);border-radius:3px;transition:width 0.2s;"></div>'
     +'</div></div>'
 
-    // Stawki
-    +'<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 12px;margin-bottom:14px;">'
-    +'<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:6px;">STAWKI ZA MINUTĘ LOTU</div>'
-    +'<div style="display:flex;gap:8px;flex-wrap:wrap;">'
-    +'<div style="flex:1;text-align:center;padding:6px;background:rgba(255,215,0,0.1);border-radius:6px;"><div style="font-size:12px;font-weight:700;color:#ffd700;">1. Klasa</div><div style="font-size:11px;color:#ffd700;">4.0 zł</div></div>'
-    +'<div style="flex:1;text-align:center;padding:6px;background:rgba(168,139,250,0.1);border-radius:6px;"><div style="font-size:12px;font-weight:700;color:#a78bfa;">Premium</div><div style="font-size:11px;color:#a78bfa;">3.0 zł</div></div>'
-    +'<div style="flex:1;text-align:center;padding:6px;background:rgba(245,166,35,0.1);border-radius:6px;"><div style="font-size:12px;font-weight:700;color:#f5a623;">Biznes</div><div style="font-size:11px;color:#f5a623;">2.0 zł</div></div>'
-    +'<div style="flex:1;text-align:center;padding:6px;background:rgba(0,212,255,0.1);border-radius:6px;"><div style="font-size:12px;font-weight:700;color:#00d4ff;">Ekonomia</div><div style="font-size:11px;color:#00d4ff;">1.6 zł</div></div>'
-    +'</div></div>'
-
-    // Suwaki
-    +'<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:10px;">UKŁAD SIEDZEŃ</div>'
-
+    // Sliders
     +'<div style="margin-bottom:10px;">'
     +'<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">'
-    +'<span style="color:#ffd700;">&#9733; Pierwsza klasa</span>'
-    +'<span style="color:#ffd700;font-weight:700;" id="md-first-val">'+cfg.first+'</span>'
-    +'</div>'
-    +'<input type="range" id="md-first" min="0" max="'+Math.floor(totalSeats*0.1)+'" value="'+(cfg.first||0)+'" step="1" '
-    +'oninput="modUpdateSeats()" style="width:100%;accent-color:#ffd700;margin-bottom:2px;">'
+    +'<span style="color:#ffd700;font-weight:700;">⭐ Pierwsza klasa</span>'
+    +'<span style="color:#ffd700;font-weight:900;" id="md-first-val">'+(cfg.first||0)+'</span></div>'
+    +'<input type="range" id="md-first" min="0" max="'+maxFirst+'" value="'+(cfg.first||0)+'" step="1" '
+    +'oninput="modUpdateSeats()" style="width:100%;accent-color:#ffd700;">'
     +'</div>'
 
     +'<div style="margin-bottom:10px;">'
     +'<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">'
-    +'<span style="color:#a78bfa;">&#11044; Premium</span>'
-    +'<span style="color:#a78bfa;font-weight:700;" id="md-prem-val">'+cfg.prem+'</span>'
-    +'</div>'
-    +'<input type="range" id="md-prem" min="0" max="'+Math.floor(totalSeats*0.2)+'" value="'+(cfg.prem||0)+'" step="1" '
-    +'oninput="modUpdateSeats()" style="width:100%;accent-color:#a78bfa;margin-bottom:2px;">'
+    +'<span style="color:#a78bfa;font-weight:700;">💎 Premium</span>'
+    +'<span style="color:#a78bfa;font-weight:900;" id="md-prem-val">'+(cfg.prem||0)+'</span></div>'
+    +'<input type="range" id="md-prem" min="0" max="'+maxPrem+'" value="'+(cfg.prem||0)+'" step="1" '
+    +'oninput="modUpdateSeats()" style="width:100%;accent-color:#a78bfa;">'
     +'</div>'
 
     +'<div style="margin-bottom:10px;">'
     +'<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">'
-    +'<span style="color:#f5a623;">&#9650; Biznes</span>'
-    +'<span style="color:#f5a623;font-weight:700;" id="md-biz-val">'+cfg.biz+'</span>'
-    +'</div>'
-    +'<input type="range" id="md-biz" min="0" max="'+Math.floor(totalSeats*0.3)+'" value="'+(cfg.biz||0)+'" step="1" '
-    +'oninput="modUpdateSeats()" style="width:100%;accent-color:#f5a623;margin-bottom:2px;">'
+    +'<span style="color:#f5a623;font-weight:700;">🎩 Biznes</span>'
+    +'<span style="color:#f5a623;font-weight:900;" id="md-biz-val">'+(cfg.biz||0)+'</span></div>'
+    +'<input type="range" id="md-biz" min="0" max="'+maxBiz+'" value="'+(cfg.biz||0)+'" step="1" '
+    +'oninput="modUpdateSeats()" style="width:100%;accent-color:#f5a623;">'
     +'</div>'
 
-    // Ekonomia (auto)
-    +'<div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:12px;margin-bottom:14px;">'
+    // Eco auto
+    +'<div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:12px;margin-bottom:12px;">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;">'
-    +'<span style="font-size:12px;color:#00d4ff;">&#9632; Ekonomia (pozostałe)</span>'
-    +'<span style="font-size:16px;font-weight:900;color:#00d4ff;" id="md-eco-val">'+cfg.eco+'</span>'
+    +'<span style="font-size:12px;color:#00d4ff;font-weight:700;">💺 Ekonomia (pozostałe)</span>'
+    +'<span style="font-size:18px;font-weight:900;color:#00d4ff;" id="md-eco-val">'+(cfg.eco||totalSeats)+'</span>'
     +'</div></div>'
 
-    // Podgląd przychodu
-    +'<div style="background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.15);border-radius:10px;padding:10px 12px;margin-bottom:14px;">'
+    // Revenue preview
+    +'<div style="background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.15);border-radius:10px;padding:10px 12px;margin-bottom:12px;">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;">'
     +'<div style="font-size:11px;color:#5580a0;">Przychód/lot (40 min)</div>'
-    +'<div style="font-size:14px;font-weight:900;color:#00e676;" id="md-rev-val">$'+calcModRevenue(cfg,40).toLocaleString()+'</div>'
+    +'<div style="font-size:15px;font-weight:900;color:#00e676;" id="md-rev-val">$'+calcModRevenue(cfg,40).toLocaleString()+'</div>'
     +'</div></div>'
 
-    +'<div id="md-warn" style="display:none;color:#e63946;font-size:11px;margin-bottom:8px;text-align:center;"></div>'
-    +'<button onclick="applySeatsNew()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Zastosuj układ</button>';
+    +'<div id="md-warn" style="display:none;color:#e63946;font-size:11px;margin-bottom:8px;padding:8px;background:rgba(230,57,70,0.1);border-radius:8px;text-align:center;"></div>'
+    +'<button onclick="applySeatsNew()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">✓ Zastosuj układ</button>';
 
   document.getElementById('modal').style.display='flex';
 }
@@ -636,20 +660,28 @@ function modUpdateSeats() {
   if(!ac) return;
   var totalSeats = ac.seats || 150;
   var first = parseInt(document.getElementById('md-first').value)||0;
-  var prem = parseInt(document.getElementById('md-prem').value)||0;
-  var biz = parseInt(document.getElementById('md-biz').value)||0;
-  var used = first+prem+biz;
-  var eco = Math.max(0, totalSeats-used);
+  var prem  = parseInt(document.getElementById('md-prem').value)||0;
+  var biz   = parseInt(document.getElementById('md-biz').value)||0;
+  // Slots used: first=4, prem=3, biz=2, eco=1
+  var slotsUsed = first*4 + prem*3 + biz*2;
+  var ecoSlots  = Math.max(0, totalSeats - slotsUsed);
 
   document.getElementById('md-first-val').textContent = first;
-  document.getElementById('md-prem-val').textContent = prem;
-  document.getElementById('md-biz-val').textContent = biz;
-  document.getElementById('md-eco-val').textContent = eco;
+  document.getElementById('md-prem-val').textContent  = prem;
+  document.getElementById('md-biz-val').textContent   = biz;
+  document.getElementById('md-eco-val').textContent   = ecoSlots;
+
+  var pct = Math.min(100, Math.round(slotsUsed/totalSeats*100));
+  var bar = document.getElementById('md-slots-bar');
+  var used_el = document.getElementById('md-slots-used');
+  if(bar) bar.style.width = pct+'%';
+  if(bar) bar.style.background = pct>95?'#e63946':pct>75?'#f5a623':'linear-gradient(90deg,#ffd700,#00d4ff)';
+  if(used_el) used_el.textContent = slotsUsed;
 
   var warn = document.getElementById('md-warn');
-  if(used > totalSeats) {
+  if(slotsUsed > totalSeats) {
     warn.style.display='block';
-    warn.textContent='Za dużo miejsc! Zmniejsz którąś klasę.';
+    warn.textContent='Przekroczono pojemność! Zmniejsz liczby klas.';
   } else {
     warn.style.display='none';
   }
@@ -657,7 +689,7 @@ function modUpdateSeats() {
   var route = ac.routeId ? G.routes.filter(function(r){return r.id===ac.routeId;})[0] : null;
   var mins = route ? (route.durationMin||40) : 40;
   var rev = document.getElementById('md-rev-val');
-  if(rev) rev.textContent = '$'+calcModRevenue({first:first,prem:prem,biz:biz,eco:eco},mins).toLocaleString();
+  if(rev) rev.textContent = '$'+calcModRevenue({first:first,prem:prem,biz:biz,eco:ecoSlots},mins).toLocaleString();
 }
 
 function applySeatsNew() {
@@ -665,12 +697,13 @@ function applySeatsNew() {
   if(!ac) return;
   var totalSeats = ac.seats || 150;
   var first = parseInt(document.getElementById('md-first').value)||0;
-  var prem = parseInt(document.getElementById('md-prem').value)||0;
-  var biz = parseInt(document.getElementById('md-biz').value)||0;
-  var eco = Math.max(0, totalSeats-first-prem-biz);
+  var prem  = parseInt(document.getElementById('md-prem').value)||0;
+  var biz   = parseInt(document.getElementById('md-biz').value)||0;
+  var slotsUsed = first*4 + prem*3 + biz*2;
+  var eco = Math.max(0, totalSeats - slotsUsed);
 
-  if(first+prem+biz > totalSeats) {
-    showMsg('Za dużo miejsc!'); return;
+  if(slotsUsed > totalSeats) {
+    showMsg('Przekroczono pojemność!'); return;
   }
 
   ac.config = {first:first, prem:prem, biz:biz, eco:eco, total:totalSeats};
