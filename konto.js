@@ -81,6 +81,12 @@ function renderAccountPanel(player) {
     +'<div><div style="font-size:13px;font-weight:700;color:#e0f0ff;">Ustawienia</div>'
     +'<div style="font-size:11px;color:#5580a0;">Dźwięk, powiadomienia</div></div>'
     +'<div style="margin-left:auto;color:#5580a0;">›</div></div>'
+    +'<div onclick="G.tutorialDone=false;closeModal();if(typeof startTutorial==='function')startTutorial();" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;'
+    +'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);margin-bottom:8px;">'
+    +'<div style="width:36px;height:36px;border-radius:10px;background:rgba(0,212,255,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;">📖</div>'
+    +'<div><div style="font-size:13px;font-weight:700;color:#e0f0ff;">Samouczek</div>'
+    +'<div style="font-size:11px;color:#5580a0;">Uruchom samouczek ponownie</div></div>'
+    +'<div style="margin-left:auto;color:#5580a0;">›</div></div>'
 
     // Reset
     +'<div onclick="confirmReset()" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;'
