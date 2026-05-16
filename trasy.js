@@ -103,11 +103,13 @@ function departSingle(el) {
   }
   r.duration = (r.durationMin||40)*60000;
 
-  // Sprawdz personel
-  if(typeof canAircraftDepart === 'function' && G.staff && G.staff.pilot && G.staff.pilot.length > 0) {
+  // Sprawdz personel (tylko jesli gracz juz zatrudnil kogos)
+  var totalStaff = 0;
+  if(G.staff) Object.keys(G.staff).forEach(function(t){ totalStaff += (G.staff[t]||[]).length; });
+  if(totalStaff > 0 && typeof canAircraftDepart === 'function') {
     var crewCheck = canAircraftDepart(ac);
     if(crewCheck !== true && !crewCheck.ok) {
-      showMsg('Nie można odlecieć: '+crewCheck.reason);
+      showMsg('✋ Nie można odlecieć: '+crewCheck.reason);
       return;
     }
   }
