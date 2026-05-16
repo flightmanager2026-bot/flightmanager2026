@@ -103,6 +103,15 @@ function departSingle(el) {
   }
   r.duration = (r.durationMin||40)*60000;
 
+  // Sprawdz personel
+  if(typeof canAircraftDepart === 'function' && G.staff && G.staff.pilot && G.staff.pilot.length > 0) {
+    var crewCheck = canAircraftDepart(ac);
+    if(crewCheck !== true && !crewCheck.ok) {
+      showMsg('Nie można odlecieć: '+crewCheck.reason);
+      return;
+    }
+  }
+
   // Sprawdz limit terminala
   var mins = r.durationMin||40;
   var eco = ac.config?(ac.config.eco||0):(ac.seats||150);
