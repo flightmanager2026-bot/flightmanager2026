@@ -6,10 +6,10 @@ var BRAND_LOGOS = {
 };
 
 var STAFF_TYPES = {
-  pilot:    { label:'Pilot',       icon:'✈️', color:'#00d4ff', salaryMin:3500, salaryMax:6000, neededPerAc:2, desc:'Wymagany do lotu (2 na samolot)' },
-  steward:  { label:'Steward/essa',icon:'👩‍✈️', color:'#a78bfa', salaryMin:2000, salaryMax:3500, neededPerAc:4, desc:'Obsługa pasażerów (4 na samolot)' },
-  mechanic: { label:'Mechanik',    icon:'🔧', color:'#f5a623', salaryMin:2800, salaryMax:4500, neededPerAc:1, desc:'Konserwacja samolotu (1 na samolot)' },
-  engineer: { label:'Inżynier',    icon:'👷', color:'#00e676', salaryMin:4000, salaryMax:7000, neededPerAc:0.33, desc:'Nadzór techniczny (1 na 3 samoloty)' }
+  pilot:    { label:'Pilot',       icon:'✈️', color:'#00d4ff', salaryMin:1800, salaryMax:3500, neededPerAc:2, desc:'Wymagany do lotu (2 na samolot)' },
+  steward:  { label:'Steward/essa',icon:'👩‍✈️', color:'#a78bfa', salaryMin:800,  salaryMax:1800, neededPerAc:4, desc:'Obsługa pasażerów (4 na samolot)' },
+  mechanic: { label:'Mechanik',    icon:'🔧', color:'#f5a623', salaryMin:1200, salaryMax:2500, neededPerAc:1, desc:'Konserwacja samolotu (1 na samolot)' },
+  engineer: { label:'Inżynier',    icon:'👷', color:'#00e676', salaryMin:2000, salaryMax:4000, neededPerAc:0.33, desc:'Nadzór techniczny (1 na 3 samoloty)' }
 };
 
 var FIRST_NAMES_M = ['Adam','Piotr','Marek','Tomasz','Paweł','Michał','Andrzej','Grzegorz','Rafał','Łukasz','Jakub','Krzysztof','Robert','Marcin','Bartosz'];
@@ -322,12 +322,10 @@ function doAssign(type, empId, acId) {
 }
 
 function canAircraftDepart(ac) {
-  if(!G.staff||!ac.crew) return {ok:true};
-  var totalHired=Object.keys(G.staff).reduce(function(s,t){return s+(G.staff[t]||[]).length;},0);
-  if(totalHired===0) return {ok:true};
+  if(!G.staff) return {ok:true}; // brak systemu personelu
   var crew=ac.crew||{};
-  if((crew.pilot||[]).length<2) return {ok:false,reason:'Brak pilotów ('+(crew.pilot||[]).length+'/2)'};
-  if((crew.steward||[]).length<2) return {ok:false,reason:'Brak stewardów ('+(crew.steward||[]).length+'/2)'};
-  if((crew.mechanic||[]).length<1) return {ok:false,reason:'Brak mechanika (0/1)'};
+  if((crew.pilot||[]).length<2) return {ok:false,reason:'Brak pilotów ('+(crew.pilot||[]).length+'/2) — Personel → Piloci'};
+  if((crew.steward||[]).length<2) return {ok:false,reason:'Brak stewardów ('+(crew.steward||[]).length+'/2) — Personel → Stewardzi'};
+  if((crew.mechanic||[]).length<1) return {ok:false,reason:'Brak mechanika (0/1) — Personel → Mechanicy'};
   return {ok:true};
 }
