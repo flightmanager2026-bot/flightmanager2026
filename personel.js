@@ -1,344 +1,333 @@
 /* -- PERSONEL -- */
 
-var STAFF_TYPES = {
-  pilot: {
-    label: 'Pilot', icon: '✈️',
-    salaryBase: 8000, needed: 2, // per aircraft
-    desc: 'Wymagany do wykonywania lotów',
-    names: ['Adam Kowalski','Piotr Nowak','Marek Wiśniewski','Tomasz Dąbrowski','Paweł Lewandowski',
-            'Michał Wójcik','Andrzej Kamiński','Grzegorz Kowalczyk','Zbigniew Zieliński','Rafał Szymański',
-            'John Smith','James Wilson','Robert Johnson','Michael Brown','David Miller']
-  },
-  steward: {
-    label: 'Stewardesa/Steward', icon: '👩‍✈️',
-    salaryBase: 4000, needed: 4, // per aircraft
-    desc: 'Obsługa pasażerów na pokładzie',
-    names: ['Anna Kowalska','Maria Nowak','Katarzyna Wiśniewska','Agnieszka Dąbrowska','Monika Lewandowska',
-            'Karolina Wójcik','Magdalena Kamińska','Joanna Kowalczyk','Natalia Zielińska','Aleksandra Szymańska',
-            'Sophie Martin','Emma Wilson','Laura Johnson','Olivia Brown','Isabella Miller']
-  },
-  mechanic: {
-    label: 'Mechanik', icon: '🔧',
-    salaryBase: 6000, needed: 1, // per aircraft
-    desc: 'Utrzymanie i naprawa samolotów',
-    names: ['Stanisław Kowalski','Władysław Nowak','Tadeusz Wiśniewski','Henryk Dąbrowski','Eugeniusz Lewandowski',
-            'Ryszard Wójcik','Zygmunt Kamiński','Mirosław Kowalczyk','Bronisław Zieliński','Wiesław Szymański']
-  },
-  engineer: {
-    label: 'Inżynier', icon: '👷',
-    salaryBase: 9000, needed: 1, // per 3 aircraft
-    desc: 'Nadzór techniczny i certyfikacja',
-    names: ['Prof. Andrzej Nowak','Dr Piotr Kowalski','Mgr Marek Wiśniewski','Ing. Tomasz Dąbrowski','Dr Paweł Wójcik',
-            'Prof. John Smith','Dr James Wilson','Eng. Robert Johnson','Dr Michael Brown','Prof. David Miller']
-  }
+var BRAND_LOGOS = {
+  'Airbus': 'img/AIRBUS_Blue.png',
+  'Embraer': 'img/embraer-vector-logo-removebg-preview.png'
 };
 
-function initStaff() {
-  if(!G.staff) G.staff = {pilot:[], steward:[], mechanic:[], engineer:[]};
+var STAFF_TYPES = {
+  pilot:    { label:'Pilot',       icon:'✈️', color:'#00d4ff', salaryMin:3500, salaryMax:6000, neededPerAc:2, desc:'Wymagany do lotu (2 na samolot)' },
+  steward:  { label:'Steward/essa',icon:'👩‍✈️', color:'#a78bfa', salaryMin:2000, salaryMax:3500, neededPerAc:4, desc:'Obsługa pasażerów (4 na samolot)' },
+  mechanic: { label:'Mechanik',    icon:'🔧', color:'#f5a623', salaryMin:2800, salaryMax:4500, neededPerAc:1, desc:'Konserwacja samolotu (1 na samolot)' },
+  engineer: { label:'Inżynier',    icon:'👷', color:'#00e676', salaryMin:4000, salaryMax:7000, neededPerAc:0.33, desc:'Nadzór techniczny (1 na 3 samoloty)' }
+};
 
-  // Generate job market if empty
+var FIRST_NAMES_M = ['Adam','Piotr','Marek','Tomasz','Paweł','Michał','Andrzej','Grzegorz','Rafał','Łukasz','Jakub','Krzysztof','Robert','Marcin','Bartosz'];
+var FIRST_NAMES_F = ['Anna','Maria','Katarzyna','Agnieszka','Monika','Karolina','Magdalena','Joanna','Natalia','Aleksandra','Marta','Ewa','Paulina','Izabela','Barbara'];
+var LAST_NAMES = ['Kowalski','Nowak','Wiśniewski','Dąbrowski','Lewandowski','Wójcik','Kamiński','Kowalczyk','Zieliński','Szymański','Woźniak','Kozłowski','Jankowski','Wojciechowski','Kwiatkowski'];
+
+function randomName(type) {
+  if(type==='steward') {
+    var fn = FIRST_NAMES_F[Math.floor(Math.random()*FIRST_NAMES_F.length)];
+    var ln = LAST_NAMES[Math.floor(Math.random()*LAST_NAMES.length)];
+    return fn+' '+ln+'a';
+  }
+  var fn = Math.random()>0.3 ? FIRST_NAMES_M[Math.floor(Math.random()*FIRST_NAMES_M.length)] : FIRST_NAMES_F[Math.floor(Math.random()*FIRST_NAMES_F.length)];
+  var ln = LAST_NAMES[Math.floor(Math.random()*LAST_NAMES.length)];
+  return fn+' '+ln;
+}
+
+function generateCandidate(type) {
+  var st = STAFF_TYPES[type];
+  var exp = Math.floor(Math.random()*15)+1;
+  var salary = Math.round(st.salaryMin + (st.salaryMax-st.salaryMin)*(exp/15) + Math.random()*300);
+  return {
+    id: type+'_c_'+Date.now()+'_'+Math.random().toString(36).substr(2,5),
+    name: randomName(type),
+    experience: exp,
+    salary: salary,
+    rating: Math.min(5, Math.ceil(exp/3)),
+    type: type
+  };
+}
+
+function initStaff() {
+  if(!G.staff) G.staff = {pilot:[],steward:[],mechanic:[],engineer:[]};
   if(!G.jobMarket) {
     G.jobMarket = {};
-    Object.keys(STAFF_TYPES).forEach(function(type) {
-      var st = STAFF_TYPES[type];
+    Object.keys(STAFF_TYPES).forEach(function(type){
       G.jobMarket[type] = [];
-      for(var i=0; i<8; i++) {
-        var name = st.names[Math.floor(Math.random()*st.names.length)];
-        var exp = Math.floor(Math.random()*20)+1;
-        var salary = st.salaryBase + (exp*200) + Math.floor(Math.random()*1000);
-        G.jobMarket[type].push({
-          id: type+'_market_'+i,
-          name: name,
-          experience: exp,
-          salary: salary,
-          rating: Math.min(5, Math.floor(exp/4)+1)
-        });
-      }
+      for(var i=0;i<6;i++) G.jobMarket[type].push(generateCandidate(type));
     });
   }
+  // Auto-refresh market - add new candidates if < 4
+  Object.keys(STAFF_TYPES).forEach(function(type){
+    if(!G.jobMarket[type]) G.jobMarket[type]=[];
+    while(G.jobMarket[type].length < 4) {
+      G.jobMarket[type].push(generateCandidate(type));
+    }
+  });
+}
+
+function getNeeded(type) {
+  var st = STAFF_TYPES[type];
+  if(type==='engineer') return Math.max(1, Math.ceil(G.fleet.length * st.neededPerAc));
+  return G.fleet.length * st.neededPerAc;
 }
 
 function renderPersonel(body) {
   initStaff();
-  var html =
-    '<div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">'
-    +'<button onclick="renderPersonelTab(\'overview\')" id="ptab-overview" class="sub-tab-btn active">Przegląd</button>'
-    +'<button onclick="renderPersonelTab(\'pilot\')" id="ptab-pilot" class="sub-tab-btn">✈️ Piloci</button>'
-    +'<button onclick="renderPersonelTab(\'steward\')" id="ptab-steward" class="sub-tab-btn">👩‍✈️ Stewardzi</button>'
-    +'<button onclick="renderPersonelTab(\'mechanic\')" id="ptab-mechanic" class="sub-tab-btn">🔧 Mechanicy</button>'
-    +'<button onclick="renderPersonelTab(\'engineer\')" id="ptab-engineer" class="sub-tab-btn">👷 Inżynierowie</button>'
-    +'</div>'
-    +'<div id="personel-content"></div>';
+  var tabs = [
+    {id:'overview', label:'📊 Przegląd'},
+    {id:'pilot', label:'✈️ Piloci'},
+    {id:'steward', label:'👩‍✈️ Stewardzi'},
+    {id:'mechanic', label:'🔧 Mechanicy'},
+    {id:'engineer', label:'👷 Inżynierowie'}
+  ];
+
+  var html = '<div style="display:flex;gap:4px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;">';
+  tabs.forEach(function(t){
+    html += '<button onclick="openPersonelTab(\''+t.id+'\')" id="ptab-'+t.id+'" '
+      +'style="padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);'
+      +'border-radius:20px;color:#5580a0;font-size:11px;font-weight:700;cursor:pointer;'
+      +'font-family:Arial,sans-serif;white-space:nowrap;flex-shrink:0;">'+t.label+'</button>';
+  });
+  html += '</div><div id="personel-content"></div>';
   body.innerHTML = html;
-  renderPersonelTab('overview');
+  openPersonelTab('overview');
 }
 
-function renderPersonelTab(tab) {
-  // Update active tab
+function openPersonelTab(tab) {
   ['overview','pilot','steward','mechanic','engineer'].forEach(function(t){
     var el=document.getElementById('ptab-'+t);
-    if(el){ el.classList.toggle('active', t===tab); }
+    if(!el) return;
+    el.style.background = t===tab?'rgba(0,212,255,0.15)':'rgba(255,255,255,0.05)';
+    el.style.color = t===tab?'#00d4ff':'#5580a0';
+    el.style.borderColor = t===tab?'rgba(0,212,255,0.4)':'rgba(255,255,255,0.1)';
   });
-
-  var content = document.getElementById('personel-content');
-  if(!content) return;
-
-  if(tab === 'overview') {
-    renderPersonelOverview(content);
-  } else {
-    renderPersonelType(content, tab);
-  }
+  var c=document.getElementById('personel-content');
+  if(!c) return;
+  if(tab==='overview') renderOverview(c);
+  else renderStaffType(c, tab);
 }
 
-function renderPersonelOverview(el) {
+function renderOverview(el) {
   initStaff();
-  var totalSalary = 0;
-  Object.keys(G.staff).forEach(function(type){
-    G.staff[type].forEach(function(s){ totalSalary += s.salary; });
-  });
+  var totalSalary=0;
+  Object.keys(G.staff).forEach(function(t){ (G.staff[t]||[]).forEach(function(e){ totalSalary+=e.salary; }); });
 
   var html =
-    '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;margin-bottom:10px;">'
-    +'<div style="font-size:11px;color:#5580a0;letter-spacing:2px;margin-bottom:10px;">STAN PERSONELU</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
-
-  Object.keys(STAFF_TYPES).forEach(function(type){
-    var st = STAFF_TYPES[type];
-    var count = G.staff[type] ? G.staff[type].length : 0;
-    // Calculate needed
-    var needed = 0;
-    if(type==='pilot') needed = G.fleet.length * 2;
-    else if(type==='steward') needed = G.fleet.length * 4;
-    else if(type==='mechanic') needed = G.fleet.length;
-    else if(type==='engineer') needed = Math.ceil(G.fleet.length/3);
-
-    var ok = count >= needed;
-    html +=
-      '<div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px;">'
-      +'<div style="font-size:18px;margin-bottom:4px;">'+st.icon+'</div>'
-      +'<div style="font-size:12px;font-weight:700;color:#e0f0ff;">'+st.label+'</div>'
-      +'<div style="font-size:13px;font-weight:900;color:'+(ok?'#00e676':'#e63946')+';margin-top:2px;">'+count+'/'+needed+'</div>'
-      +'<div style="font-size:9px;color:#5580a0;">'+st.desc+'</div>'
-      +'</div>';
-  });
-
-  html += '</div></div>';
-
-  // Salary info
-  html +=
-    '<div style="background:rgba(230,57,70,0.06);border:1px solid rgba(230,57,70,0.15);border-radius:12px;padding:12px;margin-bottom:10px;">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;">'
-    +'<div style="font-size:12px;color:#5580a0;">Miesięczne pensje</div>'
-    +'<div style="font-size:15px;font-weight:900;color:#e63946;">$'+totalSalary.toLocaleString()+'/mies.</div>'
+    // Header stats
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">'
+    +'<div style="background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(26,86,219,0.1));border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:12px;text-align:center;">'
+    +'<div style="font-size:24px;font-weight:900;color:#00d4ff;">'+
+    Object.keys(G.staff).reduce(function(s,t){return s+(G.staff[t]||[]).length;},0)+'</div>'
+    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-top:2px;">PRACOWNIKÓW</div>'
+    +'</div>'
+    +'<div style="background:linear-gradient(135deg,rgba(230,57,70,0.1),rgba(230,57,70,0.05));border:1px solid rgba(230,57,70,0.2);border-radius:12px;padding:12px;text-align:center;">'
+    +'<div style="font-size:20px;font-weight:900;color:#e63946;">$'+totalSalary.toLocaleString()+'</div>'
+    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-top:2px;">PENSJE/MIES.</div>'
     +'</div></div>';
 
-  // Warning if missing staff
+  // Staff status per type
   Object.keys(STAFF_TYPES).forEach(function(type){
-    var count = G.staff[type] ? G.staff[type].length : 0;
-    var needed = 0;
-    if(type==='pilot') needed = G.fleet.length * 2;
-    else if(type==='steward') needed = G.fleet.length * 4;
-    else if(type==='mechanic') needed = G.fleet.length;
-    else if(type==='engineer') needed = Math.ceil(G.fleet.length/3);
-    if(count < needed) {
-      html += '<div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:11px;color:#f5a623;">'
-        +'⚠️ Brakuje '+(needed-count)+' '+STAFF_TYPES[type].label.toLowerCase()+'(ów). Samoloty bez '+STAFF_TYPES[type].label.toLowerCase()+'(ów) nie odlecą!'
-        +'</div>';
-    }
+    var st=STAFF_TYPES[type];
+    var count=(G.staff[type]||[]).length;
+    var needed=getNeeded(type);
+    var pct=needed>0?Math.min(100,Math.round(count/needed*100)):100;
+    var ok=count>=needed;
+    var barColor=ok?'#00e676':pct>50?'#f5a623':'#e63946';
+
+    html +=
+      '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);'
+      +'border-radius:14px;padding:14px;margin-bottom:8px;cursor:pointer;" '
+      +'onclick="openPersonelTab(\''+type+'\')">'
+      +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">'
+      +'<div style="width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,0.05);'
+      +'display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">'+st.icon+'</div>'
+      +'<div style="flex:1;">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;">'
+      +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+st.label+'</div>'
+      +'<div style="font-size:12px;font-weight:900;color:'+barColor+';">'+count+'/'+needed+'</div>'
+      +'</div>'
+      +'<div style="font-size:10px;color:#5580a0;margin-top:2px;">'+st.desc+'</div>'
+      +'</div></div>'
+      +'<div style="height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;">'
+      +'<div style="height:100%;width:'+pct+'%;background:'+barColor+';border-radius:2px;transition:width 0.3s;"></div>'
+      +'</div>'
+      +(!ok?'<div style="margin-top:8px;font-size:10px;color:#f5a623;">⚠ Potrzeba jeszcze '+(needed-count)+' osób</div>':'')
+      +'</div>';
   });
 
   el.innerHTML = html;
 }
 
-function renderPersonelType(el, type) {
+function renderStaffType(el, type) {
   initStaff();
-  var st = STAFF_TYPES[type];
-  var employed = G.staff[type] || [];
-  var market = (G.jobMarket && G.jobMarket[type]) || [];
+  var st=STAFF_TYPES[type];
+  var employed=G.staff[type]||[];
+  var market=G.jobMarket[type]||[];
+  var needed=getNeeded(type);
 
   var html =
+    // Stats bar
+    '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);'
+    +'border-radius:12px;padding:12px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">'
+    +'<div style="font-size:28px;">'+st.icon+'</div>'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:14px;font-weight:700;color:#e0f0ff;">'+st.label+'</div>'
+    +'<div style="font-size:11px;color:#5580a0;">Zatrudnieni: <b style="color:'+(employed.length>=needed?'#00e676':'#e63946')+'">'+employed.length+'/'+needed+'</b></div>'
+    +'</div>'
+    +'<button onclick="refreshMarket(\''+type+'\')" '
+    +'style="padding:6px 10px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);'
+    +'border-radius:8px;color:#00d4ff;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">'
+    +'🔄 Odśwież</button>'
+    +'</div>';
 
-  // Employed
-  '<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:8px;">ZATRUDNIENI ('+employed.length+')</div>';
-
-  if(employed.length === 0) {
-    html += '<div style="padding:12px;text-align:center;color:#5580a0;font-size:12px;margin-bottom:14px;">Brak zatrudnionych '+st.label.toLowerCase()+'ów</div>';
-  } else {
+  // Employed section
+  if(employed.length > 0) {
+    html += '<div style="font-size:9px;color:#5580a0;letter-spacing:3px;margin-bottom:8px;">ZATRUDNIENI</div>';
     employed.forEach(function(emp, i) {
-      // Find assigned aircraft
-      var assignedAc = null;
-      G.fleet.forEach(function(ac){
-        if(ac.crew && ac.crew[type] && ac.crew[type].indexOf(emp.id) >= 0) assignedAc = ac;
-      });
+      var assignedAc=null;
+      G.fleet.forEach(function(ac){ if(ac.crew&&ac.crew[type]&&ac.crew[type].indexOf(emp.id)>=0) assignedAc=ac; });
+      var stars='';
+      for(var s=0;s<5;s++) stars+=s<emp.rating?'★':'☆';
 
       html +=
-        '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:12px;margin-bottom:6px;">'
+        '<div style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.12);'
+        +'border-radius:12px;padding:12px;margin-bottom:6px;">'
         +'<div style="display:flex;align-items:center;gap:10px;">'
-        +'<div style="width:36px;height:36px;border-radius:50%;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;font-size:16px;">'+st.icon+'</div>'
-        +'<div style="flex:1;">'
-        +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+emp.name+'</div>'
-        +'<div style="font-size:10px;color:#5580a0;">Dośw: '+emp.experience+' lat &bull; $'+emp.salary.toLocaleString()+'/mies.</div>'
-        +'<div style="font-size:10px;color:'+(assignedAc?'#00e676':'#f5a623')+';">'
-        +(assignedAc?'✓ Przypisany: '+assignedAc.model+' ('+assignedAc.reg+')':'⚠ Nieprzypisany')
+        +'<div style="width:38px;height:38px;border-radius:50%;background:rgba(0,212,255,0.1);'
+        +'border:2px solid rgba(0,212,255,0.3);display:flex;align-items:center;justify-content:center;'
+        +'font-size:16px;flex-shrink:0;">'+st.icon+'</div>'
+        +'<div style="flex:1;min-width:0;">'
+        +'<div style="font-size:12px;font-weight:700;color:#e0f0ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+emp.name+'</div>'
+        +'<div style="font-size:10px;color:#f5a623;">'+stars+'</div>'
+        +'<div style="font-size:10px;color:#5580a0;">Dośw: '+emp.experience+' lat &bull; <span style="color:#00e676;">$'+emp.salary.toLocaleString()+'/mies.</span></div>'
+        +'<div style="font-size:10px;margin-top:2px;color:'+(assignedAc?'#00e676':'#f5a623')+';">'
+        +(assignedAc?'✓ '+assignedAc.model+' ('+assignedAc.reg+')':'⚠ Nieprzypisany')
         +'</div></div>'
-        +'<div style="display:flex;flex-direction:column;gap:4px;">'
-        +'<button onclick="assignStaff(\''+type+'\',\''+emp.id+'\')" style="padding:5px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);border-radius:6px;color:#00d4ff;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Przypisz</button>'
-        +'<button onclick="fireStaff(\''+type+'\','+i+')" style="padding:5px 8px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.2);border-radius:6px;color:#e63946;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Zwolnij</button>'
+        +'<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">'
+        +(G.fleet.length>0?'<button onclick="assignStaff(\''+type+'\',\''+emp.id+'\')" '
+          +'style="padding:5px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);'
+          +'border-radius:6px;color:#00d4ff;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Przypisz</button>':'')
+        +'<button onclick="fireStaff(\''+type+'\','+i+')" '
+        +'style="padding:5px 8px;background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.2);'
+        +'border-radius:6px;color:#e63946;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Zwolnij</button>'
         +'</div></div></div>';
     });
   }
 
-  // Job market
-  html += '<div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin:14px 0 8px;">RYNEK PRACY</div>';
+  // Market section
+  html += '<div style="font-size:9px;color:#5580a0;letter-spacing:3px;margin:14px 0 8px;">RYNEK PRACY — KANDYDACI</div>';
 
-  market.forEach(function(candidate, i) {
-    var stars = '';
-    for(var s=0;s<5;s++) stars += s<candidate.rating ? '⭐' : '☆';
-    html +=
-      '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:12px;margin-bottom:6px;">'
-      +'<div style="display:flex;align-items:center;gap:10px;">'
-      +'<div style="width:36px;height:36px;border-radius:50%;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.2);display:flex;align-items:center;justify-content:center;font-size:16px;">'+st.icon+'</div>'
-      +'<div style="flex:1;">'
-      +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+candidate.name+'</div>'
-      +'<div style="font-size:10px;color:#5580a0;">'+stars+' &bull; Dośw: '+candidate.experience+' lat</div>'
-      +'<div style="font-size:11px;color:#f5a623;font-weight:700;">$'+candidate.salary.toLocaleString()+'/mies.</div>'
-      +'</div>'
-      +'<button onclick="hireStaff(\''+type+'\','+i+')" style="padding:8px 12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;white-space:nowrap;">Zatrudnij</button>'
-      +'</div></div>';
-  });
+  if(market.length===0) {
+    html += '<div style="padding:20px;text-align:center;color:#5580a0;font-size:12px;">Brak kandydatów — odśwież listę</div>';
+  } else {
+    market.forEach(function(c, i) {
+      var stars='';
+      for(var s=0;s<5;s++) stars+=s<c.rating?'★':'☆';
+      html +=
+        '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);'
+        +'border-radius:12px;padding:12px;margin-bottom:6px;">'
+        +'<div style="display:flex;align-items:center;gap:10px;">'
+        +'<div style="width:38px;height:38px;border-radius:50%;background:rgba(245,166,35,0.1);'
+        +'border:1px solid rgba(245,166,35,0.2);display:flex;align-items:center;justify-content:center;'
+        +'font-size:16px;flex-shrink:0;">'+st.icon+'</div>'
+        +'<div style="flex:1;min-width:0;">'
+        +'<div style="font-size:12px;font-weight:700;color:#e0f0ff;">'+c.name+'</div>'
+        +'<div style="font-size:10px;color:#f5a623;">'+stars+' Dośw: '+c.experience+' lat</div>'
+        +'<div style="font-size:11px;font-weight:700;color:#00e676;">$'+c.salary.toLocaleString()+'/mies.</div>'
+        +'</div>'
+        +'<button onclick="hireStaff(\''+type+'\','+i+')" '
+        +'style="padding:8px 14px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;'
+        +'border-radius:10px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;'
+        +'font-family:Arial,sans-serif;white-space:nowrap;flex-shrink:0;">Zatrudnij</button>'
+        +'</div></div>';
+    });
+  }
 
   el.innerHTML = html;
 }
 
-function hireStaff(type, marketIdx) {
+function refreshMarket(type) {
   initStaff();
-  var candidate = G.jobMarket[type][marketIdx];
-  if(!candidate) return;
-
-  // Add to employed
-  G.staff[type].push({
-    id: type+'_'+Date.now(),
-    name: candidate.name,
-    experience: candidate.experience,
-    salary: candidate.salary,
-    rating: candidate.rating,
-    assignedAcId: null
-  });
-
-  // Remove from market
-  G.jobMarket[type].splice(marketIdx, 1);
-
+  G.jobMarket[type] = [];
+  for(var i=0;i<6;i++) G.jobMarket[type].push(generateCandidate(type));
   save();
-  showMsg(candidate.name+' zatrudniony/a! $'+candidate.salary.toLocaleString()+'/mies.');
+  var c=document.getElementById('personel-content');
+  if(c) renderStaffType(c, type);
+}
 
-  var content = document.getElementById('personel-content');
-  if(content) renderPersonelType(content, type);
+function hireStaff(type, idx) {
+  initStaff();
+  var c=G.jobMarket[type][idx]; if(!c) return;
+  G.staff[type].push({id:c.id,name:c.name,experience:c.experience,salary:c.salary,rating:c.rating,assignedAcId:null});
+  G.jobMarket[type].splice(idx,1);
+  // Auto-add new candidate
+  G.jobMarket[type].push(generateCandidate(type));
+  save();
+  showMsg('✓ '+c.name+' zatrudniony/a! $'+c.salary.toLocaleString()+'/mies.');
+  var content=document.getElementById('personel-content'); if(content) renderStaffType(content,type);
 }
 
 function fireStaff(type, idx) {
   initStaff();
-  var emp = G.staff[type][idx];
-  if(!emp) return;
+  var emp=G.staff[type][idx]; if(!emp) return;
   if(!confirm('Zwolnić '+emp.name+'?')) return;
-
-  // Remove from all aircraft crews
-  G.fleet.forEach(function(ac){
-    if(ac.crew && ac.crew[type]) {
-      ac.crew[type] = ac.crew[type].filter(function(id){ return id !== emp.id; });
-    }
-  });
-
-  G.staff[type].splice(idx, 1);
+  G.fleet.forEach(function(ac){ if(ac.crew&&ac.crew[type]) ac.crew[type]=ac.crew[type].filter(function(id){return id!==emp.id;}); });
+  G.staff[type].splice(idx,1);
   save();
   showMsg(emp.name+' zwolniony/a.');
-
-  var content = document.getElementById('personel-content');
-  if(content) renderPersonelType(content, type);
+  var c=document.getElementById('personel-content'); if(c) renderStaffType(c,type);
 }
 
 function assignStaff(type, empId) {
   initStaff();
-  if(!G.fleet.length) { showMsg('Brak samolotów we flocie!'); return; }
-
-  // Show aircraft list modal
-  var emp = null;
-  G.staff[type].forEach(function(e){ if(e.id===empId) emp=e; });
+  if(!G.fleet.length){showMsg('Brak samolotów!');return;}
+  var emp=null; G.staff[type].forEach(function(e){if(e.id===empId)emp=e;});
   if(!emp) return;
 
-  var html =
+  var maxCrew={pilot:2,steward:4,mechanic:1,engineer:1}[type]||1;
+
+  var html=
     '<div style="font-size:15px;font-weight:700;color:#00d4ff;margin-bottom:4px;">Przypisz do samolotu</div>'
     +'<div style="font-size:11px;color:#5580a0;margin-bottom:14px;">'+emp.name+'</div>';
 
   G.fleet.forEach(function(ac){
-    var crew = ac.crew || {};
-    var typeCrew = crew[type] || [];
-    var maxCrew = type==='pilot'?2:type==='steward'?4:type==='mechanic'?1:1;
-    var hasSlot = typeCrew.length < maxCrew;
-    var alreadyAssigned = typeCrew.indexOf(empId) >= 0;
-
+    var crew=ac.crew||{}; var typeCrew=crew[type]||[];
+    var hasSlot=typeCrew.length<maxCrew;
+    var already=typeCrew.indexOf(empId)>=0;
     html +=
-      '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;margin-bottom:6px;">'
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;'
+      +'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;margin-bottom:6px;">'
       +'<div>'
       +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+ac.model+'</div>'
-      +'<div style="font-size:10px;color:#5580a0;">'+ac.reg+' &bull; '+STAFF_TYPES[type].label+': '+typeCrew.length+'/'+maxCrew+'</div>'
+      +'<div style="font-size:10px;color:#5580a0;">'+ac.reg+' &bull; obsada: '+typeCrew.length+'/'+maxCrew+'</div>'
       +'</div>'
-      +(alreadyAssigned
-        ?'<div style="font-size:10px;color:#00e676;">✓ Już przypisany</div>'
-        :hasSlot
-          ?'<button onclick="doAssignStaff(\''+type+'\',\''+empId+'\',\''+ac.id+'\')" style="padding:6px 12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Przypisz</button>'
-          :'<div style="font-size:10px;color:#e63946;">Pełna obsada</div>'
-      )
+      +(already?'<div style="font-size:10px;color:#00e676;font-weight:700;">✓ Przypisany</div>'
+        :hasSlot?'<button onclick="doAssign(\''+type+'\',\''+empId+'\',\''+ac.id+'\')" '
+          +'style="padding:6px 14px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;'
+          +'border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Przypisz</button>'
+        :'<div style="font-size:10px;color:#e63946;">Pełna obsada</div>')
       +'</div>';
   });
 
-  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal-body').innerHTML=html;
   document.getElementById('modal').style.display='flex';
 }
 
-function doAssignStaff(type, empId, acId) {
-  var ac = G.fleet.filter(function(a){ return a.id===acId; })[0];
-  if(!ac) return;
+function doAssign(type, empId, acId) {
+  var ac=G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
   if(!ac.crew) ac.crew={};
   if(!ac.crew[type]) ac.crew[type]=[];
-
-  var maxCrew = type==='pilot'?2:type==='steward'?4:type==='mechanic'?1:1;
-  if(ac.crew[type].length >= maxCrew) { showMsg('Pełna obsada!'); return; }
-  if(ac.crew[type].indexOf(empId) >= 0) { showMsg('Już przypisany!'); return; }
-
-  // Remove from previous aircraft
-  G.fleet.forEach(function(a){
-    if(a.id!==acId && a.crew && a.crew[type]) {
-      a.crew[type] = a.crew[type].filter(function(id){ return id!==empId; });
-    }
-  });
-
+  var maxCrew={pilot:2,steward:4,mechanic:1,engineer:1}[type]||1;
+  if(ac.crew[type].length>=maxCrew){showMsg('Pełna obsada!');return;}
+  if(ac.crew[type].indexOf(empId)>=0){showMsg('Już przypisany!');return;}
+  G.fleet.forEach(function(a){ if(a.id!==acId&&a.crew&&a.crew[type]) a.crew[type]=a.crew[type].filter(function(id){return id!==empId;}); });
   ac.crew[type].push(empId);
-
-  // Update employee record
-  G.staff[type].forEach(function(e){ if(e.id===empId) e.assignedAcId=acId; });
-
-  save();
-  closeModal();
-  showMsg('Przypisano do '+ac.model+'!');
+  G.staff[type].forEach(function(e){if(e.id===empId)e.assignedAcId=acId;});
+  save(); closeModal();
+  showMsg('✓ Przypisano do '+ac.model+'!');
 }
 
 function canAircraftDepart(ac) {
-  if(!G.staff || !G.fleet) return true; // backward compat
-  if(!G.staff.pilot || G.staff.pilot.length === 0) return true; // no staff system yet
-
-  var crew = ac.crew || {};
-
-  // Check pilots (need 2)
-  var pilots = (crew.pilot||[]).length;
-  if(pilots < 2) return {ok:false, reason:'Brak pilotów ('+pilots+'/2)'};
-
-  // Check stewards (need at least 2)
-  var stewards = (crew.steward||[]).length;
-  if(stewards < 2) return {ok:false, reason:'Brak stewardów ('+stewards+'/2)'};
-
-  // Check mechanic (need 1)
-  var mechanics = (crew.mechanic||[]).length;
-  if(mechanics < 1) return {ok:false, reason:'Brak mechanika (0/1)'};
-
+  if(!G.staff||!ac.crew) return {ok:true};
+  var totalHired=Object.keys(G.staff).reduce(function(s,t){return s+(G.staff[t]||[]).length;},0);
+  if(totalHired===0) return {ok:true};
+  var crew=ac.crew||{};
+  if((crew.pilot||[]).length<2) return {ok:false,reason:'Brak pilotów ('+(crew.pilot||[]).length+'/2)'};
+  if((crew.steward||[]).length<2) return {ok:false,reason:'Brak stewardów ('+(crew.steward||[]).length+'/2)'};
+  if((crew.mechanic||[]).length<1) return {ok:false,reason:'Brak mechanika (0/1)'};
   return {ok:true};
 }
