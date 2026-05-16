@@ -41,13 +41,35 @@ function openShop() {
   document.getElementById('modal').style.display='flex';
 }
 
+function openCargoShop() {
+  document.getElementById('modal-body').innerHTML =
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">'
+    +'<button onclick="openSlotShop?openSlotShop():closeModal()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;padding:0;">&#8592;</button>'
+    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">Samoloty Cargo</div></div>'
+    +'<div style="text-align:center;padding:30px 20px;">'
+    +'<div style="font-size:60px;margin-bottom:16px;">📦</div>'
+    +'<div style="font-size:16px;font-weight:700;color:#e0f0ff;margin-bottom:8px;">Flota Cargo — Wkrótce</div>'
+    +'<div style="font-size:12px;color:#5580a0;line-height:1.6;margin-bottom:20px;">'
+    +'Samoloty cargo pozwolą Ci na transport towarów.<br>'
+    +'Dostępne będą: nowe, leasing i używane.<br>'
+    +'Już wkrótce w Flight Manager 2026!</div>'
+    +'<div style="display:flex;gap:8px;justify-content:center;">'
+    +'<div style="padding:8px 16px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:20px;font-size:11px;color:#f5a623;">📦 A330 Cargo</div>'
+    +'<div style="padding:8px 16px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:20px;font-size:11px;color:#f5a623;">📦 747-8F</div>'
+    +'<div style="padding:8px 16px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:20px;font-size:11px;color:#f5a623;">📦 777F</div>'
+    +'</div></div>';
+  document.getElementById('modal').style.display='flex';
+}
+
 function openNewAircraftShop() {
   var brands = Object.keys(AIRCRAFT_CATALOG);
   var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
     +'<button onclick="openShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;">&#8592;</button>'
     +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">Wybierz producenta</div></div>';
   var BRAND_LOGOS = {
-    'Boeing':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/logo.boeing.png'
+    'Boeing':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/logo.boeing.png',
+    'Airbus':'img/AIRBUS_Blue.png',
+    'Embraer':'img/embraer-vector-logo-removebg-preview.png'
   };
   brands.forEach(function(brand) {
     var planes = AIRCRAFT_CATALOG[brand];
@@ -68,6 +90,7 @@ function openManufacturer(brand) {
   var aircraft = AIRCRAFT_CATALOG[brand] || [];
   var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
     +'<button onclick="openNewAircraftShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:20px;">&#8592;</button>'
+    +(brand==='Airbus'?'<img src="img/AIRBUS_Blue.png" style="height:20px;margin-right:8px;vertical-align:middle;">':brand==='Boeing'?'<img src="img/logo.boeing.png" style="height:20px;margin-right:8px;vertical-align:middle;">':brand==='Embraer'?'<img src="img/embraer-vector-logo-removebg-preview.png" style="height:20px;margin-right:8px;vertical-align:middle;">':'')
     +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">'+brand+'</div></div>';
   aircraft.forEach(function(ac) {
     var canBuy = G.level >= (ac.level||1);
