@@ -26,7 +26,7 @@ function addPin(ap) {
   var icon = L.divIcon({
     className: '',
     html: '<div style="position:relative;display:inline-block;">'
-      + '<svg width="22" height="30" viewBox="0 0 28 38">'
+      + '<svg width="14" height="20" viewBox="0 0 28 38">'
       + '<path d="M14 0C6.27 0 0 6.27 0 14c0 9.8 14 24 14 24S28 23.8 28 14C28 6.27 21.73 0 14 0z"'
       + ' fill="'+color+'" stroke="rgba(255,255,255,0.9)" stroke-width="2"/>'
       + '<circle cx="14" cy="14" r="6" fill="white"/>'
