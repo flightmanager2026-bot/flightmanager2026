@@ -1507,5 +1507,7 @@ function confirmStarterPlane() {
     renderMarkers(); renderRoutes();
     restoreFlights(); startTick(); updateHUD();
     showMsg('Witaj! Twój '+p.model+' czeka na pierwszą trasę! ✈');
+    // Start tutorial for new players
+    setTimeout(function(){ if(typeof startTutorial==='function') startTutorial(); }, 1000);
   }, 50);
 }
