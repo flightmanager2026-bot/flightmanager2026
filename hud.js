@@ -16,7 +16,7 @@ function hudAction(type) {
   } else if(type==='shop') {
     if(typeof openShop==='function') openShop(); else showMsg('Sklep - wkrotce!');
   } else if(type==='msg') {
-    showMsg('Brak nowych wiadomosci');
+    if(typeof openMessages==='function') openMessages();
   }
 }
 
