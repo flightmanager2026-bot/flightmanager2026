@@ -257,7 +257,7 @@ function hireStaff(type, idx) {
   // Auto-add new candidate
   G.jobMarket[type].push(generateCandidate(type));
   save();
-  showMsg('✓ '+c.name+' zatrudniony/a! $'+c.salary.toLocaleString()+'/mies.');
+  showMsg('✓ '+c.name+' zatrudniony/a! $'+c.salary.toLocaleString()+'/24h');
   var content=document.getElementById('personel-content'); if(content) renderStaffType(content,type);
 }
 
