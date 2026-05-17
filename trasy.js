@@ -176,10 +176,26 @@ function departSingle(el) {
 function departAll() {
   var departed = 0;
 
+  var skipped = [];
+
   G.routes.forEach(function(r) {
     var ac = G.fleet.filter(function(a){return a.id===r.acId;})[0];
     if(!ac) return;
     if(ac.status==='flying') return;
+
+    // Sprawdz konserwacje
+    if(ac.status==='maintenance') { skipped.push(ac.model+' (w serwisie)'); return; }
+    if(typeof needsMaintenance==='function' && needsMaintenance(ac)) { skipped.push(ac.model+' (wymaga serwisu)'); return; }
+
+    // Sprawdz awarie
+    var hasIncident = ac.maintenance && (ac.maintenance.incidents||[]).some(function(i){return !i.resolved;});
+    if(hasIncident) { skipped.push(ac.model+' (awaria!)'); return; }
+
+    // Sprawdz personel
+    if(typeof canAircraftDepart==='function') {
+      var crewCheck = canAircraftDepart(ac);
+      if(!crewCheck.ok) { skipped.push(ac.model+' ('+crewCheck.reason+')'); return; }
+    }
 
     // Jeśli wyladowal - odwroc trase
     if(ac.status==='landed') {
@@ -226,8 +242,15 @@ function departAll() {
     departed++;
   });
 
-  if(departed>0){ updateHUD(); save(); showMsg('Odlecelo '+departed+' samolotow!'); }
-  else showMsg('Brak samolotow gotowych do odlotu!');
+  if(departed>0) {
+    updateHUD(); save();
+    var msg = 'Odleciało '+departed+' samolotów!';
+    if(skipped.length>0) msg += ' Pominięto: '+skipped.join(', ');
+    showMsg(msg);
+  } else {
+    var reason = skipped.length>0 ? 'Powody: '+skipped[0] : 'Brak samolotów gotowych.';
+    showMsg('Brak samolotów gotowych! '+reason);
+  }
 
   var body=document.getElementById('panel-body');
   if(body) renderTrasy(body);
