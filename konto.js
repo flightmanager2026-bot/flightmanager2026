@@ -274,6 +274,7 @@ function openTopUp() {
     +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">Doładuj konto</div></div>'
 
     +'<div style="font-size:9px;color:#5580a0;letter-spacing:3px;margin-bottom:10px;">WALUTA GRY ($)</div>'
+    +makeTopUpCard('🚀','$50,000,000 <span style="font-size:10px;background:linear-gradient(135deg,#ffd700,#f5a623);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;">MEGA PAKIET</span>','500 zł','addCash(50000000,50000)','rgba(255,215,0,0.06)','rgba(255,215,0,0.2)','#ffd700')
 
     +makeTopUpCard('💵','$100,000','4,99 zł','addCash(100000,499)','rgba(0,230,118,0.08)','rgba(0,230,118,0.2)','#00e676')
     +makeTopUpCard('💰','$500,000','19,99 zł','addCash(500000,1999)','rgba(0,230,118,0.1)','rgba(0,230,118,0.25)','#00e676')
