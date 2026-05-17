@@ -135,14 +135,19 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a141f;font-family:
 </head>
 <body>
 
-<div id="ad-container" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.95);flex-direction:column;align-items:center;justify-content:center;font-family:Arial,sans-serif;">
-  <div style="font-size:11px;color:#888;margin-bottom:12px;letter-spacing:2px;">REKLAMA</div>
-  <div id="ad-slot-wrapper" style="background:#fff;border-radius:12px;padding:10px;width:320px;min-height:200px;display:flex;align-items:center;justify-content:center;">
-    <!-- Reklama zaladuje sie dynamicznie -->
+<div id="ad-container" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(6,13,26,0.97);flex-direction:column;align-items:center;justify-content:center;font-family:Arial,sans-serif;backdrop-filter:blur(8px);">
+  <div style="font-size:10px;color:#5580a0;margin-bottom:16px;letter-spacing:3px;">REKLAMA</div>
+  <div id="ad-slot-wrapper" style="background:#fff;border-radius:16px;padding:10px;width:320px;min-height:250px;display:flex;align-items:center;justify-content:center;">
+    <ins class="adsbygoogle"
+      style="display:block;width:300px;height:250px;"
+      data-ad-client="ca-pub-3572597201441656"
+      data-ad-slot="7126799672"
+      data-ad-format="auto">
+    </ins>
   </div>
-  <div id="ad-timer-txt" style="margin-top:14px;font-size:14px;color:#f5a623;font-weight:700;">Zamknij za 5s</div>
+  <div id="ad-timer-txt" style="margin-top:16px;font-size:14px;color:#f5a623;font-weight:700;"></div>
   <button id="ad-close-btn" onclick="closeAd()" disabled
-    style="margin-top:10px;padding:10px 28px;background:#333;border:none;border-radius:8px;color:#888;font-size:14px;font-weight:700;cursor:not-allowed;">
+    style="margin-top:10px;padding:10px 28px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#5580a0;font-size:14px;font-weight:700;cursor:not-allowed;font-family:Arial,sans-serif;">
     Zamknij
   </button>
 </div>
