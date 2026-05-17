@@ -54,8 +54,7 @@ window.addEventListener('load', function() {
         // W tle synchronizuj z Firebase (nowsze dane z innego urzadzenia)
         loadPlayerData(user.uid, function(hasCloud) {
           if(hasCloud && G.homeAirport) {
-            // Odswiezamy dane jesli Firebase ma nowsze
-            // (nie restartujemy gry - tylko aktualizujemy stan)
+            // Firebase zsynchronizowany - zapisz lokalnie
             save();
           }
         });
@@ -92,6 +91,7 @@ window.addEventListener('load', function() {
             })); } catch(e) {}
             startGame();
           } else {
+            // Nowe konto - pokaż setup
             showSetupScreen();
           }
         });
