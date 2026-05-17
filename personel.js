@@ -324,12 +324,14 @@ function doAssign(type, empId, acId) {
 function canAircraftDepart(ac) {
   if(!G.staff) return {ok:true};
   var crew = ac.crew || {};
-  var pilots   = (crew.pilot||[]).length;
-  var stewards = (crew.steward||[]).length;
-  var mechs    = (crew.mechanic||[]).length;
-  if(pilots < 2)   return {ok:false, reason:'Brak pilotów ('+pilots+'/2) — idź do Personel'};
-  if(stewards < 2) return {ok:false, reason:'Brak stewardów ('+stewards+'/2) — idź do Personel'};
-  if(mechs < 1)    return {ok:false, reason:'Brak mechanika (0/1) — idź do Personel'};
+  var pilots    = (crew.pilot||[]).length;
+  var stewards  = (crew.steward||[]).length;
+  var mechs     = (crew.mechanic||[]).length;
+  var engineers = (crew.engineer||[]).length;
+  if(pilots < 2)    return {ok:false, reason:'Brak pilotów ('+pilots+'/2) → Personel'};
+  if(stewards < 2)  return {ok:false, reason:'Brak stewardów ('+stewards+'/2) → Personel'};
+  if(mechs < 1)     return {ok:false, reason:'Brak mechanika (0/1) → Personel'};
+  if(engineers < 1) return {ok:false, reason:'Brak inżyniera (0/1) → Personel'};
   return {ok:true};
 }
 
