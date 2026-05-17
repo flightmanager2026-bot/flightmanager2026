@@ -274,18 +274,24 @@ function loadPlayerData(uid, callback) {
     if(doc.exists) {
         var data = doc.data();
         // Zaladuj dane do G
-        if(data.cash) G.cash = data.cash;
-        if(data.fleet) G.fleet = data.fleet;
+        if(data.cash !== undefined) G.cash = data.cash;
+        if(data.fleet && data.fleet.length) G.fleet = data.fleet;
         if(data.routes) G.routes = data.routes;
         if(data.slots) G.slots = data.slots;
         if(data.airports) G.airports = data.airports;
         if(data.homeAirport) G.homeAirport = data.homeAirport;
         if(data.airline) G.airline = data.airline;
-        if(data.points) G.points = data.points;
+        if(data.points !== undefined) G.points = data.points;
         if(data.level) G.level = data.level;
         if(data.totalFlights) G.totalFlights = data.totalFlights;
         if(data.departurelog) G.departurelog = data.departurelog;
         if(data.lastShopPayout) G.lastShopPayout = data.lastShopPayout;
+        if(data.staff) G.staff = data.staff;
+        if(data.jobMarket) G.jobMarket = data.jobMarket;
+        if(data.tutorialDone !== undefined) G.tutorialDone = data.tutorialDone;
+        if(data.lastSalaryPay) G.lastSalaryPay = data.lastSalaryPay;
+        // Zapisz do localStorage jako backup
+        try { localStorage.setItem('sb_v3', JSON.stringify(data)); } catch(e) {}
         callback(true);
       } else {
         callback(false);
@@ -313,6 +319,10 @@ function saveToCloud() {
     totalFlights: G.totalFlights || 0,
     departurelog: G.departurelog || [],
     lastShopPayout: G.lastShopPayout || 0,
+    staff: G.staff || {},
+    jobMarket: G.jobMarket || null,
+    tutorialDone: G.tutorialDone || false,
+    lastSalaryPay: G.lastSalaryPay || 0,
     updatedAt: Date.now()
   };
   _fbDb.collection('players').doc(uid).set(data)
