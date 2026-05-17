@@ -116,7 +116,7 @@ function renderOverview(el) {
     +'</div>'
     +'<div style="background:linear-gradient(135deg,rgba(230,57,70,0.1),rgba(230,57,70,0.05));border:1px solid rgba(230,57,70,0.2);border-radius:12px;padding:12px;text-align:center;">'
     +'<div style="font-size:20px;font-weight:900;color:#e63946;">$'+totalSalary.toLocaleString()+'</div>'
-    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-top:2px;">PENSJE/MIES.</div>'
+    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-top:2px;">PENSJE/24H</div>'
     +'</div></div>';
 
   // Staff status per type
@@ -193,7 +193,7 @@ function renderStaffType(el, type) {
         +'<div style="flex:1;min-width:0;">'
         +'<div style="font-size:12px;font-weight:700;color:#e0f0ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+emp.name+'</div>'
         +'<div style="font-size:10px;color:#f5a623;">'+stars+'</div>'
-        +'<div style="font-size:10px;color:#5580a0;">Dośw: '+emp.experience+' lat &bull; <span style="color:#00e676;">$'+emp.salary.toLocaleString()+'/mies.</span></div>'
+        +'<div style="font-size:10px;color:#5580a0;">Dośw: '+emp.experience+' lat &bull; <span style="color:#00e676;">$'+emp.salary.toLocaleString()+'/24h</span></div>'
         +'<div style="font-size:10px;margin-top:2px;color:'+(assignedAc?'#00e676':'#f5a623')+';">'
         +(assignedAc?'✓ '+assignedAc.model+' ('+assignedAc.reg+')':'⚠ Nieprzypisany')
         +'</div></div>'
@@ -227,7 +227,7 @@ function renderStaffType(el, type) {
         +'<div style="flex:1;min-width:0;">'
         +'<div style="font-size:12px;font-weight:700;color:#e0f0ff;">'+c.name+'</div>'
         +'<div style="font-size:10px;color:#f5a623;">'+stars+' Dośw: '+c.experience+' lat</div>'
-        +'<div style="font-size:11px;font-weight:700;color:#00e676;">$'+c.salary.toLocaleString()+'/mies.</div>'
+        +'<div style="font-size:11px;font-weight:700;color:#00e676;">$'+c.salary.toLocaleString()+'/24h</div>'
         +'</div>'
         +'<button onclick="hireStaff(\''+type+'\','+i+')" '
         +'style="padding:8px 14px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;'
@@ -257,7 +257,7 @@ function hireStaff(type, idx) {
   // Auto-add new candidate
   G.jobMarket[type].push(generateCandidate(type));
   save();
-  showMsg('✓ '+c.name+' zatrudniony/a! $'+c.salary.toLocaleString()+'/mies.');
+  showMsg('✓ '+c.name+' zatrudniony/a! $'+c.salary.toLocaleString()+'/24h');
   var content=document.getElementById('personel-content'); if(content) renderStaffType(content,type);
 }
 
