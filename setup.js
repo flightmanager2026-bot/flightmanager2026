@@ -1508,6 +1508,6 @@ function confirmStarterPlane() {
     restoreFlights(); startTick(); updateHUD();
     showMsg('Witaj! Twój '+p.model+' czeka na pierwszą trasę! ✈');
     // Start tutorial for new players
-    setTimeout(function(){ if(typeof startTutorial==='function') startTutorial(); }, 1000);
+    setTimeout(function(){ if(typeof startTutorial==='function' && !G.tutorialDone) startTutorial(); }, 1500);
   }, 50);
 }
