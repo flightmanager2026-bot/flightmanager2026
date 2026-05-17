@@ -14,32 +14,61 @@ function closeModal(){ document.getElementById("modal").style.display="none"; }
 // AIRCRAFT_CATALOG loaded from aircraft.js
 
 function openShop() {
-  function sec(title, rows) {
-    return '<div style="margin-bottom:16px;"><div style="font-size:10px;color:#5580a0;letter-spacing:2px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.07);padding-bottom:6px;">'+title+'</div>'+rows+'</div>';
-  }
-  function row(label, sub, fn) {
-    return '<div onclick="'+fn+'" style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">'
-      +'<div><div style="font-size:13px;font-weight:600;color:#e0f0ff;">'+label+'</div>'
-      +(sub?'<div style="font-size:11px;color:#5580a0;margin-top:2px;">'+sub+'</div>':'')+'</div>'
-      +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5580a0" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
-      +'</div>';
-  }
-  document.getElementById('modal-body').innerHTML =
-    '<div style="font-size:15px;font-weight:700;color:#00d4ff;margin-bottom:16px;">SKLEP</div>'
-    +sec('KUP SAMOLOT',
-      row('Nowy','Airbus, Boeing, Embraer...','openNewAircraftShop()')
-      +row('Uzywany','Tansze, wieksze ryzyko','showMsg("Uzywane - wkrotce!")')
-      +row('Leasing','Nizsza oplata poczatkowa','showMsg("Leasing - wkrotce!")')
-    )
-    +sec('KUP SLOT',row('Slot na lotnisku','Dodaj lotnisko docelowe','openSlotShop()'))
-    +sec('PREMIUM',row('Doladuj konto','Zakup waluty premium','showMsg("Premium - wkrotce!")'))
-    +'<div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:12px;margin-top:4px;">'
-    +'<div onclick="shopWatchAd()" style="background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:12px;padding:13px;cursor:pointer;">'
-    +'<div style="font-size:13px;font-weight:700;color:#f5a623;">&#128253; Obejrzyj reklame</div>'
-    +'<div style="font-size:11px;color:#a07040;margin-top:2px;">+50 punktow i +$5,000</div>'
+  var html =
+    '<div style="font-size:15px;font-weight:900;color:#e0f0ff;margin-bottom:16px;">🛒 Sklep</div>'
+
+    // Main categories
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">'
+
+    // Aircraft
+    +'<div onclick="openNewAircraftShop()" style="background:linear-gradient(135deg,rgba(26,86,219,0.15),rgba(0,212,255,0.08));'
+    +'border:1px solid rgba(0,212,255,0.25);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
+    +'<div style="font-size:32px;margin-bottom:8px;">✈️</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#00d4ff;">Samoloty</div>'
+    +'<div style="font-size:10px;color:#5580a0;margin-top:3px;">'+Object.values(AIRCRAFT_CATALOG).reduce(function(s,a){return s+a.length;},0)+' modeli</div>'
+    +'</div>'
+
+    // Slots
+    +'<div onclick="openSlotShop()" style="background:linear-gradient(135deg,rgba(168,139,250,0.12),rgba(168,139,250,0.06));'
+    +'border:1px solid rgba(168,139,250,0.25);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
+    +'<div style="font-size:32px;margin-bottom:8px;">🎫</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#a78bfa;">Sloty</div>'
+    +'<div style="font-size:10px;color:#5580a0;margin-top:3px;">Dostęp do lotnisk</div>'
+    +'</div>'
+
+    // Cargo
+    +'<div onclick="openCargoShop()" style="background:linear-gradient(135deg,rgba(245,166,35,0.1),rgba(245,166,35,0.04));'
+    +'border:1px solid rgba(245,166,35,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
+    +'<div style="font-size:32px;margin-bottom:8px;">📦</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#f5a623;">Cargo</div>'
+    +'<div style="font-size:10px;color:#5580a0;margin-top:3px;">Wkrótce</div>'
+    +'</div>'
+
+    // Top-up
+    +'<div onclick="openTopUp()" style="background:linear-gradient(135deg,rgba(0,230,118,0.1),rgba(0,230,118,0.04));'
+    +'border:1px solid rgba(0,230,118,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
+    +'<div style="font-size:32px;margin-bottom:8px;">💳</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#00e676;">Doładuj</div>'
+    +'<div style="font-size:10px;color:#5580a0;margin-top:3px;">Kup $ i PKT</div>'
+    +'</div>'
+
+    +'</div>'
+
+    // Quick stats
+    +'<div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;">'
+    +'<div style="font-size:11px;color:#5580a0;">Twoje saldo</div>'
+    +'<div style="font-size:14px;font-weight:700;color:#00e676;">$'+Math.round(G.cash).toLocaleString()+'</div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">'
+    +'<div style="font-size:11px;color:#5580a0;">Hangar</div>'
+    +'<div style="font-size:12px;font-weight:700;color:#00d4ff;">'+G.fleet.length+'/'+getHangarCapacity()+' samolotów</div>'
     +'</div></div>';
+
+  document.getElementById('modal-body').innerHTML=html;
   document.getElementById('modal').style.display='flex';
 }
+
 
 function openCargoShop() {
   document.getElementById('modal-body').innerHTML =
