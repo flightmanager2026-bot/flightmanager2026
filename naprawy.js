@@ -28,6 +28,7 @@ function tickFlightHours(ac, durationMin) {
       var cost=Math.round(inc.minCost+Math.random()*(inc.maxCost-inc.minCost));
       ac.maintenance.incidents.push({id:inc.id,name:inc.name,cost:cost,date:Date.now(),resolved:false});
       showMsg('⚠️ '+ac.model+': '+inc.name+'! Koszt: $'+cost.toLocaleString());
+      if(typeof addGameNotification==='function') addGameNotification('⚠️ '+ac.model+' ('+ac.reg+'): '+inc.name+' — koszt naprawy $'+cost.toLocaleString(),'error');
     }
   });
 }
