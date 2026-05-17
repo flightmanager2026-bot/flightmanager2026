@@ -68,3 +68,35 @@ function buySlotShop(el) { var icao=el&&el.dataset?el.dataset.icao:el;
   save(); renderMarkers(); updateHUD(); document.getElementById('modal').style.display='none';
   showMsg('Slot '+icao+' ('+db.city+') kupiony!');
 }
+
+
+function showRewardedAd() {
+  var el = document.getElementById('ad-container');
+  if(!el) return;
+  el.style.display='flex';
+  // Push AdSense ad
+  try { (adsbygoogle=window.adsbygoogle||[]).push({}); } catch(e){}
+  // Timer
+  var sec=5;
+  var timerEl=document.getElementById('ad-timer-txt');
+  var closeBtn=document.getElementById('ad-close-btn');
+  if(timerEl) timerEl.textContent='Zamknij za '+sec+'s';
+  if(closeBtn){ closeBtn.disabled=true; closeBtn.style.color='#5580a0'; closeBtn.style.cursor='not-allowed'; }
+  var interval=setInterval(function(){
+    sec--;
+    if(timerEl) timerEl.textContent=sec>0?'Zamknij za '+sec+'s':'Możesz zamknąć';
+    if(sec<=0){
+      clearInterval(interval);
+      if(closeBtn){ closeBtn.disabled=false; closeBtn.style.color='#fff'; closeBtn.style.background='linear-gradient(135deg,#1a56db,#00d4ff)'; closeBtn.style.cursor='pointer'; }
+      // Reward
+      G.points=(G.points||0)+50; G.cash+=5000;
+      save(); updateHUD();
+    }
+  },1000);
+}
+
+function closeAd() {
+  var el=document.getElementById('ad-container');
+  if(el) el.style.display='none';
+  showMsg('🎁 +50 PKT +$5,000 za obejrzenie reklamy!');
+}
