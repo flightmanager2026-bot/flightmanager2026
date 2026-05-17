@@ -1198,6 +1198,22 @@ var WORLD_CITIES = {
 };
 
 function showSetupScreen() {
+  // Guard - if already has base don't show setup
+  if(G.homeAirport && G.fleet && G.fleet.length > 0) {
+    initMap();
+    setTimeout(function(){
+      if(typeof LMAP !== 'undefined' && LMAP) {
+        LMAP.invalidateSize({animate:false});
+        LMAP.setView([G.homeAirport.lat, G.homeAirport.lng], 6);
+        if(typeof renderMarkers==='function') renderMarkers();
+        if(typeof renderRoutes==='function') renderRoutes();
+        if(typeof restoreFlights==='function') restoreFlights();
+        if(typeof startTick==='function') startTick();
+        if(typeof updateHUD==='function') updateHUD();
+      }
+    }, 100);
+    return;
+  }
   var el=document.createElement('div');
   el.id='setupScreen';
   el.style.cssText='position:fixed;inset:0;z-index:400;background:rgba(5,10,20,0.98);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;font-family:Arial,sans-serif;overflow-y:auto;';
@@ -1415,6 +1431,18 @@ function doSetupFinish(c, airlineName, airlineCode) {
 
 
 function showStarterPlaneScreen() {
+  // If player already has a base (returning from another device), skip setup
+  if(G.homeAirport && G.fleet && G.fleet.length > 0) {
+    initMap();
+    setTimeout(function(){
+      LMAP.invalidateSize({animate:false});
+      LMAP.setView([G.homeAirport.lat, G.homeAirport.lng], 6);
+      renderMarkers(); renderRoutes();
+      restoreFlights(); startTick(); updateHUD();
+    }, 50);
+    return;
+  }
+
   var el = document.createElement('div');
   el.id = 'starterScreen';
   el.style.cssText = 'position:fixed;inset:0;z-index:500;background:#060d1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;font-family:Arial,sans-serif;overflow-y:auto;';
@@ -1480,19 +1508,21 @@ function confirmStarterPlane() {
   if(i === null || i === undefined) return;
   var p = window._starterPlanes[i];
 
-  // Dodaj samolot do floty
-  var ac = {
-    id: 'AC_' + Date.now(),
-    model: p.model,
-    brand: p.brand,
-    seats: p.seats,
-    range: p.range,
-    reg: G.airline.iata + '-001',
-    status: 'ground',
-    routeId: null,
-    config: {eco: p.seats, biz: 0, total: p.seats}
-  };
-  G.fleet.push(ac);
+  // Dodaj samolot tylko jeśli flota jest pusta
+  if(!G.fleet || G.fleet.length === 0) {
+    var ac = {
+      id: 'AC_' + Date.now(),
+      model: p.model,
+      brand: p.brand,
+      seats: p.seats,
+      range: p.range,
+      reg: G.airline.iata + '-001',
+      status: 'ground',
+      routeId: null,
+      config: {eco: p.seats, biz: 0, total: p.seats}
+    };
+    G.fleet.push(ac);
+  }
   save();
 
   // Usuń ekran
