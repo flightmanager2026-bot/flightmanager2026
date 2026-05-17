@@ -33,11 +33,19 @@ function tickFlightHours(ac, durationMin) {
   });
 }
 
-function startMaintenance(acId, cost) {
+function startMaintenance(acId, cost, usePkt) {
   var ac=G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
-  if(G.cash<cost){showMsg('Za mało gotówki!');return;}
   if(ac.status==='flying'){showMsg('Samolot jest w locie!');return;}
-  G.cash-=cost; ac.status='maintenance';
+  var pktCost = Math.max(1, Math.round(cost/10000));
+  if(usePkt) {
+    if((G.points||0)<pktCost){showMsg('Za mało PKT! Potrzebujesz '+pktCost+' PKT');return;}
+    G.points-=pktCost;
+    showMsg('🔧 Opłacono '+pktCost+' PKT!');
+  } else {
+    if(G.cash<cost){showMsg('Za mało gotówki! Potrzebujesz $'+cost.toLocaleString());return;}
+    G.cash-=cost;
+  }
+  ac.status='maintenance';
   initMaintenance(ac);
   var dur=(10+Math.floor(Math.random()*20))*60000;
   ac.maintenance.inMaintenance=true; ac.maintenance.maintenanceEnd=Date.now()+dur;
@@ -56,12 +64,19 @@ function completeMaintenance(acId) {
   var b=document.getElementById('panel-body'); if(b&&_activeTab==='naprawy') renderNaprawy(b);
 }
 
-function repairIncident(acId, incId) {
+function repairIncident(acId, incId, usePkt) {
   var ac=G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
   var inc=(ac.maintenance.incidents||[]).filter(function(i){return i.id===incId;})[0];
   if(!inc||inc.resolved) return;
-  if(G.cash<inc.cost){showMsg('Za mało gotówki!');return;}
-  G.cash-=inc.cost; inc.resolved=true;
+  var pktCost = Math.max(1, Math.round(inc.cost/10000));
+  if(usePkt) {
+    if((G.points||0)<pktCost){showMsg('Za mało PKT! Potrzebujesz '+pktCost+' PKT');return;}
+    G.points-=pktCost;
+  } else {
+    if(G.cash<inc.cost){showMsg('Za mało gotówki! Potrzebujesz $'+inc.cost.toLocaleString());return;}
+    G.cash-=inc.cost;
+  }
+  inc.resolved=true;
   ac.maintenance.condition=Math.min(100,(ac.maintenance.condition||0)+20);
   save(); updateHUD();
   showMsg('✅ Naprawa ukończona! $'+inc.cost.toLocaleString());
