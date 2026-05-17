@@ -54,6 +54,19 @@ function openShop() {
 
     +'</div>'
 
+    // Rewarded ad
+    +'<div style="background:linear-gradient(135deg,rgba(255,215,0,0.06),rgba(245,166,35,0.04));'
+    +'border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:14px;margin-bottom:12px;cursor:pointer;" onclick="showRewardedAdShop()">'
+    +'<div style="display:flex;align-items:center;gap:12px;">'
+    +'<div style="font-size:28px;">🎬</div>'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:13px;font-weight:700;color:#ffd700;">Obejrzyj reklamę — odbierz nagrodę</div>'
+    +'<div style="font-size:10px;color:#5580a0;margin-top:2px;">Losowa nagroda za każdy obejrzany film</div>'
+    +'</div>'
+    +'<div style="padding:6px 12px;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);'
+    +'border-radius:8px;font-size:11px;font-weight:700;color:#ffd700;">▶ Play</div>'
+    +'</div></div>'
+
     // Quick stats
     +'<div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px;">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;">'
@@ -411,3 +424,58 @@ function buySlot(icao,cost) {
 
 function resetGame(){ localStorage.removeItem('sb_v3'); location.reload(); }
 function saveSettings(){ closeModal(); showMsg('Zapisano!'); }
+
+function showRewardedAdShop() {
+  var el = document.getElementById('ad-container');
+  if(!el) { doAdReward(); return; }
+  el.style.display='flex';
+  try { (adsbygoogle=window.adsbygoogle||[]).push({}); } catch(e){}
+  var sec=5;
+  var timerEl=document.getElementById('ad-timer-txt');
+  var closeBtn=document.getElementById('ad-close-btn');
+  if(timerEl) timerEl.textContent='Zamknij za '+sec+'s';
+  if(closeBtn){ closeBtn.disabled=true; closeBtn.style.color='#5580a0'; closeBtn.style.cursor='not-allowed'; closeBtn.style.background='rgba(255,255,255,0.04)'; }
+  var interval=setInterval(function(){
+    sec--;
+    if(timerEl) timerEl.textContent=sec>0?'Zamknij za '+sec+'s':'Możesz zamknąć ✓';
+    if(sec<=0){
+      clearInterval(interval);
+      if(closeBtn){ closeBtn.disabled=false; closeBtn.style.color='#fff'; closeBtn.style.background='linear-gradient(135deg,#1a56db,#00d4ff)'; closeBtn.style.cursor='pointer'; }
+      closeBtn.onclick=function(){ closeAdAndReward(); };
+    }
+  },1000);
+}
+
+function closeAdAndReward() {
+  var el=document.getElementById('ad-container');
+  if(el) el.style.display='none';
+  doAdReward();
+}
+
+function doAdReward() {
+  var lvl = G.level || 1;
+  // Level bonus
+  var lvlBonus = lvl * 100000;
+  var lvlPts = 50;
+  // Random reward - cash OR points (not both)
+  var rewardType = Math.random() < 0.5 ? 'cash' : 'points';
+  var cashAmount = Math.round(1000 + Math.random()*4000);
+  var ptsAmount = Math.round(1 + Math.random()*49);
+
+  G.cash += lvlBonus;
+  G.points = (G.points||0) + lvlPts;
+
+  var msg = '🎁 Nagroda za LVL '+lvl+': +$'+lvlBonus.toLocaleString()+' +'+lvlPts+' PKT';
+
+  if(rewardType==='cash') {
+    G.cash += cashAmount;
+    msg += ' | Bonus losowy: +$'+cashAmount.toLocaleString();
+  } else {
+    G.points += ptsAmount;
+    msg += ' | Bonus losowy: +'+ptsAmount+' PKT';
+  }
+
+  save(); updateHUD();
+  showMsg(msg);
+  if(typeof addGameNotification==='function') addGameNotification(msg, 'success');
+}
