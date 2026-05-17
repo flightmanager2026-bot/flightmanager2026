@@ -59,13 +59,7 @@ function renderAccountPanel(player) {
     // Actions
     +'<div style="font-size:9px;color:#5580a0;letter-spacing:3px;margin-bottom:10px;">OPCJE KONTA</div>'
 
-    // Top up
-    +'<div onclick="openTopUp()" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;'
-    +'background:linear-gradient(135deg,rgba(0,230,118,0.08),rgba(0,230,118,0.03));border:1px solid rgba(0,230,118,0.2);margin-bottom:8px;">'
-    +'<div style="width:36px;height:36px;border-radius:10px;background:rgba(0,230,118,0.15);display:flex;align-items:center;justify-content:center;font-size:18px;">💳</div>'
-    +'<div><div style="font-size:13px;font-weight:700;color:#00e676;">Doładuj konto</div>'
-    +'<div style="font-size:11px;color:#5580a0;">Kup walutę gry i PKT</div></div>'
-    +'<div style="margin-left:auto;color:#5580a0;">›</div></div>'
+
 
     // Map style
     +'<div onclick="openMapStyle()" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;'
