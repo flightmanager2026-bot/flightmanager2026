@@ -6,10 +6,10 @@ var BRAND_LOGOS = {
 };
 
 var STAFF_TYPES = {
-  pilot:    { label:'Pilot',       icon:'✈️', color:'#00d4ff', salaryMin:1800, salaryMax:3500, neededPerAc:2, desc:'Wymagany do lotu (2 na samolot)' },
-  steward:  { label:'Steward/essa',icon:'👩‍✈️', color:'#a78bfa', salaryMin:800,  salaryMax:1800, neededPerAc:4, desc:'Obsługa pasażerów (4 na samolot)' },
-  mechanic: { label:'Mechanik',    icon:'🔧', color:'#f5a623', salaryMin:1200, salaryMax:2500, neededPerAc:1, desc:'Konserwacja samolotu (1 na samolot)' },
-  engineer: { label:'Inżynier',    icon:'👷', color:'#00e676', salaryMin:2000, salaryMax:4000, neededPerAc:0.33, desc:'Nadzór techniczny (1 na 3 samoloty)' }
+  pilot:    { label:'Pilot',       icon:'✈️', color:'#00d4ff', salaryMin:60,   salaryMax:120,  neededPerAc:2, desc:'Wymagany do lotu (2 na samolot)' },
+  steward:  { label:'Steward/essa',icon:'👩‍✈️', color:'#a78bfa', salaryMin:30,   salaryMax:70,   neededPerAc:4, desc:'Obsługa pasażerów (4 na samolot)' },
+  mechanic: { label:'Mechanik',    icon:'🔧', color:'#f5a623', salaryMin:40,   salaryMax:90,   neededPerAc:1, desc:'Konserwacja samolotu (1 na samolot)' },
+  engineer: { label:'Inżynier',    icon:'👷', color:'#00e676', salaryMin:70,   salaryMax:150,  neededPerAc:0.33, desc:'Nadzór techniczny (1 na 3 samoloty)' }
 };
 
 var FIRST_NAMES_M = ['Adam','Piotr','Marek','Tomasz','Paweł','Michał','Andrzej','Grzegorz','Rafał','Łukasz','Jakub','Krzysztof','Robert','Marcin','Bartosz'];
@@ -322,20 +322,30 @@ function doAssign(type, empId, acId) {
 }
 
 function canAircraftDepart(ac) {
-  // Sprawdz czy system personelu jest aktywny (czy ktokolwiek jest zatrudniony)
   if(!G.staff) return {ok:true};
-  var totalHired = 0;
-  Object.keys(G.staff).forEach(function(t){ totalHired += (G.staff[t]||[]).length; });
-  if(totalHired === 0) return {ok:true}; // nikt nie zatrudniony = system nieaktywny
-
-  // Sprawdz crew samolotu
   var crew = ac.crew || {};
   var pilots   = (crew.pilot||[]).length;
   var stewards = (crew.steward||[]).length;
   var mechs    = (crew.mechanic||[]).length;
-
-  if(pilots < 2)   return {ok:false, reason:'Brak pilotów ('+pilots+'/2) — Personel → Piloci'};
-  if(stewards < 2) return {ok:false, reason:'Brak stewardów ('+stewards+'/2) — Personel → Stewardzi'};
-  if(mechs < 1)    return {ok:false, reason:'Brak mechanika (0/1) — Personel → Mechanicy'};
+  if(pilots < 2)   return {ok:false, reason:'Brak pilotów ('+pilots+'/2) — idź do Personel'};
+  if(stewards < 2) return {ok:false, reason:'Brak stewardów ('+stewards+'/2) — idź do Personel'};
+  if(mechs < 1)    return {ok:false, reason:'Brak mechanika (0/1) — idź do Personel'};
   return {ok:true};
+}
+
+function paySalaries() {
+  if(!G.staff) return;
+  if(!G.lastSalaryPay) G.lastSalaryPay = Date.now();
+  var now = Date.now();
+  if(now - G.lastSalaryPay < 86400000) return; // 24h
+  var total = 0;
+  Object.keys(G.staff).forEach(function(t){
+    (G.staff[t]||[]).forEach(function(e){ total+=e.salary; });
+  });
+  if(total > 0) {
+    G.cash -= total;
+    G.lastSalaryPay = now;
+    save();
+    showMsg('💰 Wypłata pensji: -$'+total.toLocaleString()+'/24h');
+  }
 }
