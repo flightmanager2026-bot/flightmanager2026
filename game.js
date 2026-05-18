@@ -24,9 +24,11 @@ function save() {
     if(window._saveCount % 5 === 0) updateRankingValue();
   }
   try {
+    var uid = (typeof _currentUser !== 'undefined' && _currentUser) ? _currentUser.uid : 'guest';
     var sv={cash:G.cash,airports:G.airports,routes:G.routes,slots:G.slots,departurelog:G.departurelog||[],lastShopPayout:G.lastShopPayout||0,lastSalaryPay:G.lastSalaryPay||0,staff:G.staff||{},jobMarket:G.jobMarket||null,tutorialDone:G.tutorialDone||false,
       homeAirport:G.homeAirport,fleet:G.fleet,airline:G.airline,
-      points:G.points||0,level:G.level||1,totalFlights:G.totalFlights||0};
+      points:G.points||0,level:G.level||1,totalFlights:G.totalFlights||0,
+      reset_version:G.reset_version||0,_uid:uid};
     localStorage.setItem('sb_v3',JSON.stringify(sv));
   } catch(e) {}
 }

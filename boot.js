@@ -11,6 +11,10 @@ window.addEventListener('load', function() {
         var d = localStorage.getItem('sb_v3');
         if(d) {
           var g = JSON.parse(d);
+          if(g._uid && g._uid !== user.uid) {
+            localStorage.removeItem('sb_v3');
+            g = {};
+          }
           if(g.homeAirport) {
             if(g.cash) G.cash=g.cash;
             if(g.homeAirport) G.homeAirport=g.homeAirport;
