@@ -249,20 +249,34 @@ function onAuthSuccess(user, isNewUser) {
   var authEl = document.getElementById('authScreen');
 
   if(isNewUser) {
-    // Nowy gracz - usun auth screen i pokaz setup
     if(authEl) document.body.removeChild(authEl);
     showSetupScreen();
   } else {
-    // Istniejacy gracz - zaladuj dane z Firestore
-    loadPlayerData(user.uid, function(hasData) {
-      if(authEl) document.body.removeChild(authEl);
-      if(hasData) {
-        // Zaladowano dane - start gry
-        startGame();
-      } else {
-        // Brak danych w chmurze - nowy setup
-        showSetupScreen();
-      }
+    // Sprawdz flage globalnego resetu
+    _fbDb.collection('config').doc('global').get().then(function(cfg) {
+      var requiredVersion = cfg.exists ? (cfg.data().reset_version || 0) : 0;
+      loadPlayerData(user.uid, function(hasData) {
+        if(authEl) document.body.removeChild(authEl);
+        if(hasData && requiredVersion > (G.reset_version || 0)) {
+          // Reset wymagany - wyczysc dane gracza
+          localStorage.removeItem('sb_v3');
+          G.cash=500000; G.fleet=[]; G.routes=[]; G.slots=[]; G.airports=[];
+          G.homeAirport=null; G.points=0; G.level=1; G.totalFlights=0;
+          G.departurelog=[]; G.lastShopPayout=0; G.staff=null; G.jobMarket=null;
+          G.airline={name:'',iata:'',color:'#00d4ff'}; G.reset_version=requiredVersion;
+          _fbDb.collection('players').doc(user.uid).delete();
+          showSetupScreen();
+        } else if(hasData) {
+          startGame();
+        } else {
+          showSetupScreen();
+        }
+      });
+    }).catch(function() {
+      loadPlayerData(user.uid, function(hasData) {
+        if(authEl) document.body.removeChild(authEl);
+        if(hasData) startGame(); else showSetupScreen();
+      });
     });
   }
 }
@@ -323,6 +337,7 @@ function saveToCloud() {
     jobMarket: G.jobMarket || null,
     tutorialDone: G.tutorialDone || false,
     lastSalaryPay: G.lastSalaryPay || 0,
+    reset_version: G.reset_version || 0,
     updatedAt: Date.now()
   };
   _fbDb.collection('players').doc(uid).set(data)
