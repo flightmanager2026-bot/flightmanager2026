@@ -3,12 +3,7 @@ var G = {
   airline: {name:'VIS Airlines', iata:'VS', color:'#e63946'},
   cash: 500000, airports: [], routes: [], slots: [],
   homeAirport: null, points: 0, level: 1, totalFlights: 0,
-  fleet: [
-    {id:'ac1',model:'Boeing 737-800',reg:'VS-001',seats:156,status:'ground',routeId:null},
-    {id:'ac2',model:'Boeing 737-800',reg:'VS-002',seats:156,status:'ground',routeId:null},
-    {id:'ac3',model:'Airbus A320neo',reg:'VS-003',seats:168,status:'ground',routeId:null},
-    {id:'ac4',model:'ATR-72',reg:'VS-004',seats:72,status:'ground',routeId:null}
-  ]
+  fleet: []
 };
 
 var LMAP=null, AP_MARKERS={}, ROUTE_LINES=[], PL_MARKERS=[];

@@ -1198,6 +1198,7 @@ var WORLD_CITIES = {
 };
 
 function showSetupScreen() {
+  if(document.getElementById('setupScreen')) return;
   // Guard - if already has base don't show setup
   if(G.homeAirport && G.fleet && G.fleet.length > 0) {
     initMap();
