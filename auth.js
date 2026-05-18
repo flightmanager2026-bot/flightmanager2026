@@ -345,6 +345,8 @@ function startGame() {
     LMAP.invalidateSize({animate:false});
     LMAP.setView([G.homeAirport.lat, G.homeAirport.lng], 6);
     renderMarkers(); renderRoutes(); restoreFlights(); startTick(); updateHUD();
+    paySalaries();
+    setInterval(paySalaries, 3600000);
     showMsg('Witaj z powrotem!');
   }, 50);
 }
