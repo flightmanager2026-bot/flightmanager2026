@@ -37,26 +37,50 @@ window.addEventListener('load', function() {
       } catch(e) {}
 
       if(hasLocal && G.homeAirport) {
-        // Napraw niespojnosci
-        G.fleet.forEach(function(ac){
-          if(ac.routeId) {
-            var route = G.routes.filter(function(r){return r.id===ac.routeId;})[0];
-            if(!route) { ac.routeId=null; ac.status='ground'; }
+        // Sprawdz flage globalnego resetu
+        _fbDb.collection('config').doc('global').get().then(function(cfg) {
+          var requiredVersion = cfg.exists ? (cfg.data().reset_version || 0) : 0;
+          var localVersion = 0;
+          try { var lv=JSON.parse(localStorage.getItem('sb_v3')||'{}'); localVersion=lv.reset_version||0; } catch(e){}
+          if(requiredVersion > localVersion) {
+            localStorage.removeItem('sb_v3');
+            G.cash=500000; G.fleet=[]; G.routes=[]; G.slots=[]; G.airports=[];
+            G.homeAirport=null; G.points=0; G.level=1; G.totalFlights=0;
+            G.departurelog=[]; G.lastShopPayout=0; G.staff=null; G.jobMarket=null;
+            G.airline={name:'',iata:'',color:'#00d4ff'};
+            _fbDb.collection('players').doc(user.uid).delete();
+            showSetupScreen();
+            return;
           }
-        });
-        G.routes = G.routes.filter(function(r){
-          return G.fleet.some(function(ac){return ac.id===r.acId;});
-        });
-
-        // Uruchom gre od razu z lokalnych danych
-        startGame();
-
-        // W tle synchronizuj z Firebase (nowsze dane z innego urzadzenia)
-        loadPlayerData(user.uid, function(hasCloud) {
-          if(hasCloud && G.homeAirport) {
-            // Firebase zsynchronizowany - zapisz lokalnie
-            save();
-          }
+          // Napraw niespojnosci
+          G.fleet.forEach(function(ac){
+            if(ac.routeId) {
+              var route = G.routes.filter(function(r){return r.id===ac.routeId;})[0];
+              if(!route) { ac.routeId=null; ac.status='ground'; }
+            }
+          });
+          G.routes = G.routes.filter(function(r){
+            return G.fleet.some(function(ac){return ac.id===r.acId;});
+          });
+          startGame();
+          loadPlayerData(user.uid, function(hasCloud) {
+            if(hasCloud && G.homeAirport) save();
+          });
+        }).catch(function() {
+          // Blad odczytu config - startuj normalnie
+          G.fleet.forEach(function(ac){
+            if(ac.routeId) {
+              var route = G.routes.filter(function(r){return r.id===ac.routeId;})[0];
+              if(!route) { ac.routeId=null; ac.status='ground'; }
+            }
+          });
+          G.routes = G.routes.filter(function(r){
+            return G.fleet.some(function(ac){return ac.id===r.acId;});
+          });
+          startGame();
+          loadPlayerData(user.uid, function(hasCloud) {
+            if(hasCloud && G.homeAirport) save();
+          });
         });
       } else {
         // Brak lokalnych danych - sprobuj z Firebase
