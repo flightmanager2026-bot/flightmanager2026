@@ -50,6 +50,15 @@ function initStaff() {
       for(var i=0;i<6;i++) G.jobMarket[type].push(generateCandidate(type));
     });
   }
+  // Napraw zawyżone pensje z poprzednich wersji
+  Object.keys(STAFF_TYPES).forEach(function(type){
+    var st = STAFF_TYPES[type];
+    (G.staff[type]||[]).forEach(function(e){
+      if(e.salary > st.salaryMax + 1) {
+        e.salary = Math.round(st.salaryMin + (st.salaryMax-st.salaryMin)*((e.experience||1)/15));
+      }
+    });
+  });
   // Auto-refresh market - add new candidates if < 4
   Object.keys(STAFF_TYPES).forEach(function(type){
     if(!G.jobMarket[type]) G.jobMarket[type]=[];
