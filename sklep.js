@@ -110,46 +110,68 @@ function openNewAircraftShop() {
     'Airbus': 'img/AIRBUS_Blue.png',
     'Embraer': 'img/embraer-vector-logo-removebg-preview.png'
   };
-  var LOGO_BG = {'Airbus':'#001f5b', 'Boeing':'#fff'};
+  var LOGO_BG = {'Airbus':'#001f5b','Boeing':'#fff','Embraer':'#111'};
+  var BRAND_COLOR = {
+    'Boeing':'#1f5ea8','Airbus':'#003087','Embraer':'#00a651',
+    'Bombardier':'#d4372c','ATR':'#4a90e2','Suchoj':'#c0392b',
+    'Irkut':'#e74c3c','Iliuszyn':'#9b59b6','Tupolew':'#e67e22',
+    'McDonnell Douglas':'#16a085','Fokker':'#f39c12','British Aerospace':'#8e44ad',
+    'Antonow':'#27ae60','Dassault':'#2980b9','DHC':'#1abc9c','COMAC':'#c0392b'
+  };
 
   var html =
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">'
-    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">Kup samolot</div>'
-    +'<div style="margin-left:auto;font-size:11px;color:#5580a0;">Flota: '+G.fleet.length+'/'+getHangarCapacity()+' &bull; $'+Math.round(G.cash/1000)+'K</div>'
-    +'</div>'
+    +'<button onclick="openShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e0f0ff;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;line-height:1.4;font-family:Arial,sans-serif;">&#8592;</button>'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:15px;font-weight:800;color:#e0f0ff;">Kup samolot</div>'
+    +'<div style="font-size:10px;color:#5580a0;margin-top:1px;">Saldo: <span style="color:#00e676;font-weight:700;">$'+Math.round(G.cash).toLocaleString()+'</span> &nbsp;&bull;&nbsp; Hangar: <span style="color:#00d4ff;font-weight:700;">'+G.fleet.length+'/'+getHangarCapacity()+'</span></div>'
+    +'</div></div>'
 
-    // Type tabs
     +'<div style="display:flex;gap:6px;margin-bottom:14px;">'
-    +'<button onclick="openNewAircraftShop()" style="flex:1;padding:8px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">✈ Pasażerskie</button>'
-    +'<button onclick="openCargoShop()" style="flex:1;padding:8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:10px;color:#f5a623;font-size:12px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">📦 Cargo</button>'
+    +'<button onclick="openNewAircraftShop()" style="flex:1;padding:9px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;box-shadow:0 3px 12px rgba(0,212,255,0.3);">✈ Pasażerskie</button>'
+    +'<button onclick="openCargoShop()" style="flex:1;padding:9px;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.25);border-radius:10px;color:#f5a623;font-size:12px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">📦 Cargo</button>'
     +'</div>'
 
-    +'<div style="font-size:9px;color:#5580a0;letter-spacing:3px;margin-bottom:10px;">WYBIERZ PRODUCENTA</div>';
+    +'<div style="font-size:9px;color:#5580a0;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Wybierz producenta</div>';
 
   brands.forEach(function(brand) {
     var planes = AIRCRAFT_CATALOG[brand];
-    var logo = LOGOS[brand];
-    var logoBg = LOGO_BG[brand] || 'transparent';
     var availablePlanes = planes.filter(function(p){return p.locked !== true;});
+    var allLocked = availablePlanes.length === 0;
     var minPrice = availablePlanes.length ? Math.min.apply(null, availablePlanes.map(function(p){return p.price;})) : 0;
     var affordable = availablePlanes.filter(function(p){return G.cash>=p.price && G.level>=(p.level||1);}).length;
+    var logo = LOGOS[brand];
+    var logoBg = LOGO_BG[brand] || '#0d1b2a';
+    var accent = BRAND_COLOR[brand] || '#5580a0';
+    var abbr = brand.substring(0,3).toUpperCase();
 
     html +=
       '<div data-brand="'+brand+'" onclick="openManufacturerByName(this)" '
-      +'style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;'
+      +'style="display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:13px;'
       +'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);'
-      +'margin-bottom:6px;cursor:pointer;transition:background 0.2s;" '
+      +'border-left:3px solid '+accent+';margin-bottom:7px;cursor:pointer;" '
+      +'onmouseover="this.style.background=\'rgba(255,255,255,0.065)\'" '
+      +'onmouseout="this.style.background=\'rgba(255,255,255,0.03)\'">'
+      // Logo box
       +(logo
-        ?'<div style="width:72px;height:36px;background:'+logoBg+';border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:4px;">'
-          +'<img src="'+logo+'" style="max-width:64px;max-height:28px;object-fit:contain;"></div>'
-        :'<div style="width:72px;height:36px;background:#0d1b2a;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;">✈</div>'
+        ?'<div style="width:66px;height:36px;background:'+logoBg+';border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:5px;box-sizing:border-box;">'
+          +'<img src="'+logo+'" style="max-width:56px;max-height:26px;object-fit:contain;"></div>'
+        :'<div style="width:66px;height:36px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+          +'<span style="font-size:11px;font-weight:800;color:'+accent+';letter-spacing:-0.5px;">'+abbr+'</span></div>'
       )
+      // Brand info
       +'<div style="flex:1;min-width:0;">'
-      +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+brand+'</div>'
-      +'<div style="font-size:10px;color:#5580a0;margin-top:2px;">'+planes.length+' modeli &bull; od $'+Math.round(minPrice/1000000)+'M</div>'
-      +(affordable>0?'<div style="font-size:10px;color:#00e676;margin-top:1px;">'+affordable+' dostępnych</div>':'')
+      +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;margin-bottom:2px;">'+brand+'</div>'
+      +'<div style="font-size:10px;color:#5580a0;">'+planes.length+' modeli'+(minPrice>0?' &bull; od $'+Math.round(minPrice/1000000)+'M':'')+'</div>'
+      +(affordable>0
+        ?'<div style="display:inline-flex;align-items:center;gap:3px;margin-top:4px;padding:2px 8px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);border-radius:20px;font-size:9px;font-weight:700;color:#00e676;">&#10003; '+affordable+' dostępnych</div>'
+        :allLocked
+          ?'<div style="margin-top:4px;font-size:9px;color:#5580a0;">&#128274; Wkrótce</div>'
+          :''
+      )
       +'</div>'
-      +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5580a0" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
+      // Chevron
+      +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2.5" opacity="0.7"><polyline points="9 18 15 12 9 6"/></svg>'
       +'</div>';
   });
 
@@ -161,39 +183,77 @@ function openNewAircraftShop() {
 function openManufacturer(brand) {
   var aircraft = AIRCRAFT_CATALOG[brand] || [];
   var LOGOS = {'Boeing':'img/logo.boeing.png','Airbus':'img/AIRBUS_Blue.png','Embraer':'img/embraer-vector-logo-removebg-preview.png'};
-  var LOGO_BG = {'Airbus':'#001f5b','Boeing':'#fff'};
+  var LOGO_BG = {'Airbus':'#001f5b','Boeing':'#fff','Embraer':'#111'};
+  var BRAND_COLOR = {
+    'Boeing':'#1f5ea8','Airbus':'#003087','Embraer':'#00a651',
+    'Bombardier':'#d4372c','ATR':'#4a90e2','Suchoj':'#c0392b',
+    'Irkut':'#e74c3c','Iliuszyn':'#9b59b6','Tupolew':'#e67e22',
+    'McDonnell Douglas':'#16a085','Fokker':'#f39c12','British Aerospace':'#8e44ad',
+    'Antonow':'#27ae60','Dassault':'#2980b9','DHC':'#1abc9c','COMAC':'#c0392b'
+  };
   var logo = LOGOS[brand];
+  var accent = BRAND_COLOR[brand] || '#00d4ff';
+  var availCount = aircraft.filter(function(a){return !a.locked;}).length;
+  var affordCount = aircraft.filter(function(a){return !a.locked && G.cash>=a.price && G.level>=(a.level||1);}).length;
+
   var html =
-    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
-    +'<button onclick="openNewAircraftShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;padding:0;">&#8592;</button>'
-    +(logo?'<div style="background:'+(LOGO_BG[brand]||'transparent')+';border-radius:8px;padding:4px 8px;">'
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">'
+    +'<button onclick="openNewAircraftShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e0f0ff;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;line-height:1.4;font-family:Arial,sans-serif;">&#8592;</button>'
+    +(logo?'<div style="background:'+(LOGO_BG[brand]||'#0d1b2a')+';border-radius:8px;padding:4px 10px;flex-shrink:0;">'
       +'<img src="'+logo+'" style="height:22px;object-fit:contain;vertical-align:middle;"></div>':'')
-    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">'+brand+'</div>'
-    +'<div style="margin-left:auto;font-size:10px;color:#5580a0;">'+aircraft.length+' modeli</div>'
-    +'</div>';
+    +'<div style="flex:1;min-width:0;">'
+    +'<div style="font-size:15px;font-weight:800;color:#e0f0ff;">'+brand+'</div>'
+    +'<div style="font-size:10px;color:#5580a0;">'+availCount+' modeli &bull; <span style="color:#00e676;">'+affordCount+' stać cię</span></div>'
+    +'</div></div>';
+
   aircraft.forEach(function(ac) {
     var isLocked = ac.locked === true;
-    var canBuy = !isLocked && G.level >= (ac.level||1);
-    var img = ac.img
-      ? '<img src="'+ac.img+'" style="width:100%;max-height:110px;object-fit:contain;background:#000;border-radius:8px;margin-bottom:10px;">'
-      : '';
-    html += '<div style="background:'+(isLocked?'rgba(255,255,255,0.01)':'rgba(255,255,255,0.04)')+';border:1px solid '+(isLocked?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.08)')+';border-radius:12px;padding:12px;margin-bottom:8px;opacity:'+(isLocked?'0.55':'1')+'">'
-      +img
-      +'<div style="font-size:13px;font-weight:700;color:'+(isLocked?'#5580a0':'#e0f0ff')+';margin-bottom:3px;">'+(isLocked?'🔒 ':'')+ac.model+'</div>'
-      +'<div style="font-size:10px;color:#5580a0;margin-bottom:6px;">'+ac.desc+'</div>'
-      +'<div style="display:flex;gap:12px;font-size:10px;color:#5580a0;margin-bottom:8px;">'
-      +'<span>&#128cadeiras; '+ac.seats+' miejsc</span>'
-      +'<span>&#9992; '+ac.range+' km</span>'
-      +'<span>'+ac.engines+'</span></div>'
-      +(isLocked
-        ? '<div style="padding:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-align:center;font-size:11px;color:#5580a0;">🔒 Niedostępny</div>'
-        : (canBuy
-          ? '<button data-model="'+ac.model+'" onclick="buyAircraftByEl(this)" style="width:100%;padding:9px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Kup za $'+ac.price.toLocaleString()+'</button>'
-          : '<div style="padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center;font-size:11px;color:#5580a0;">Wymagany poziom '+ac.level+'</div>'
+    var levelLocked = !isLocked && G.level < (ac.level||1);
+    var tooExpensive = !isLocked && !levelLocked && G.cash < ac.price;
+    var canBuy = !isLocked && !levelLocked && !tooExpensive;
+
+    var statusBadge = '';
+    if(isLocked)       statusBadge = '<span style="padding:2px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;font-size:9px;color:#5580a0;white-space:nowrap;">&#128274; Wkrótce</span>';
+    else if(canBuy)    statusBadge = '<span style="padding:2px 8px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.25);border-radius:20px;font-size:9px;font-weight:700;color:#00e676;white-space:nowrap;">&#10003; Dostępny</span>';
+    else if(levelLocked) statusBadge = '<span style="padding:2px 8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);border-radius:20px;font-size:9px;font-weight:700;color:#f5a623;white-space:nowrap;">LVL '+ac.level+'</span>';
+    else if(tooExpensive) statusBadge = '<span style="padding:2px 8px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.2);border-radius:20px;font-size:9px;color:#e63946;white-space:nowrap;">Za drogi</span>';
+
+    html +=
+      '<div style="border-radius:13px;overflow:hidden;margin-bottom:10px;'
+      +'border:1px solid '+(isLocked?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.09)')+';'
+      +'opacity:'+(isLocked?'0.5':'1')+'">'
+      // Card header
+      +'<div style="padding:10px 12px;background:rgba(255,255,255,0.04);display:flex;align-items:flex-start;justify-content:space-between;gap:8px;border-bottom:1px solid rgba(255,255,255,0.05);border-left:3px solid '+accent+'">'
+      +'<div style="min-width:0;">'
+      +'<div style="font-size:14px;font-weight:800;color:'+(isLocked?'#5580a0':'#e0f0ff')+';margin-bottom:2px;">'+(isLocked?'&#128274; ':'')+ac.model+'</div>'
+      +'<div style="font-size:10px;color:#5580a0;line-height:1.3;">'+ac.desc+'</div>'
+      +'</div>'
+      +statusBadge
+      +'</div>'
+      // Aircraft image
+      +(ac.img?'<img src="'+ac.img+'" style="width:100%;max-height:100px;object-fit:cover;object-position:center;background:#060e17;display:block;">':'')
+      // Specs + action
+      +'<div style="padding:10px 12px;background:rgba(0,0,0,0.25);">'
+      +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:'+(isLocked?'0':'10px')+'">'
+      +'<div style="padding:4px 8px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.14);border-radius:7px;font-size:10px;color:#7dd3fc;">&#128186; '+ac.seats+' miejsc</div>'
+      +'<div style="padding:4px 8px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.14);border-radius:7px;font-size:10px;color:#7dd3fc;">&#9992; '+ac.range+' km</div>'
+      +'<div style="padding:4px 8px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.14);border-radius:7px;font-size:10px;color:#7dd3fc;">'+ac.engines+'</div>'
+      +'</div>'
+      +(!isLocked
+        ? (canBuy
+          ? '<button data-model="'+ac.model+'" onclick="buyAircraftByEl(this)" style="width:100%;padding:10px;background:linear-gradient(135deg,'+accent+','+accent+'cc);border:none;border-radius:9px;color:#fff;font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,0.35);">Kup za $'+ac.price.toLocaleString()+'</button>'
+          : levelLocked
+            ? '<div style="padding:9px 12px;background:rgba(245,166,35,0.05);border:1px solid rgba(245,166,35,0.15);border-radius:9px;text-align:center;font-size:11px;color:#f5a623;">Wymagany poziom '+ac.level+'</div>'
+            : '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(230,57,70,0.05);border:1px solid rgba(230,57,70,0.12);border-radius:9px;">'
+              +'<span style="font-size:11px;color:#e63946;">Za mało gotówki</span>'
+              +'<span style="font-size:12px;font-weight:700;color:#e0f0ff;">$'+ac.price.toLocaleString()+'</span>'
+              +'</div>'
         )
+        : ''
       )
-      +'</div>';
+      +'</div></div>';
   });
+
   document.getElementById('modal-body').innerHTML = html;
   document.getElementById('modal').style.display = 'flex';
 }
