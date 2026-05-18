@@ -30,7 +30,7 @@ function randomName(type) {
 function generateCandidate(type) {
   var st = STAFF_TYPES[type];
   var exp = Math.floor(Math.random()*15)+1;
-  var salary = Math.round(st.salaryMin + (st.salaryMax-st.salaryMin)*(exp/15) + Math.random()*300);
+  var salary = Math.round(st.salaryMin + (st.salaryMax-st.salaryMin)*(exp/15));
   return {
     id: type+'_c_'+Date.now()+'_'+Math.random().toString(36).substr(2,5),
     name: randomName(type),
