@@ -3,6 +3,7 @@ var G = {
   airline: {name:'VIS Airlines', iata:'VS', color:'#e63946'},
   cash: 500000, airports: [], routes: [], slots: [],
   homeAirport: null, points: 0, level: 1, totalFlights: 0,
+  totalPassengers: 0, cargolicence: false, foundedAt: 0,
   fleet: []
 };
 

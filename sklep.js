@@ -84,23 +84,73 @@ function openShop() {
 
 
 function openCargoShop() {
-  document.getElementById('modal-body').innerHTML =
-    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">'
-    +'<button onclick="openSlotShop?openSlotShop():closeModal()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;padding:0;">&#8592;</button>'
-    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">Samoloty Cargo</div></div>'
-    +'<div style="text-align:center;padding:30px 20px;">'
-    +'<div style="font-size:60px;margin-bottom:16px;">📦</div>'
-    +'<div style="font-size:16px;font-weight:700;color:#e0f0ff;margin-bottom:8px;">Flota Cargo — Wkrótce</div>'
-    +'<div style="font-size:12px;color:#5580a0;line-height:1.6;margin-bottom:20px;">'
-    +'Samoloty cargo pozwolą Ci na transport towarów.<br>'
-    +'Dostępne będą: nowe, leasing i używane.<br>'
-    +'Już wkrótce w Flight Manager 2026!</div>'
-    +'<div style="display:flex;gap:8px;justify-content:center;">'
-    +'<div style="padding:8px 16px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:20px;font-size:11px;color:#f5a623;">📦 A330 Cargo</div>'
-    +'<div style="padding:8px 16px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:20px;font-size:11px;color:#f5a623;">📦 747-8F</div>'
-    +'<div style="padding:8px 16px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:20px;font-size:11px;color:#f5a623;">📦 777F</div>'
-    +'</div></div>';
-  document.getElementById('modal').style.display='flex';
+  var hasLicence = G.cargolicence === true;
+  var CARGO_PRICE = 20000000;
+  var CARGO_PTS   = 500;
+  var canAfford   = G.cash >= CARGO_PRICE && (G.points||0) >= CARGO_PTS;
+
+  var html =
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
+    +'<button onclick="openShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e0f0ff;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;line-height:1.4;font-family:Arial,sans-serif;">&#8592;</button>'
+    +'<div style="font-size:15px;font-weight:800;color:#e0f0ff;">Cargo</div>'
+    +'</div>'
+
+    // Status licencji
+    +(hasLicence
+      ? '<div style="border-radius:13px;padding:16px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.2);margin-bottom:14px;text-align:center;">'
+        +'<div style="font-size:32px;margin-bottom:8px;">📦</div>'
+        +'<div style="font-size:14px;font-weight:800;color:#f5a623;margin-bottom:4px;">Masz licencję Cargo!</div>'
+        +'<div style="font-size:11px;color:#5580a0;">Flota cargo będzie dostępna wkrótce.</div>'
+        +'</div>'
+      : '<div style="border-radius:13px;padding:16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);margin-bottom:14px;">'
+        +'<div style="font-size:28px;margin-bottom:10px;text-align:center;">📦</div>'
+        +'<div style="font-size:14px;font-weight:800;color:#e0f0ff;margin-bottom:6px;text-align:center;">Licencja Cargo</div>'
+        +'<div style="font-size:11px;color:#5580a0;line-height:1.6;margin-bottom:14px;text-align:center;">'
+        +'Odblokuj dostęp do transportu towarów.<br>Samoloty cargo pojawią się wkrótce po zakupie licencji.'
+        +'</div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">'
+        +'<div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px;text-align:center;">'
+        +'<div style="font-size:10px;color:#5580a0;margin-bottom:2px;">Koszt</div>'
+        +'<div style="font-size:14px;font-weight:800;color:'+(G.cash>=CARGO_PRICE?'#00e676':'#e63946')+';">$'+CARGO_PRICE.toLocaleString()+'</div>'
+        +'</div>'
+        +'<div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px;text-align:center;">'
+        +'<div style="font-size:10px;color:#5580a0;margin-bottom:2px;">Punkty</div>'
+        +'<div style="font-size:14px;font-weight:800;color:'+((G.points||0)>=CARGO_PTS?'#00e676':'#e63946')+';">'+CARGO_PTS+' PKT</div>'
+        +'</div>'
+        +'</div>'
+        +(canAfford
+          ? '<button onclick="buyCargoLicence()" style="width:100%;padding:12px;background:linear-gradient(135deg,#e67e22,#f5a623);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:800;font-family:Arial,sans-serif;cursor:pointer;box-shadow:0 3px 12px rgba(245,166,35,0.3);">📦 Kup licencję Cargo</button>'
+          : '<div style="padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;text-align:center;font-size:11px;color:#5580a0;">Potrzebujesz $'+CARGO_PRICE.toLocaleString()+' i '+CARGO_PTS+' PKT</div>'
+        )
+        +'</div>'
+    )
+
+    // Co będzie dostępne
+    +'<div style="font-size:9px;color:#5580a0;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Planowane modele cargo</div>'
+    +'<div style="display:flex;gap:7px;flex-wrap:wrap;">'
+    +'<div style="padding:6px 12px;background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.18);border-radius:20px;font-size:11px;color:#f5a623;">📦 A330-200F</div>'
+    +'<div style="padding:6px 12px;background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.18);border-radius:20px;font-size:11px;color:#f5a623;">📦 747-8F</div>'
+    +'<div style="padding:6px 12px;background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.18);border-radius:20px;font-size:11px;color:#f5a623;">📦 777F</div>'
+    +'<div style="padding:6px 12px;background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.18);border-radius:20px;font-size:11px;color:#f5a623;">📦 737-800BCF</div>'
+    +'<div style="padding:6px 12px;background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.18);border-radius:20px;font-size:11px;color:#f5a623;">📦 An-124</div>'
+    +'</div>';
+
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function buyCargoLicence() {
+  var CARGO_PRICE = 20000000;
+  var CARGO_PTS   = 500;
+  if(G.cargolicence) { showMsg('Już masz licencję cargo!'); return; }
+  if(G.cash < CARGO_PRICE) { showMsg('Za mało gotówki!'); return; }
+  if((G.points||0) < CARGO_PTS) { showMsg('Za mało punktów! Potrzebujesz '+CARGO_PTS+' PKT'); return; }
+  G.cash -= CARGO_PRICE;
+  G.points = (G.points||0) - CARGO_PTS;
+  G.cargolicence = true;
+  save(); updateHUD(); updateRankingValue();
+  showMsg('📦 Licencja Cargo zakupiona! Flota cargo wkrótce dostępna.');
+  openCargoShop();
 }
 
 function openNewAircraftShop() {
