@@ -106,16 +106,14 @@ window.addEventListener('load', function() {
             G.routes = G.routes.filter(function(r){
               return G.fleet.some(function(ac){return ac.id===r.acId;});
             });
-            // Zapisz staff
-            if(data.staff) G.staff=data.staff;
-            if(data.jobMarket) G.jobMarket=data.jobMarket;
             // Zapisz lokalnie na przyszlosc
             try { localStorage.setItem('sb_v3', JSON.stringify({
               cash:G.cash, homeAirport:G.homeAirport, fleet:G.fleet,
               airline:G.airline, points:G.points||0, level:G.level||1,
               totalFlights:G.totalFlights||0, routes:G.routes,
               slots:G.slots, airports:G.airports,
-              departurelog:G.departurelog||[], lastShopPayout:G.lastShopPayout||0
+              departurelog:G.departurelog||[], lastShopPayout:G.lastShopPayout||0,
+              staff:G.staff||{}, jobMarket:G.jobMarket||null
             })); } catch(e) {}
             startGame();
           } else {
