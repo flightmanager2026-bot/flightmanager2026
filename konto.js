@@ -261,51 +261,157 @@ function openRewards() {
 
 function closeModal(){ document.getElementById("modal").style.display="none"; }
 
+/* ── STRIPE CONFIG ─────────────────────────────────────────────
+   Wypełnij po wdrożeniu Firebase Cloud Functions:
+   1. Ustaw STRIPE_PUBLISHABLE_KEY ze swojego dashboardu Stripe
+   2. Ustaw STRIPE_FUNCTIONS_URL po deploymencie Cloud Functions
+──────────────────────────────────────────────────────────────── */
+var STRIPE_PUBLISHABLE_KEY = '';        // pk_live_... lub pk_test_...
+var STRIPE_FUNCTIONS_URL   = '';        // https://us-central1-PROJEKT.cloudfunctions.net
+
+var TOPUP_PACKAGES = [
+  // Gotówka
+  { id:'cash_50k',   type:'cash',   icon:'💵', label:'$50 000',    badge:'',                   amount:50000,    pricePLN:'1,99 zł',  priceCents:199,  color:'#00e676', bg:'rgba(0,230,118,0.07)', border:'rgba(0,230,118,0.18)' },
+  { id:'cash_200k',  type:'cash',   icon:'💰', label:'$200 000',   badge:'',                   amount:200000,   pricePLN:'4,99 zł',  priceCents:499,  color:'#00e676', bg:'rgba(0,230,118,0.08)', border:'rgba(0,230,118,0.22)' },
+  { id:'cash_500k',  type:'cash',   icon:'💳', label:'$500 000',   badge:'POPULARNY',          amount:500000,   pricePLN:'9,99 zł',  priceCents:999,  color:'#00d4ff', bg:'rgba(0,212,255,0.07)', border:'rgba(0,212,255,0.2)'  },
+  { id:'cash_2m',    type:'cash',   icon:'🏦', label:'$2 000 000', badge:'BESTSELLER',         amount:2000000,  pricePLN:'24,99 zł', priceCents:2499, color:'#f5a623', bg:'rgba(245,166,35,0.07)', border:'rgba(245,166,35,0.22)' },
+  { id:'cash_5m',    type:'cash',   icon:'🏛️', label:'$5 000 000', badge:'VIP',                amount:5000000,  pricePLN:'49,99 zł', priceCents:4999, color:'#f5a623', bg:'rgba(245,166,35,0.09)', border:'rgba(245,166,35,0.28)' },
+  { id:'cash_15m',   type:'cash',   icon:'💎', label:'$15 000 000',badge:'PREMIUM',            amount:15000000, pricePLN:'99,99 zł', priceCents:9999, color:'#a78bfa', bg:'rgba(168,139,250,0.07)', border:'rgba(168,139,250,0.22)' },
+  { id:'cash_50m',   type:'cash',   icon:'🚀', label:'$50 000 000',badge:'MEGA',               amount:50000000, pricePLN:'249,99 zł',priceCents:24999,color:'#ffd700', bg:'rgba(255,215,0,0.06)', border:'rgba(255,215,0,0.2)'  },
+  // Punkty
+  { id:'pts_200',    type:'points', icon:'⭐', label:'200 PKT',    badge:'',                   amount:200,      pricePLN:'0,99 zł',  priceCents:99,   color:'#a78bfa', bg:'rgba(168,139,250,0.06)', border:'rgba(168,139,250,0.16)' },
+  { id:'pts_1000',   type:'points', icon:'🌟', label:'1 000 PKT',  badge:'',                   amount:1000,     pricePLN:'3,99 zł',  priceCents:399,  color:'#a78bfa', bg:'rgba(168,139,250,0.07)', border:'rgba(168,139,250,0.2)'  },
+  { id:'pts_5000',   type:'points', icon:'💫', label:'5 000 PKT',  badge:'POPULARNY',          amount:5000,     pricePLN:'14,99 zł', priceCents:1499, color:'#f5a623', bg:'rgba(245,166,35,0.07)', border:'rgba(245,166,35,0.22)' },
+  { id:'pts_15000',  type:'points', icon:'🔮', label:'15 000 PKT', badge:'BESTSELLER',         amount:15000,    pricePLN:'34,99 zł', priceCents:3499, color:'#f5a623', bg:'rgba(245,166,35,0.09)', border:'rgba(245,166,35,0.28)' },
+  { id:'pts_50000',  type:'points', icon:'👑', label:'50 000 PKT', badge:'NAJLEPSZA WARTOŚĆ',  amount:50000,    pricePLN:'79,99 zł', priceCents:7999, color:'#ffd700', bg:'rgba(255,215,0,0.06)', border:'rgba(255,215,0,0.2)'  },
+  // Paczki combo
+  { id:'pack_start', type:'combo',  icon:'🎁', label:'Pakiet Startowy',   badge:'$500K + 500 PKT',  cash:500000,  pts:500,   pricePLN:'12,99 zł', priceCents:1299, color:'#00d4ff', bg:'rgba(0,212,255,0.07)', border:'rgba(0,212,255,0.22)' },
+  { id:'pack_pro',   type:'combo',  icon:'✈️', label:'Pakiet Pro',        badge:'$3M + 3 000 PKT',  cash:3000000, pts:3000,  pricePLN:'59,99 zł', priceCents:5999, color:'#a78bfa', bg:'rgba(168,139,250,0.08)', border:'rgba(168,139,250,0.25)' },
+  { id:'pack_elite', type:'combo',  icon:'🛩️', label:'Pakiet Elite',      badge:'$15M + 15 000 PKT',cash:15000000,pts:15000, pricePLN:'149,99 zł',priceCents:14999,color:'#ffd700', bg:'rgba(255,215,0,0.07)', border:'rgba(255,215,0,0.22)' }
+];
+
 function openTopUp() {
-  document.getElementById('modal-body').innerHTML =
-    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
-    +'<button onclick="openAccount()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;padding:0;">&#8592;</button>'
-    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">Doładuj konto</div></div>'
-
-    +'<div style="font-size:9px;color:#5580a0;letter-spacing:3px;margin-bottom:10px;">WALUTA GRY ($)</div>'
-    +makeTopUpCard('🚀','$50,000,000 <span style="font-size:10px;background:linear-gradient(135deg,#ffd700,#f5a623);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;">MEGA PAKIET</span>','500 zł','addCash(50000000,50000)','rgba(255,215,0,0.06)','rgba(255,215,0,0.2)','#ffd700')
-
-    +makeTopUpCard('💵','$100,000','4,99 zł','addCash(100000,499)','rgba(0,230,118,0.08)','rgba(0,230,118,0.2)','#00e676')
-    +makeTopUpCard('💰','$500,000','19,99 zł','addCash(500000,1999)','rgba(0,230,118,0.1)','rgba(0,230,118,0.25)','#00e676')
-    +makeTopUpCard('🏦','$2,000,000 <span style="font-size:10px;color:#f5a623;">BESTSELLER</span>','49,99 zł','addCash(2000000,4999)','rgba(245,166,35,0.08)','rgba(245,166,35,0.25)','#f5a623')
-
-    +'<div style="font-size:9px;color:#5580a0;letter-spacing:3px;margin:14px 0 10px;">PUNKTY (PKT ⭐)</div>'
-
-    +makeTopUpCard('⭐','500 PKT','2,99 zł','addPoints(500,299)','rgba(168,139,250,0.08)','rgba(168,139,250,0.2)','#a78bfa')
-    +makeTopUpCard('🌟','2,000 PKT','9,99 zł','addPoints(2000,999)','rgba(168,139,250,0.1)','rgba(168,139,250,0.25)','#a78bfa')
-    +makeTopUpCard('💫','10,000 PKT <span style="font-size:10px;color:#f5a623;">NAJLEPSZA WARTOŚĆ</span>','29,99 zł','addPoints(10000,2999)','rgba(245,166,35,0.08)','rgba(245,166,35,0.25)','#f5a623')
-
-    +'<div style="margin-top:14px;padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;font-size:10px;color:#5580a0;text-align:center;">'
-    +'Płatności wkrótce dostępne. Teraz w trybie demonstracyjnym.</div>';
-
-  document.getElementById('modal').style.display='flex';
-}
-
-function makeTopUpCard(icon, label, price, action, bg, border, color) {
-  return '<div onclick="'+action+'" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;cursor:pointer;'
-    +'background:'+bg+';border:1px solid '+border+';margin-bottom:8px;">'
-    +'<div style="font-size:24px;flex-shrink:0;">'+icon+'</div>'
-    +'<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:'+color+';">'+label+'</div></div>'
-    +'<div style="padding:6px 14px;background:'+border+';border-radius:8px;font-size:12px;font-weight:700;color:'+color+';white-space:nowrap;">'+price+'</div>'
+  var stripeReady = !!(STRIPE_PUBLISHABLE_KEY && STRIPE_FUNCTIONS_URL);
+  var html =
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">'
+    +'<button onclick="openShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e0f0ff;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;line-height:1.4;font-family:Arial,sans-serif;">&#8592;</button>'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:15px;font-weight:800;color:#e0f0ff;">Doładuj konto</div>'
+    +'<div style="font-size:10px;color:#5580a0;margin-top:1px;">Saldo: <span style="color:#00e676;font-weight:700;">$'+Math.round(G.cash).toLocaleString()+'</span> &nbsp;&bull;&nbsp; <span style="color:#a78bfa;font-weight:700;">'+(G.points||0)+' PKT</span></div>'
+    +'</div>'
+    +(stripeReady
+      ? '<div style="padding:3px 8px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);border-radius:20px;font-size:9px;color:#00e676;font-weight:700;">&#128274; Stripe</div>'
+      : '<div style="padding:3px 8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.2);border-radius:20px;font-size:9px;color:#f5a623;font-weight:700;">DEMO</div>'
+    )
     +'</div>';
+
+  // Tabs
+  var activeTab = window._topupTab || 'cash';
+  html +=
+    '<div style="display:flex;gap:5px;margin-bottom:14px;">'
+    +['cash','points','combo'].map(function(t){
+      var labels={cash:'💵 Gotówka',points:'⭐ Punkty',combo:'🎁 Paczki'};
+      var active = t === activeTab;
+      return '<button onclick="window._topupTab=\''+t+'\';openTopUp()" '
+        +'style="flex:1;padding:8px 4px;font-size:11px;font-weight:700;border-radius:9px;cursor:pointer;font-family:Arial,sans-serif;'
+        +(active?'background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;color:#fff;box-shadow:0 2px 10px rgba(0,212,255,0.25);'
+                :'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#5580a0;')+'">'+labels[t]+'</button>';
+    }).join('')
+    +'</div>';
+
+  TOPUP_PACKAGES.filter(function(p){ return p.type === activeTab; }).forEach(function(pkg) {
+    var badgeHtml = pkg.badge
+      ? '<span style="font-size:9px;font-weight:700;padding:1px 7px;background:rgba(255,215,0,0.15);color:#ffd700;border-radius:20px;margin-left:6px;">'+pkg.badge+'</span>'
+      : '';
+    var actionLabel = pkg.type==='combo'
+      ? pkg.badge
+      : (pkg.type==='cash' ? pkg.label : pkg.label);
+    var mainLabel = pkg.type==='combo' ? pkg.label : pkg.label;
+
+    html +=
+      '<div onclick="purchasePackage(\''+pkg.id+'\')" '
+      +'style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:13px;cursor:pointer;'
+      +'background:'+pkg.bg+';border:1px solid '+pkg.border+';margin-bottom:8px;" '
+      +'onmouseover="this.style.opacity=\'0.85\'" onmouseout="this.style.opacity=\'1\'">'
+      +'<div style="font-size:26px;flex-shrink:0;">'+pkg.icon+'</div>'
+      +'<div style="flex:1;min-width:0;">'
+      +'<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">'
+      +'<span style="font-size:13px;font-weight:800;color:'+pkg.color+';">'+mainLabel+'</span>'
+      +badgeHtml
+      +'</div>'
+      +(pkg.type==='combo'?'<div style="font-size:10px;color:#5580a0;margin-top:2px;">'+pkg.badge+'</div>':'')
+      +'</div>'
+      +'<div style="padding:7px 14px;background:'+pkg.border+';border-radius:9px;font-size:12px;font-weight:800;color:'+pkg.color+';white-space:nowrap;flex-shrink:0;">'+pkg.pricePLN+'</div>'
+      +'</div>';
+  });
+
+  // Footer
+  html +=
+    '<div style="margin-top:10px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;font-size:10px;color:#5580a0;text-align:center;">'
+    +(stripeReady
+      ? '&#128274; Bezpieczna płatność przez Stripe &bull; Karta &bull; BLIK &bull; Apple Pay'
+      : 'Tryb demonstracyjny — płatności testowe. Stripe wkrótce aktywny.'
+    )+'</div>';
+
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').style.display = 'flex';
 }
 
-function addCash(amount, priceCents) {
-  // Demo mode - just add cash
-  G.cash += amount;
-  save(); updateHUD();
-  showMsg('✓ Dodano $'+amount.toLocaleString()+' (tryb demo)');
-  closeModal();
+function purchasePackage(packageId) {
+  var pkg = null;
+  TOPUP_PACKAGES.forEach(function(p){ if(p.id===packageId) pkg=p; });
+  if(!pkg) return;
+
+  if(STRIPE_PUBLISHABLE_KEY && STRIPE_FUNCTIONS_URL) {
+    startStripeCheckout(pkg);
+  } else {
+    // Tryb demo
+    if(pkg.type==='cash')   { G.cash += pkg.amount; showMsg('✓ Demo: +$'+pkg.amount.toLocaleString()); }
+    if(pkg.type==='points') { G.points=(G.points||0)+pkg.amount; showMsg('✓ Demo: +'+pkg.amount+' PKT'); }
+    if(pkg.type==='combo')  { G.cash += pkg.cash; G.points=(G.points||0)+pkg.pts; showMsg('✓ Demo: +$'+pkg.cash.toLocaleString()+' i +'+pkg.pts+' PKT'); }
+    save(); updateHUD(); closeModal();
+  }
 }
 
-function addPoints(amount, priceCents) {
-  G.points = (G.points||0) + amount;
-  save(); updateHUD();
-  showMsg('✓ Dodano '+amount+' PKT (tryb demo)');
-  closeModal();
+function startStripeCheckout(pkg) {
+  if(!_currentUser) { showMsg('Zaloguj się, aby dokonać zakupu!'); return; }
+  var btn = event && event.currentTarget;
+  var modal = document.getElementById('modal-body');
+  if(modal) modal.innerHTML = '<div style="padding:40px;text-align:center;color:#5580a0;">&#128274; Łączenie ze Stripe...</div>';
+
+  _currentUser.getIdToken().then(function(token) {
+    return fetch(STRIPE_FUNCTIONS_URL + '/createCheckoutSession', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({ packageId: pkg.id })
+    });
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    if(data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'Brak URL sesji');
+    }
+  })
+  .catch(function(e) {
+    showMsg('Błąd płatności: '+e.message);
+    openTopUp();
+  });
+}
+
+function addCash(amount) { G.cash += amount; save(); updateHUD(); showMsg('✓ Dodano $'+amount.toLocaleString()); closeModal(); }
+function addPoints(amount) { G.points=(G.points||0)+amount; save(); updateHUD(); showMsg('✓ Dodano '+amount+' PKT'); closeModal(); }
+
+// Sprawdź powrót ze Stripe przy ładowaniu strony
+function checkStripeReturn() {
+  var params = new URLSearchParams(window.location.search);
+  var status = params.get('payment');
+  if(status === 'success') {
+    showMsg('✅ Płatność zakończona! Środki zostaną naliczone automatycznie.');
+    history.replaceState({}, '', window.location.pathname);
+  } else if(status === 'cancelled') {
+    showMsg('Płatność anulowana.');
+    history.replaceState({}, '', window.location.pathname);
+  }
 }

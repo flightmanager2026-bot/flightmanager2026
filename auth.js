@@ -344,6 +344,7 @@ function startGame() {
     setInterval(paySalaries, 3600000);
     // Zaktualizuj ranking doc przy każdym starcie (uzupełnia nowe pola dla starych graczy)
     if(typeof updateRankingValue === 'function') updateRankingValue();
+    if(typeof checkStripeReturn === 'function') checkStripeReturn();
     showMsg('Witaj z powrotem!');
   }, 50);
 }

@@ -6,7 +6,7 @@ var BRAND_LOGOS = {
 };
 
 var STAFF_TYPES = {
-  pilot:    { label:'Pilot',       icon:'✈️', color:'#00d4ff', salaryMin:60,   salaryMax:120,  neededPerAc:2, desc:'Wymagany do lotu (2 na samolot)' },
+  pilot:    { label:'Pilot',       icon:'✈️', color:'#00d4ff', salaryMin:60,   salaryMax:120,  neededPerAc:2, desc:'Wymagany do lotu (2–4 zależnie od zasięgu)' },
   steward:  { label:'Steward/essa',icon:'👩‍✈️', color:'#a78bfa', salaryMin:30,   salaryMax:70,   neededPerAc:1, desc:'Obsługa pasażerów (zależy od wielkości samolotu)' },
   mechanic: { label:'Mechanik',    icon:'🔧', color:'#f5a623', salaryMin:40,   salaryMax:90,   neededPerAc:1, desc:'Konserwacja samolotu (1 na samolot)' },
   engineer: { label:'Inżynier',    icon:'👷', color:'#00e676', salaryMin:70,   salaryMax:150,  neededPerAc:0.33, desc:'Nadzór techniczny (1 na 3 samoloty)' }
@@ -68,23 +68,38 @@ function initStaff() {
   });
 }
 
-// 1 FA per 50 seats, min 1, tiered
+// EASA: 1 FA per 50 seats, minimum 1
 function getRequiredStewards(seats) {
   var s = seats || 0;
-  if(s <= 20)  return 1;
-  if(s <= 80)  return 2;
+  if(s <= 19)  return 0; // poniżej 20 miejsc – FA niewymagany
+  if(s <= 50)  return 1;
+  if(s <= 100) return 2;
   if(s <= 150) return 3;
-  if(s <= 220) return 4;
-  if(s <= 300) return 5;
-  if(s <= 400) return 6;
-  if(s <= 500) return 8;
-  return 10;
+  if(s <= 200) return 4;
+  if(s <= 250) return 5;
+  if(s <= 300) return 6;
+  if(s <= 400) return 8;
+  if(s <= 500) return 10;
+  return 12; // A380 itp.
+}
+
+// Zasięg samolotu → liczba pilotów (FAR 121 / EASA OPS)
+// ≤5500km / ~7h: 2 pilotów  |  ≤12000km / ~14h: 3 pilotów  |  >12000km: 4 pilotów
+function getRequiredPilots(range) {
+  var r = range || 0;
+  if(r <= 5500)  return 2;
+  if(r <= 12000) return 3;
+  return 4;
 }
 
 function getNeeded(type) {
   if(type === 'steward') {
     if(!G.fleet.length) return 0;
     return G.fleet.reduce(function(sum, ac){ return sum + getRequiredStewards(ac.seats); }, 0);
+  }
+  if(type === 'pilot') {
+    if(!G.fleet.length) return 0;
+    return G.fleet.reduce(function(sum, ac){ return sum + getRequiredPilots(ac.range); }, 0);
   }
   var st = STAFF_TYPES[type];
   if(type==='engineer') return Math.max(1, Math.ceil(G.fleet.length * st.neededPerAc));
@@ -312,16 +327,19 @@ function assignStaff(type, empId) {
     +'<div style="font-size:11px;color:#5580a0;margin-bottom:14px;">'+emp.name+'</div>';
 
   G.fleet.forEach(function(ac){
-    var maxCrew = type==='steward' ? getRequiredStewards(ac.seats) : ({pilot:2,mechanic:1,engineer:1}[type]||1);
+    var maxCrew = type==='steward' ? getRequiredStewards(ac.seats)
+                : type==='pilot'   ? getRequiredPilots(ac.range)
+                : ({mechanic:1,engineer:1}[type]||1);
     var crew=ac.crew||{}; var typeCrew=crew[type]||[];
     var hasSlot=typeCrew.length<maxCrew;
     var already=typeCrew.indexOf(empId)>=0;
+    var rangeLabel = type==='pilot' ? ' &bull; '+ac.range+'km' : type==='steward' ? ' &bull; '+ac.seats+' miejsc' : '';
     html +=
       '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;'
       +'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;margin-bottom:6px;">'
       +'<div>'
       +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+ac.model+'</div>'
-      +'<div style="font-size:10px;color:#5580a0;">'+ac.reg+' &bull; obsada: '+typeCrew.length+'/'+maxCrew+'</div>'
+      +'<div style="font-size:10px;color:#5580a0;">'+ac.reg+' &bull; obsada: '+typeCrew.length+'/'+maxCrew+rangeLabel+'</div>'
       +'</div>'
       +(already?'<div style="font-size:10px;color:#00e676;font-weight:700;">✓ Przypisany</div>'
         :hasSlot?'<button onclick="doAssign(\''+type+'\',\''+empId+'\',\''+ac.id+'\')" '
@@ -339,7 +357,9 @@ function doAssign(type, empId, acId) {
   var ac=G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
   if(!ac.crew) ac.crew={};
   if(!ac.crew[type]) ac.crew[type]=[];
-  var maxCrew = type==='steward' ? getRequiredStewards(ac.seats) : ({pilot:2,mechanic:1,engineer:1}[type]||1);
+  var maxCrew = type==='steward' ? getRequiredStewards(ac.seats)
+              : type==='pilot'   ? getRequiredPilots(ac.range)
+              : ({mechanic:1,engineer:1}[type]||1);
   if(ac.crew[type].length>=maxCrew){showMsg('Pełna obsada!');return;}
   if(ac.crew[type].indexOf(empId)>=0){showMsg('Już przypisany!');return;}
   G.fleet.forEach(function(a){ if(a.id!==acId&&a.crew&&a.crew[type]) a.crew[type]=a.crew[type].filter(function(id){return id!==empId;}); });
@@ -357,8 +377,9 @@ function canAircraftDepart(ac) {
   var stewards  = (crew.steward||[]).length;
   var mechs     = (crew.mechanic||[]).length;
   var engineers = (crew.engineer||[]).length;
+  var reqPilots   = getRequiredPilots(ac.range);
   var reqStewards = getRequiredStewards(ac.seats);
-  if(pilots < 2)              return {ok:false, reason:'Brak pilotów ('+pilots+'/2) → Personel'};
+  if(pilots < reqPilots)      return {ok:false, reason:'Brak pilotów ('+pilots+'/'+reqPilots+') → Personel'};
   if(stewards < reqStewards)  return {ok:false, reason:'Brak stewardów ('+stewards+'/'+reqStewards+') → Personel'};
   if(mechs < 1)     return {ok:false, reason:'Brak mechanika (0/1) → Personel'};
   if(engineers < 1) return {ok:false, reason:'Brak inżyniera (0/1) → Personel'};
