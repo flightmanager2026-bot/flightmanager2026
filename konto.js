@@ -1,6 +1,5 @@
 /* -- KONTO -- */
 
-/* Simple local auth system */
 function getPlayer() {
   try { return JSON.parse(localStorage.getItem('fm_player') || 'null'); } catch(e) { return null; }
 }
@@ -8,13 +7,8 @@ function savePlayer(p) { localStorage.setItem('fm_player', JSON.stringify(p)); }
 
 function openAccount() {
   if(typeof _currentUser !== 'undefined' && _currentUser) {
-    var player = {
-      name: _currentUser.displayName || _currentUser.email || 'Gracz',
-      email: _currentUser.email,
-      airline: G.airline ? G.airline.name : 'VIS Airlines'
-    };
-    renderAccountPanel(player);
-    return;
+    var player = { name: _currentUser.displayName || _currentUser.email || 'Gracz', email: _currentUser.email, airline: G.airline ? G.airline.name : 'VIS Airlines' };
+    renderAccountPanel(player); return;
   }
   var player = getPlayer();
   if(!player) { openLogin(); return; }
@@ -25,60 +19,37 @@ function renderAccountPanel(player) {
   var email = _currentUser ? (_currentUser.email||'') : (player.email||'');
   var displayName = G.airline ? G.airline.name : (player.name||'Pilot');
   var code = G.airline ? G.airline.iata : '??';
-  var level = G.level||1;
-  var flights = G.totalFlights||0;
-  var cash = G.cash||0;
-  var fleetSize = G.fleet.length;
-  var fleetVal = typeof getFleetValue==='function' ? getFleetValue() : 0;
-
+  var level = G.level||1, flights = G.totalFlights||0, cash = G.cash||0, fleetSize = G.fleet.length;
   var html =
     '<div style="background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(26,86,219,0.1));border:1px solid rgba(0,212,255,0.2);border-radius:16px;padding:16px;margin-bottom:14px;">'
     +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">'
     +'<div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#1a56db,#00d4ff);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">✈</div>'
-    +'<div style="flex:1;">'
-    +'<div style="font-size:16px;font-weight:900;color:#fff;">'+displayName+'</div>'
+    +'<div style="flex:1;"><div style="font-size:16px;font-weight:900;color:#fff;">'+displayName+'</div>'
     +'<div style="font-size:11px;color:rgba(0,212,255,0.7);font-weight:700;letter-spacing:2px;">'+code+' &bull; LVL '+level+'</div>'
-    +'<div style="font-size:10px;color:#5580a0;margin-top:2px;">'+email+'</div>'
-    +'</div></div>'
+    +'<div style="font-size:10px;color:#5580a0;margin-top:2px;">'+email+'</div></div></div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">'
-    +'<div style="text-align:center;padding:8px;background:rgba(0,0,0,0.2);border-radius:10px;">'
-    +'<div style="font-size:18px;font-weight:900;color:#00e676;">$'+Math.round(cash/1000)+'K</div>'
-    +'<div style="font-size:9px;color:#5580a0;letter-spacing:1px;">SALDO</div></div>'
-    +'<div style="text-align:center;padding:8px;background:rgba(0,0,0,0.2);border-radius:10px;">'
-    +'<div style="font-size:18px;font-weight:900;color:#00d4ff;">'+fleetSize+'</div>'
-    +'<div style="font-size:9px;color:#5580a0;letter-spacing:1px;">SAMOLOTÓW</div></div>'
-    +'<div style="text-align:center;padding:8px;background:rgba(0,0,0,0.2);border-radius:10px;">'
-    +'<div style="font-size:18px;font-weight:900;color:#f5a623;">'+flights+'</div>'
-    +'<div style="font-size:9px;color:#5580a0;letter-spacing:1px;">LOTÓW</div></div>'
+    +'<div style="text-align:center;padding:8px;background:rgba(0,0,0,0.2);border-radius:10px;"><div style="font-size:18px;font-weight:900;color:#00e676;">$'+Math.round(cash/1000)+'K</div><div style="font-size:9px;color:#5580a0;letter-spacing:1px;">SALDO</div></div>'
+    +'<div style="text-align:center;padding:8px;background:rgba(0,0,0,0.2);border-radius:10px;"><div style="font-size:18px;font-weight:900;color:#00d4ff;">'+fleetSize+'</div><div style="font-size:9px;color:#5580a0;letter-spacing:1px;">SAMOLOTÓW</div></div>'
+    +'<div style="text-align:center;padding:8px;background:rgba(0,0,0,0.2);border-radius:10px;"><div style="font-size:18px;font-weight:900;color:#f5a623;">'+flights+'</div><div style="font-size:9px;color:#5580a0;letter-spacing:1px;">LOTÓW</div></div>'
     +'</div></div>'
     +'<div style="font-size:9px;color:#5580a0;letter-spacing:3px;margin-bottom:10px;">OPCJE KONTA</div>'
-    +'<div onclick="openMapStyle()" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;'
-    +'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);margin-bottom:8px;">'
+    +'<div onclick="openMapStyle()" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);margin-bottom:8px;">'
     +'<div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:18px;">🗺️</div>'
-    +'<div><div style="font-size:13px;font-weight:700;color:#e0f0ff;">Styl mapy</div>'
-    +'<div style="font-size:11px;color:#5580a0;">Zmień wygląd mapy</div></div>'
+    +'<div><div style="font-size:13px;font-weight:700;color:#e0f0ff;">Styl mapy</div><div style="font-size:11px;color:#5580a0;">Zmień wygląd mapy</div></div>'
     +'<div style="margin-left:auto;color:#5580a0;">›</div></div>'
-    +'<div onclick="openSettings()" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;'
-    +'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);margin-bottom:8px;">'
+    +'<div onclick="openSettings()" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);margin-bottom:8px;">'
     +'<div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:18px;">⚙️</div>'
-    +'<div><div style="font-size:13px;font-weight:700;color:#e0f0ff;">Ustawienia</div>'
-    +'<div style="font-size:11px;color:#5580a0;">Dźwięk, powiadomienia</div></div>'
+    +'<div><div style="font-size:13px;font-weight:700;color:#e0f0ff;">Ustawienia</div><div style="font-size:11px;color:#5580a0;">Dźwięk, powiadomienia</div></div>'
     +'<div style="margin-left:auto;color:#5580a0;">›</div></div>'
-    +'<div onclick="G.tutorialDone=false;closeModal();if(typeof startTutorial!==\'undefined\')startTutorial();" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;'
-    +'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);margin-bottom:8px;">'
+    +'<div onclick="G.tutorialDone=false;closeModal();if(typeof startTutorial!==\'undefined\')startTutorial();" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);margin-bottom:8px;">'
     +'<div style="width:36px;height:36px;border-radius:10px;background:rgba(0,212,255,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;">📖</div>'
-    +'<div><div style="font-size:13px;font-weight:700;color:#e0f0ff;">Samouczek</div>'
-    +'<div style="font-size:11px;color:#5580a0;">Uruchom samouczek ponownie</div></div>'
+    +'<div><div style="font-size:13px;font-weight:700;color:#e0f0ff;">Samouczek</div><div style="font-size:11px;color:#5580a0;">Uruchom samouczek ponownie</div></div>'
     +'<div style="margin-left:auto;color:#5580a0;">›</div></div>'
-    +'<div onclick="confirmReset()" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;'
-    +'background:rgba(230,57,70,0.05);border:1px solid rgba(230,57,70,0.15);margin-bottom:8px;">'
+    +'<div onclick="confirmReset()" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;background:rgba(230,57,70,0.05);border:1px solid rgba(230,57,70,0.15);margin-bottom:8px;">'
     +'<div style="width:36px;height:36px;border-radius:10px;background:rgba(230,57,70,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;">🔄</div>'
-    +'<div><div style="font-size:13px;font-weight:700;color:#e63946;">Zresetuj postępy</div>'
-    +'<div style="font-size:11px;color:#5580a0;">Usuń zapis gry i zacznij od nowa</div></div>'
+    +'<div><div style="font-size:13px;font-weight:700;color:#e63946;">Zresetuj postępy</div><div style="font-size:11px;color:#5580a0;">Usuń zapis gry i zacznij od nowa</div></div>'
     +'<div style="margin-left:auto;color:#5580a0;">›</div></div>'
-    +'<button onclick="logoutPlayer()" style="width:100%;padding:13px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);'
-    +'border-radius:12px;color:#5580a0;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-top:4px;">Wyloguj się</button>';
-
+    +'<button onclick="logoutPlayer()" style="width:100%;padding:13px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#5580a0;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-top:4px;">Wyloguj się</button>';
   document.getElementById('modal-body').innerHTML = html;
   document.getElementById('modal').style.display = 'flex';
 }
@@ -105,31 +76,24 @@ function registerPlayer() {
   var player = { name: name, airline: airline, joined: now.toLocaleDateString('pl-PL'), alliance: null, mapStyle: 'standard' };
   savePlayer(player);
   if(G.airline) { G.airline.name = airline; save(); }
-  closeModal();
-  showMsg('Witaj, '+name+'!');
+  closeModal(); showMsg('Witaj, '+name+'!');
 }
 
 function logoutPlayer() {
   if(confirm('Na pewno chcesz sie wylogowac?')) {
     closeModal();
-    if(typeof _fbAuth !== 'undefined' && _fbAuth) {
-      _fbAuth.signOut().then(function(){ location.reload(); });
-    } else {
-      localStorage.removeItem('sb_v3');
-      location.reload();
-    }
+    if(typeof _fbAuth !== 'undefined' && _fbAuth) { _fbAuth.signOut().then(function(){ location.reload(); }); }
+    else { localStorage.removeItem('sb_v3'); location.reload(); }
   }
 }
 
 function confirmReset() {
   if(confirm('Na pewno chcesz zresetowac postepy? Tego nie mozna cofnac!')) {
-    localStorage.removeItem('sb_v3');
-    localStorage.removeItem('fm_player');
+    localStorage.removeItem('sb_v3'); localStorage.removeItem('fm_player');
     if(typeof _fbDb !== 'undefined' && _fbDb && typeof _currentUser !== 'undefined' && _currentUser) {
       _fbDb.collection('players').doc(_currentUser.uid).delete().then(function(){
         G.cash=500000; G.fleet=[]; G.routes=[]; G.slots=[]; G.airports=[];
-        G.homeAirport=null; G.points=0; G.level=1; G.totalFlights=0;
-        G.departurelog=[]; G.lastShopPayout=0;
+        G.homeAirport=null; G.points=0; G.level=1; G.totalFlights=0; G.departurelog=[]; G.lastShopPayout=0;
         G.airline={name:'',iata:'',color:'#00d4ff'};
         document.getElementById('modal').style.display='none';
         if(typeof LMAP !== 'undefined' && LMAP) { LMAP.remove(); window.LMAP=null; }
@@ -166,8 +130,7 @@ function openMapStyle() {
     +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">Styl mapy</div></div>';
   styles.forEach(function(s,i) {
     html += '<div onclick="changeMapStyle('+i+')" style="padding:12px;border-radius:10px;cursor:pointer;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">'
-      +'<div style="font-size:13px;font-weight:600;color:#e0f0ff;">'+s.name+'</div>'
-      +'<div style="font-size:11px;color:#5580a0;">&#8250;</div></div>';
+      +'<div style="font-size:13px;font-weight:600;color:#e0f0ff;">'+s.name+'</div><div style="font-size:11px;color:#5580a0;">&#8250;</div></div>';
   });
   document.getElementById('modal-body').innerHTML = html;
   window._mapStyles = styles;
@@ -180,8 +143,7 @@ function changeMapStyle(idx) {
   L.tileLayer(style.url, {maxZoom:19, subdomains:['a','b','c']}).addTo(LMAP);
   var player = getPlayer();
   if(player) { player.mapStyle = style.name; savePlayer(player); }
-  closeModal();
-  showMsg('Zmieniono styl mapy: '+style.name);
+  closeModal(); showMsg('Zmieniono styl mapy: '+style.name);
 }
 
 function openAlliance() {
@@ -189,7 +151,7 @@ function openAlliance() {
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
     +'<button onclick="openAccount()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:20px;">&#8592;</button>'
     +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">Sojusz</div></div>'
-    +'<div style="color:#5580a0;font-size:13px;text-align:center;padding:20px;">Sojusze - wkrotce!<br><br>Dolacz do grupy graczy,<br>wspolnie rozwijajcie siec tras.</div>';
+    +'<div style="color:#5580a0;font-size:13px;text-align:center;padding:20px;">Sojusze - wkrotce!</div>';
 }
 
 function openRanking() {
@@ -200,9 +162,8 @@ function openRanking() {
     +'<div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:12px;padding:14px;margin-bottom:12px;">'
     +'<div style="font-size:11px;color:#5580a0;margin-bottom:4px;">TWOJ WYNIK</div>'
     +'<div style="font-size:20px;font-weight:900;color:#f5a623;">'+G.points+' PKT</div>'
-    +'<div style="font-size:11px;color:#5580a0;margin-top:2px;">Poziom '+G.level+' &bull; '+G.totalFlights+' lotow</div>'
-    +'</div>'
-    +'<div style="color:#5580a0;font-size:12px;text-align:center;padding:10px;">Ranking globalny - wkrotce!<br>Porownaj sie z graczami z calego swiata.</div>';
+    +'<div style="font-size:11px;color:#5580a0;margin-top:2px;">Poziom '+G.level+' &bull; '+G.totalFlights+' lotow</div></div>'
+    +'<div style="color:#5580a0;font-size:12px;text-align:center;padding:10px;">Ranking globalny - wkrotce!</div>';
 }
 
 function openRewards() {
@@ -218,13 +179,10 @@ function openRewards() {
     +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">Nagrody</div></div>';
   rewards.forEach(function(r) {
     html += '<div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);margin-bottom:8px;">'
-      +'<div style="font-size:22px;">'+(r.done?'&#9989;':'&#9744;')+'</div>'
-      +'<div style="flex:1;">'
+      +'<div style="font-size:22px;">'+(r.done?'&#9989;':'&#9744;')+'</div><div style="flex:1;">'
       +'<div style="font-size:13px;font-weight:600;color:'+(r.done?'#00e676':'#e0f0ff')+';">'+r.name+'</div>'
-      +'<div style="font-size:11px;color:#5580a0;">'+r.desc+'</div>'
-      +'</div>'
-      +'<div style="font-size:12px;font-weight:700;color:#f5a623;">+'+r.pts+' PKT</div>'
-      +'</div>';
+      +'<div style="font-size:11px;color:#5580a0;">'+r.desc+'</div></div>'
+      +'<div style="font-size:12px;font-weight:700;color:#f5a623;">+'+r.pts+' PKT</div></div>';
   });
   document.getElementById('modal-body').innerHTML = html;
 }
@@ -258,52 +216,29 @@ function openTopUp() {
   var html =
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">'
     +'<button onclick="openShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e0f0ff;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;line-height:1.4;font-family:Arial,sans-serif;">&#8592;</button>'
-    +'<div style="flex:1;">'
-    +'<div style="font-size:15px;font-weight:800;color:#e0f0ff;">Doładuj konto</div>'
-    +'<div style="font-size:10px;color:#5580a0;margin-top:1px;">Saldo: <span style="color:#00e676;font-weight:700;">$'+Math.round(G.cash).toLocaleString()+'</span> &nbsp;&bull;&nbsp; <span style="color:#a78bfa;font-weight:700;">'+(G.points||0)+' PKT</span></div>'
-    +'</div>'
-    +(stripeReady
-      ? '<div style="padding:3px 8px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);border-radius:20px;font-size:9px;color:#00e676;font-weight:700;">&#128274; Stripe</div>'
-      : '<div style="padding:3px 8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.2);border-radius:20px;font-size:9px;color:#f5a623;font-weight:700;">DEMO</div>'
-    )
+    +'<div style="flex:1;"><div style="font-size:15px;font-weight:800;color:#e0f0ff;">Doładuj konto</div>'
+    +'<div style="font-size:10px;color:#5580a0;margin-top:1px;">Saldo: <span style="color:#00e676;font-weight:700;">$'+Math.round(G.cash).toLocaleString()+'</span> &nbsp;&bull;&nbsp; <span style="color:#a78bfa;font-weight:700;">'+(G.points||0)+' PKT</span></div></div>'
+    +(stripeReady ? '<div style="padding:3px 8px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);border-radius:20px;font-size:9px;color:#00e676;font-weight:700;">&#128274; Stripe</div>'
+                  : '<div style="padding:3px 8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.2);border-radius:20px;font-size:9px;color:#f5a623;font-weight:700;">DEMO</div>')
     +'</div>';
-
   var activeTab = window._topupTab || 'cash';
-  html +=
-    '<div style="display:flex;gap:5px;margin-bottom:14px;">'
+  html += '<div style="display:flex;gap:5px;margin-bottom:14px;">'
     +['cash','points','combo'].map(function(t){
       var labels={cash:'💵 Gotówka',points:'⭐ Punkty',combo:'🎁 Paczki'};
-      var active = t === activeTab;
-      return '<button onclick="window._topupTab=\''+t+'\';openTopUp()" '
-        +'style="flex:1;padding:8px 4px;font-size:11px;font-weight:700;border-radius:9px;cursor:pointer;font-family:Arial,sans-serif;'
-        +(active?'background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;color:#fff;box-shadow:0 2px 10px rgba(0,212,255,0.25);'
-                :'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#5580a0;')+'">'+labels[t]+'</button>';
-    }).join('')
-    +'</div>';
-
-  TOPUP_PACKAGES.filter(function(p){ return p.type === activeTab; }).forEach(function(pkg) {
+      var active = t===activeTab;
+      return '<button onclick="window._topupTab=\''+t+'\';openTopUp()" style="flex:1;padding:8px 4px;font-size:11px;font-weight:700;border-radius:9px;cursor:pointer;font-family:Arial,sans-serif;'
+        +(active?'background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;color:#fff;':'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#5580a0;')+'">'+labels[t]+'</button>';
+    }).join('')+'</div>';
+  TOPUP_PACKAGES.filter(function(p){ return p.type===activeTab; }).forEach(function(pkg) {
     var badgeHtml = pkg.badge ? '<span style="font-size:9px;font-weight:700;padding:1px 7px;background:rgba(255,215,0,0.15);color:#ffd700;border-radius:20px;margin-left:6px;">'+pkg.badge+'</span>' : '';
-    var mainLabel = pkg.label;
-    html +=
-      '<div onclick="purchasePackage(\''+pkg.id+'\')" '
-      +'style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:13px;cursor:pointer;'
-      +'background:'+pkg.bg+';border:1px solid '+pkg.border+';margin-bottom:8px;" '
-      +'onmouseover="this.style.opacity=\'0.85\'" onmouseout="this.style.opacity=\'1\'">'
+    html += '<div onclick="purchasePackage(\''+pkg.id+'\')" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:13px;cursor:pointer;background:'+pkg.bg+';border:1px solid '+pkg.border+';margin-bottom:8px;" onmouseover="this.style.opacity=\'0.85\'" onmouseout="this.style.opacity=\'1\'">'
       +'<div style="font-size:26px;flex-shrink:0;">'+pkg.icon+'</div>'
-      +'<div style="flex:1;min-width:0;">'
-      +'<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">'
-      +'<span style="font-size:13px;font-weight:800;color:'+pkg.color+';">'+mainLabel+'</span>'
-      +badgeHtml
-      +'</div>'
-      +(pkg.type==='combo'?'<div style="font-size:10px;color:#5580a0;margin-top:2px;">'+pkg.badge+'</div>':'')
-      +'</div>'
-      +'<div style="padding:7px 14px;background:'+pkg.border+';border-radius:9px;font-size:12px;font-weight:800;color:'+pkg.color+';white-space:nowrap;flex-shrink:0;">'+pkg.pricePLN+'</div>'
-      +'</div>';
+      +'<div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;"><span style="font-size:13px;font-weight:800;color:'+pkg.color+';">'+pkg.label+'</span>'+badgeHtml+'</div>'
+      +(pkg.type==='combo'?'<div style="font-size:10px;color:#5580a0;margin-top:2px;">'+pkg.badge+'</div>':'')+'</div>'
+      +'<div style="padding:7px 14px;background:'+pkg.border+';border-radius:9px;font-size:12px;font-weight:800;color:'+pkg.color+';white-space:nowrap;flex-shrink:0;">'+pkg.pricePLN+'</div></div>';
   });
-
   html += '<div style="margin-top:10px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;font-size:10px;color:#5580a0;text-align:center;">'
-    +(stripeReady ? '&#128274; Bezpieczna płatność przez Stripe &bull; Karta &bull; BLIK &bull; Apple Pay' : 'Tryb demonstracyjny — płatności testowe.')+'</div>';
-
+    +(stripeReady?'&#128274; Bezpieczna płatność przez Stripe &bull; Karta &bull; BLIK &bull; Apple Pay':'Tryb demonstracyjny')+'</div>';
   document.getElementById('modal-body').innerHTML = html;
   document.getElementById('modal').style.display = 'flex';
 }
