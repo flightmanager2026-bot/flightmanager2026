@@ -130,8 +130,9 @@ function openNewAircraftShop() {
     var planes = AIRCRAFT_CATALOG[brand];
     var logo = LOGOS[brand];
     var logoBg = LOGO_BG[brand] || 'transparent';
-    var minPrice = Math.min.apply(null, planes.map(function(p){return p.price;}));
-    var affordable = planes.filter(function(p){return G.cash>=p.price && G.level>=(p.level||1);}).length;
+    var availablePlanes = planes.filter(function(p){return p.locked !== true;});
+    var minPrice = availablePlanes.length ? Math.min.apply(null, availablePlanes.map(function(p){return p.price;})) : 0;
+    var affordable = availablePlanes.filter(function(p){return G.cash>=p.price && G.level>=(p.level||1);}).length;
 
     html +=
       '<div data-brand="'+brand+'" onclick="openManufacturerByName(this)" '
@@ -171,21 +172,25 @@ function openManufacturer(brand) {
     +'<div style="margin-left:auto;font-size:10px;color:#5580a0;">'+aircraft.length+' modeli</div>'
     +'</div>';
   aircraft.forEach(function(ac) {
-    var canBuy = G.level >= (ac.level||1);
+    var isLocked = ac.locked === true;
+    var canBuy = !isLocked && G.level >= (ac.level||1);
     var img = ac.img
       ? '<img src="'+ac.img+'" style="width:100%;max-height:110px;object-fit:contain;background:#000;border-radius:8px;margin-bottom:10px;">'
       : '';
-    html += '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;margin-bottom:8px;">'
+    html += '<div style="background:'+(isLocked?'rgba(255,255,255,0.01)':'rgba(255,255,255,0.04)')+';border:1px solid '+(isLocked?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.08)')+';border-radius:12px;padding:12px;margin-bottom:8px;opacity:'+(isLocked?'0.55':'1')+'">'
       +img
-      +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;margin-bottom:3px;">'+ac.model+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+(isLocked?'#5580a0':'#e0f0ff')+';margin-bottom:3px;">'+(isLocked?'🔒 ':'')+ac.model+'</div>'
       +'<div style="font-size:10px;color:#5580a0;margin-bottom:6px;">'+ac.desc+'</div>'
       +'<div style="display:flex;gap:12px;font-size:10px;color:#5580a0;margin-bottom:8px;">'
       +'<span>&#128cadeiras; '+ac.seats+' miejsc</span>'
       +'<span>&#9992; '+ac.range+' km</span>'
       +'<span>'+ac.engines+'</span></div>'
-      +(canBuy
-        ? '<button data-model="'+ac.model+'" onclick="buyAircraftByEl(this)" style="width:100%;padding:9px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Kup za $'+ac.price.toLocaleString()+'</button>'
-        : '<div style="padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center;font-size:11px;color:#5580a0;">Wymagany poziom '+ac.level+'</div>'
+      +(isLocked
+        ? '<div style="padding:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-align:center;font-size:11px;color:#5580a0;">🔒 Niedostępny</div>'
+        : (canBuy
+          ? '<button data-model="'+ac.model+'" onclick="buyAircraftByEl(this)" style="width:100%;padding:9px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Kup za $'+ac.price.toLocaleString()+'</button>'
+          : '<div style="padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center;font-size:11px;color:#5580a0;">Wymagany poziom '+ac.level+'</div>'
+        )
       )
       +'</div>';
   });
