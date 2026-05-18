@@ -279,6 +279,10 @@ function loadPlayerData(uid, callback) {
         if(data.totalPassengers !== undefined) G.totalPassengers = data.totalPassengers;
         if(data.cargolicence !== undefined) G.cargolicence = data.cargolicence;
         if(data.foundedAt) G.foundedAt = data.foundedAt;
+        // Fallback: użyj daty rejestracji z Firebase Auth jeśli foundedAt nie ustawiono
+        if(!G.foundedAt && _currentUser && _currentUser.metadata && _currentUser.metadata.creationTime) {
+          G.foundedAt = new Date(_currentUser.metadata.creationTime).getTime();
+        }
         callback(true);
       } else {
         callback(false);
@@ -338,6 +342,8 @@ function startGame() {
     renderMarkers(); renderRoutes(); restoreFlights(); startTick(); updateHUD();
     paySalaries();
     setInterval(paySalaries, 3600000);
+    // Zaktualizuj ranking doc przy każdym starcie (uzupełnia nowe pola dla starych graczy)
+    if(typeof updateRankingValue === 'function') updateRankingValue();
     showMsg('Witaj z powrotem!');
   }, 50);
 }
