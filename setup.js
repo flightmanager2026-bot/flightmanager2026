@@ -1199,8 +1199,9 @@ var WORLD_CITIES = {
 
 function showSetupScreen() {
   if(document.getElementById('setupScreen')) return;
-  // Guard - if already has base don't show setup
-  if(G.homeAirport && G.fleet && G.fleet.length > 0) {
+  // Guard - if already has base don't show setup (only real aircraft count, not test defaults)
+  var hasRealFleet = G.fleet && G.fleet.some(function(ac){ return ac.id && ac.id.indexOf('AC_')===0; });
+  if(G.homeAirport && hasRealFleet) {
     initMap();
     setTimeout(function(){
       if(typeof LMAP !== 'undefined' && LMAP) {
@@ -1432,8 +1433,9 @@ function doSetupFinish(c, airlineName, airlineCode) {
 
 
 function showStarterPlaneScreen() {
-  // If player already has a base (returning from another device), skip setup
-  if(G.homeAirport && G.fleet && G.fleet.length > 0) {
+  // If player already has a base (returning from another device), skip setup (only real aircraft count)
+  var hasRealFleet = G.fleet && G.fleet.some(function(ac){ return ac.id && ac.id.indexOf('AC_')===0; });
+  if(G.homeAirport && hasRealFleet) {
     initMap();
     setTimeout(function(){
       LMAP.invalidateSize({animate:false});
@@ -1509,8 +1511,10 @@ function confirmStarterPlane() {
   if(i === null || i === undefined) return;
   var p = window._starterPlanes[i];
 
-  // Dodaj samolot tylko jeśli flota jest pusta
-  if(!G.fleet || G.fleet.length === 0) {
+  // Usuń domyślne samoloty testowe (ac1-ac4), zostaw tylko prawdziwe
+  G.fleet = (G.fleet || []).filter(function(ac){ return ac.id && ac.id.indexOf('AC_')===0; });
+  // Dodaj samolot startowy jeśli brak prawdziwych
+  if(G.fleet.length === 0) {
     var ac = {
       id: 'AC_' + Date.now(),
       model: p.model,
