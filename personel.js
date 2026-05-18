@@ -207,9 +207,12 @@ function renderStaffType(el, type) {
         +(assignedAc?'✓ '+assignedAc.model+' ('+assignedAc.reg+')':'⚠ Nieprzypisany')
         +'</div></div>'
         +'<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">'
-        +(G.fleet.length>0?'<button onclick="assignStaff(\''+type+'\',\''+emp.id+'\')" '
-          +'style="padding:5px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);'
-          +'border-radius:6px;color:#00d4ff;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Przypisz</button>':'')
+        +(assignedAc
+          ? '<div style="padding:5px 8px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);border-radius:6px;color:#00e676;font-size:10px;font-weight:700;text-align:center;">✓ Przypisany</div>'
+          : (G.fleet.length>0?'<button onclick="assignStaff(\''+type+'\',\''+emp.id+'\')" '
+            +'style="padding:5px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);'
+            +'border-radius:6px;color:#00d4ff;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Przypisz</button>':'')
+        )
         +'<button onclick="fireStaff(\''+type+'\','+i+')" '
         +'style="padding:5px 8px;background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.2);'
         +'border-radius:6px;color:#e63946;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Zwolnij</button>'
