@@ -331,6 +331,7 @@ function doAssign(type, empId, acId) {
   G.staff[type].forEach(function(e){if(e.id===empId)e.assignedAcId=acId;});
   save(); closeModal();
   showMsg('✓ Przypisano do '+ac.model+'!');
+  var c=document.getElementById('personel-content'); if(c) renderStaffType(c,type);
 }
 
 function canAircraftDepart(ac) {
