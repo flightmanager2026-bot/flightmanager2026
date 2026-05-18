@@ -276,6 +276,9 @@ function loadPlayerData(uid, callback) {
         if(data.jobMarket) G.jobMarket = data.jobMarket;
         if(data.tutorialDone !== undefined) G.tutorialDone = data.tutorialDone;
         if(data.lastSalaryPay) G.lastSalaryPay = data.lastSalaryPay;
+        if(data.totalPassengers !== undefined) G.totalPassengers = data.totalPassengers;
+        if(data.cargolicence !== undefined) G.cargolicence = data.cargolicence;
+        if(data.foundedAt) G.foundedAt = data.foundedAt;
         callback(true);
       } else {
         callback(false);
@@ -308,6 +311,9 @@ function saveToCloud() {
     tutorialDone: G.tutorialDone || false,
     lastSalaryPay: G.lastSalaryPay || 0,
     reset_version: G.reset_version || 0,
+    totalPassengers: G.totalPassengers || 0,
+    cargolicence: G.cargolicence || false,
+    foundedAt: G.foundedAt || 0,
     updatedAt: Date.now()
   };
   _fbDb.collection('players').doc(uid).set(data)

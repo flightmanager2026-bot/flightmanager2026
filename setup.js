@@ -1513,6 +1513,7 @@ function confirmStarterPlane() {
 
   // Usuń domyślne samoloty testowe (ac1-ac4), zostaw tylko prawdziwe
   G.fleet = (G.fleet || []).filter(function(ac){ return ac.id && ac.id.indexOf('AC_')===0; });
+  if(!G.foundedAt) G.foundedAt = Date.now();
   // Dodaj samolot startowy jeśli brak prawdziwych
   if(G.fleet.length === 0) {
     var ac = {
