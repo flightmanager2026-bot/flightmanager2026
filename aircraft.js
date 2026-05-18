@@ -463,3 +463,274 @@ Object.assign(AC_SPEEDS, {
   'DHC-2 Beaver':208,'DHC-3 Otter':243,'DHC-7 Dash 7':428,
   'DHC-8-100':450,'DHC-8-200':450,'DHC-8-300':452,'DHC-8-400':556,
 });
+
+// ============================================================
+// PRICE UPDATE & NEW MODELS — self-executing function
+// ============================================================
+(function(){
+
+  // ----------------------------------------------------------
+  // 1. Price list (in-game currency)
+  // ----------------------------------------------------------
+  var PRICES = {
+    // Airbus
+    'A220-100':5322240,'A220-300':6773760,'A220-500':8225280,
+    'A318':5177088,'A319':6483456,'A319 Neo':6773760,
+    'A320':13685760,'A320 Neo':13685760,
+    'A321':14141952,'A321 Neo':18247680,
+    'A321LR':18247680,'A321XLR':18247680,
+    'A310':57576960,
+    'A330-200':57694464,'A330-300':70502400,
+    'A340-200':61337088,'A340-300':69327360,'A340-500':73557504,'A340-600':83662848,
+    'A350-900':74027520,'A350-1000':86012928,
+    'A380-800':123379200,
+    // Boeing
+    '717-200':2867928,
+    '727-100':10933632,'727-200':14309376,
+    '737-100':8493120,'737-200':10137600,'737-300':11329920,'737-400':13478400,
+    '737-500':10228992,'737-600':10228992,'737-700':11329920,'737-800':14378112,'737-900':16022592,
+    '737 MAX 7':13112640,'737 MAX 8':16022592,'737 MAX 9':17483520,'737 MAX 10':18944448,
+    '747-100':84341760,'747-200':106444800,'747-300':110592000,'747-400':95869440,'747-8':107550720,
+    '757-200':18156288,'757-300':22173696,
+    '767-200':51617280,'767-300':62208000,'767-400ER':70041600,
+    '777-200':71884800,'777-300':84756480,'777-8':88442880,'777-9':100416000,
+    '787-8':29184000,'787-9':67276800,'787-10':76032000,
+    // Embraer
+    'ERJ-135':383232,'ERJ-140':439797,'ERJ-145':567146,
+    'E170':3475712,'E175':3875712,'E190':5160960,'E195':5684224,
+    'E175-E2':4068000,'E190-E2':5160960,'E195-E2':6707200,
+    // Bombardier
+    'CRJ-100':332394,'CRJ-200':358610,
+    'CRJ-700':1732998,'CRJ-900':2212672,'CRJ-1000':2578956,
+    'Dash 8 Q100':287000,'Dash 8 Q200':304500,'Dash 8 Q300':430500,'Dash 8 Q400':1848000,
+    'CS100':3725568,'CS300':4741632,
+    // ATR
+    'ATR 42-300':171500,'ATR 42-400':189000,'ATR 42-500':220500,'ATR 42-600':232675,
+    'ATR 72-200':1058400,'ATR 72-500':1213098,'ATR 72-600':1293600,
+    // Suchoj
+    'Superjet New':1625000,
+    // Irkut
+    'MC-21-200':3650000,'MC-21-300':4500000,'MC-21-310':4250000,'MC-21-400':5400000,
+    // Iliuszyn
+    'Ił-14':720000,'Ił-18':1850000,'Ił-62':4210000,
+    'Ił-86':18500000,'Ił-96-300':42600000,'Ił-96-400M':53100000,
+    'Ił-114-300':1680000,
+    // Tupolew
+    'Tu-104':1450000,'Tu-114':6210000,'Tu-124':1120000,'Tu-134':1850000,
+    'Tu-144':18500000,
+    'Tu-204':13800000,'Tu-214':14500000,'Tu-334':2450000,
+    // McDonnell Douglas
+    'DC-9':1850000,'DC-10':42600000,'MD-11':58700000,
+    'MD-81':11400000,'MD-82':12100000,'MD-83':12500000,'MD-87':9800000,'MD-88':13200000,
+    'MD-90':14500000,
+    // Fokker
+    'Fokker F27 Friendship':560000,'Fokker F28 Fellowship':925000,
+    'Fokker 50':625000,'Fokker 70':1225000,'Fokker 100':1740000,
+    // British Aerospace
+    'BAe Jetstream 31':190000,'BAe Jetstream 41':310000,'BAe ATP':780000,
+    'BAe 146-100':1120000,'BAe 146-200':1350000,'BAe 146-300':1580000,
+    'Avro RJ70':1150000,'Avro RJ85':1380000,'Avro RJ100':1620000,
+    // Antonow
+    'An-24':510000,'An-26B-100':580000,
+    'An-28':180000,'An-38':240000,'An-74TK':720000,'An-140':640000,
+    'An-148':1350000,'An-158':1580000,
+    // Dassault
+    'Falcon 10':160000,'Falcon 20':280000,'Falcon 30':350000,'Falcon 50':420000,
+    'Falcon 900':1250000,'Falcon 2000':980000,
+    'Falcon 6X':2100000,'Falcon 7X':2450000,'Falcon 8X':2680000,'Falcon 10X':3150000,
+    'Mercure':4950000,
+    // Havilland Canada
+    'DHC-2 Beaver':245000,
+    'DHC-3 Otter':345000,
+    'DHC-6 Twin Otter':710000,
+    'DHC-7 Dash 7':1730000,
+    'DHC-8-100':2210000,'DHC-8-200':2350000,'DHC-8-300':2570000,'DHC-8-400':3640000,
+  };
+
+  // ----------------------------------------------------------
+  // 2. Models that must be locked (not in price list)
+  // ----------------------------------------------------------
+  var LOCKED_MODELS = [
+    // Airbus
+    'A350-800','A300','A310',
+    // Boeing
+    '737-900ER','737 MAX 8-200','707-120','707-320','720','747SP',
+    '767-200ER','767-300ER','777-200ER','777-200LR','777-300ER',
+    // Suchoj
+    'Superjet 100LR',
+    // Iliuszyn
+    'Ił-76',
+    // Tupolew
+    'Tu-154',
+    // McDonnell Douglas
+    'DC-8','MD-80',
+    // British Aerospace
+    'BAe 748','Concorde',
+    // Dassault
+    'Falcon 900LX','Falcon 2000LXS',
+  ];
+
+  // ----------------------------------------------------------
+  // 3. Update prices and lock existing models
+  // ----------------------------------------------------------
+  Object.keys(AIRCRAFT_CATALOG).forEach(function(brand) {
+    AIRCRAFT_CATALOG[brand].forEach(function(ac) {
+      if(PRICES.hasOwnProperty(ac.model)) {
+        ac.price = PRICES[ac.model];
+        ac.locked = false;
+      } else if(LOCKED_MODELS.indexOf(ac.model) >= 0) {
+        ac.locked = true;
+      }
+    });
+  });
+
+  // ----------------------------------------------------------
+  // 4. New models to add
+  // ----------------------------------------------------------
+  var NEW_MODELS = {
+    'Airbus': [
+      {model:'A320-100', seats:150, range:4800, price:11404800, img:'', level:2, desc:'Wczesna wersja A320, 150 miejsc, zasięg 4,800 km'},
+      {model:'A321-200', seats:220, range:5600, price:16727040, img:'', level:3, desc:'Powiększona wersja A321, 220 miejsc, zasięg 5,600 km'},
+      {model:'A321LR', seats:206, range:7400, price:18247680, img:'', level:4, desc:'Długi zasięg, 206 miejsc, zasięg 7,400 km'},
+      {model:'A321XLR', seats:200, range:8700, price:18247680, img:'', level:4, desc:'Bardzo długi zasięg, 200 miejsc, zasięg 8,700 km'},
+      {model:'A300B1', seats:250, range:4500, price:58752000, img:'', level:5, desc:'Wczesna wersja A300, 250 miejsc, zasięg 4,500 km'},
+      {model:'A300B2', seats:281, range:5000, price:58752000, img:'', level:5, desc:'A300B2, 281 miejsc, zasięg 5,000 km'},
+      {model:'A300B4', seats:295, range:6300, price:58752000, img:'', level:5, desc:'A300B4, 295 miejsc, zasięg 6,300 km'},
+      {model:'A300-600', seats:300, range:7500, price:62512128, img:'', level:5, desc:'A300-600, 300 miejsc, zasięg 7,500 km'},
+      {model:'A310-300', seats:280, range:10560, price:65802240, img:'', level:5, desc:'A310-300, 280 miejsc, zasięg 10,560 km'},
+      {model:'A330-800', seats:406, range:15100, price:60397056, img:'', level:7, desc:'Daleki zasięg, 406 miejsc, zasięg 15,100 km'},
+      {model:'A330-900', seats:460, range:12130, price:70502400, img:'', level:7, desc:'Długi kadłub, 460 miejsc, zasięg 12,130 km'},
+    ],
+    'Boeing': [
+      // Boeing has no new models to add that aren't locked
+    ],
+    'Bombardier': [
+      {model:'Challenger 800', seats:50, range:3020, price:241500, img:'', level:1, desc:'Mały odrzutowiec regionalny, 50 miejsc, zasięg 3,020 km'},
+      {model:'CRJ-440', seats:44, range:2200, price:381500, img:'', level:1, desc:'CRJ-440, 44 miejsca, zasięg 2,200 km'},
+      {model:'CRJ-705', seats:75, range:3050, price:1897000, img:'', level:1, desc:'CRJ-705, 75 miejsc, zasięg 3,050 km'},
+    ],
+    'ATR': [
+      {model:'ATR 72-210', seats:70, range:1430, price:1106000, img:'', level:1, desc:'ATR 72-210, 70 miejsc, zasięg 1,430 km'},
+    ],
+    'Suchoj': [
+      {model:'Superjet 100-75', seats:75, range:4578, price:1225000, img:'', level:2, desc:'Skrócona wersja, 75 miejsc, zasięg 4,578 km'},
+      {model:'Superjet 100-95', seats:98, range:4578, price:1560000, img:'', level:2, desc:'Standardowa wersja, 98 miejsc, zasięg 4,578 km'},
+    ],
+    'Iliuszyn': [
+      {model:'Ił-12', seats:27, range:2000, price:580000, img:'', level:1, desc:'Klasyczny turbośmigłowy, 27 miejsc, zasięg 2,000 km'},
+      {model:'Ił-62M', seats:186, range:11050, price:4680000, img:'', level:4, desc:'Zmodernizowany Ił-62, 186 miejsc, zasięg 11,050 km'},
+      {model:'Ił-114', seats:64, range:1200, price:1450000, img:'', level:2, desc:'Turbośmigłowy regionalny, 64 miejsca, zasięg 1,200 km'},
+    ],
+    'Tupolew': [
+      {model:'Tu-154B', seats:180, range:5600, price:4520000, img:'', level:3, desc:'Tu-154B, 180 miejsc, zasięg 5,600 km'},
+      {model:'Tu-154M', seats:180, range:6600, price:4980000, img:'', level:3, desc:'Zmodernizowany Tu-154, 180 miejsc, zasięg 6,600 km'},
+    ],
+    'McDonnell Douglas': [
+      {model:'DC-9-30', seats:115, range:2670, price:2450000, img:'', level:2, desc:'DC-9-30, 115 miejsc, zasięg 2,670 km'},
+      {model:'DC-9-50', seats:139, range:3030, price:3120000, img:'', level:2, desc:'DC-9-50, 139 miejsc, zasięg 3,030 km'},
+      {model:'DC-10-30', seats:380, range:10950, price:45800000, img:'', level:5, desc:'DC-10-30 daleki zasięg, 380 miejsc, zasięg 10,950 km'},
+    ],
+    'Fokker': [
+      {model:'Fokker F7', seats:8, range:1200, price:60000, img:'', level:1, desc:'Fokker F.VII, 8 miejsc, zasięg 1,200 km'},
+      {model:'Fokker F22', seats:22, range:2600, price:175000, img:'', level:1, desc:'Fokker F.XXII, 22 miejsca, zasięg 2,600 km'},
+      {model:'Fokker F36', seats:36, range:2900, price:240000, img:'', level:1, desc:'Fokker F.XXXVI, 36 miejsc, zasięg 2,900 km'},
+      {model:'Fokker 60', seats:68, range:2650, price:710000, img:'', level:1, desc:'Fokker 60, 68 miejsc, zasięg 2,650 km'},
+    ],
+    'Antonow': [
+      {model:'An-2', seats:12, range:845, price:65000, img:'', level:1, desc:'Klasyczny dwupłatowiec, 12 miejsc, zasięg 845 km'},
+      {model:'An-10', seats:100, range:4075, price:1120000, img:'', level:2, desc:'An-10, 100 miejsc, zasięg 4,075 km'},
+      {model:'An-174', seats:68, range:5400, price:1420000, img:'', level:2, desc:'An-174, 68 miejsc, zasięg 5,400 km'},
+      {model:'An-180', seats:180, range:5000, price:3150000, img:'', level:3, desc:'An-180, 180 miejsc, zasięg 5,000 km'},
+      {model:'An-218', seats:350, range:10000, price:38500000, img:'', level:6, desc:'An-218, 350 miejsc, zasięg 10,000 km'},
+    ],
+    'Dassault': [
+      {model:'Falcon 5X', seats:16, range:9630, price:1850000, img:'', level:4, desc:'Falcon 5X, 16 miejsc, zasięg 9,630 km'},
+    ],
+    'Havilland Canada': [
+      {model:'DHC-1 Chipmunk', seats:2, range:460, price:65000, img:'', level:1, desc:'Klasyczny samolot szkolny, 2 miejsca, zasięg 460 km'},
+      {model:'DHC-2T Turbo Beaver', seats:7, range:1380, price:280000, img:'', level:1, desc:'Turbo Beaver, 7 miejsc, zasięg 1,380 km'},
+      {model:'DHC-3T Turbo Otter', seats:11, range:1765, price:410000, img:'', level:1, desc:'Turbo Otter, 11 miejsc, zasięg 1,765 km'},
+      {model:'DHC-6 Twin Otter 200', seats:19, range:1705, price:780000, img:'', level:1, desc:'Twin Otter 200, 19 miejsc, zasięg 1,705 km'},
+      {model:'DHC-6 Twin Otter 300', seats:19, range:1297, price:890000, img:'', level:1, desc:'Twin Otter 300, 19 miejsc, zasięg 1,297 km'},
+      {model:'DHC-6 Twin Otter 400', seats:19, range:1480, price:1120000, img:'', level:1, desc:'Twin Otter 400, 19 miejsc, zasięg 1,480 km'},
+      {model:'DHC-6 Twin Otter 300-G', seats:19, range:1480, price:1250000, img:'', level:1, desc:'Twin Otter 300-G, 19 miejsc, zasięg 1,480 km'},
+      {model:'DHC-7 Dash 7-150', seats:54, range:1300, price:1890000, img:'', level:1, desc:'Dash 7-150, 54 miejsca, zasięg 1,300 km'},
+    ],
+  };
+
+  Object.keys(NEW_MODELS).forEach(function(brand) {
+    if(!AIRCRAFT_CATALOG[brand]) AIRCRAFT_CATALOG[brand] = [];
+    NEW_MODELS[brand].forEach(function(newAc) {
+      if(!AIRCRAFT_CATALOG[brand].some(function(a){ return a.model === newAc.model; })) {
+        AIRCRAFT_CATALOG[brand].push(newAc);
+      }
+    });
+  });
+
+  // ----------------------------------------------------------
+  // 5. Fix: map 'Superjet 100' price to Superjet 100-95 price,
+  //    and mark Superjet 100 with its price too
+  // ----------------------------------------------------------
+  (AIRCRAFT_CATALOG['Suchoj']||[]).forEach(function(ac){
+    if(ac.model === 'Superjet 100') {
+      ac.price = 1560000;
+      ac.locked = false;
+    }
+  });
+
+  // ----------------------------------------------------------
+  // 6. COMAC — new manufacturer
+  // ----------------------------------------------------------
+  if(!AIRCRAFT_CATALOG['COMAC']) {
+    AIRCRAFT_CATALOG['COMAC'] = [
+      {model:'ARJ21-700', seats:90, range:2225, price:3150000, img:'', level:2, desc:'Regionalny odrzutowiec, 90 miejsc, zasięg 2,225 km'},
+      {model:'ARJ21-900', seats:105, range:2225, price:3640000, img:'', level:2, desc:'Powiększony ARJ21, 105 miejsc, zasięg 2,225 km'},
+      {model:'ARJ21-700CBJ', seats:50, range:4000, price:3800000, img:'', level:2, desc:'Business Jet, 50 miejsc, zasięg 4,000 km'},
+      {model:'C919', seats:168, range:5555, price:16174080, img:'', level:3, desc:'Wąskokadłubowy, 168 miejsc, zasięg 5,555 km'},
+      {model:'C929-500', seats:280, range:12000, price:49738752, img:'', level:7, desc:'Szerokokadłubowy, 280 miejsc, zasięg 12,000 km'},
+      {model:'C929-600', seats:320, range:12000, price:58060800, img:'', level:7, desc:'Podstawowy C929, 320 miejsc, zasięg 12,000 km'},
+      {model:'C929-700', seats:360, range:12000, price:70502400, img:'', level:8, desc:'Powiększony C929, 360 miejsc, zasięg 12,000 km'},
+      {model:'C939', seats:500, range:13000, price:101606400, img:'', level:9, desc:'Bardzo duży, 500 miejsc, zasięg 13,000 km'},
+    ];
+  }
+
+  // ----------------------------------------------------------
+  // 7. Additional speeds for new models
+  // ----------------------------------------------------------
+  Object.assign(AC_SPEEDS, {
+    // Airbus new
+    'A320-100':840,'A321-200':840,'A321LR':840,'A321XLR':840,
+    'A300B1':875,'A300B2':875,'A300B4':875,'A300-600':875,
+    'A310-300':875,
+    'A330-800':871,'A330-900':871,
+    // Bombardier new
+    'Challenger 800':820,'CRJ-440':820,'CRJ-705':830,
+    // ATR new
+    'ATR 72-210':526,
+    // Suchoj new
+    'Superjet 100-75':870,'Superjet 100-95':870,
+    // Iliuszyn new
+    'Ił-12':350,'Ił-62M':900,'Ił-114':500,
+    // Tupolew new
+    'Tu-154B':900,'Tu-154M':900,
+    // McDonnell Douglas new
+    'DC-9-30':917,'DC-9-50':917,'DC-10-30':908,
+    // Fokker new
+    'Fokker F7':185,'Fokker F22':245,'Fokker F36':265,'Fokker 60':843,
+    // Antonow new
+    'An-2':185,'An-10':550,'An-174':820,'An-180':870,'An-218':870,
+    // Dassault new
+    'Falcon 5X':956,
+    // Havilland Canada new
+    'DHC-1 Chipmunk':222,'DHC-2T Turbo Beaver':220,'DHC-3T Turbo Otter':295,
+    'DHC-6 Twin Otter 200':337,'DHC-6 Twin Otter 300':337,
+    'DHC-6 Twin Otter 400':337,'DHC-6 Twin Otter 300-G':337,
+    'DHC-7 Dash 7-150':428,
+    // COMAC
+    'ARJ21-700':828,'ARJ21-900':828,'ARJ21-700CBJ':828,
+    'C919':834,
+    'C929-500':903,'C929-600':903,'C929-700':903,
+    'C939':903,
+  });
+
+})();
