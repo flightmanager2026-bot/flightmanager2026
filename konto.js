@@ -266,8 +266,8 @@ function closeModal(){ document.getElementById("modal").style.display="none"; }
    1. Ustaw STRIPE_PUBLISHABLE_KEY ze swojego dashboardu Stripe
    2. Ustaw STRIPE_FUNCTIONS_URL po deploymencie Cloud Functions
 ──────────────────────────────────────────────────────────────── */
-var STRIPE_PUBLISHABLE_KEY = '';        // pk_live_... lub pk_test_...
-var STRIPE_FUNCTIONS_URL   = '';        // https://us-central1-PROJEKT.cloudfunctions.net
+var STRIPE_PUBLISHABLE_KEY = 'pk_live_51TAoPjJpSjRIQcXxCJUCG9DUZj4VGRkj6xAYVdy25O7xl4qN0cFmLe16Hr88ZdOoB8oLyRFtMtvEwvcu3jxXEQaD004R9IlEeS';
+var STRIPE_FUNCTIONS_URL   = '';        // https://us-central1-PROJEKT.cloudfunctions.net — ustaw po deploymencie
 
 var TOPUP_PACKAGES = [
   // Gotówka
