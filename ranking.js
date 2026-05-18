@@ -209,6 +209,21 @@ function showPlayerProfile(uid) {
     }
     var d = doc.data();
     var isMe = _currentUser && doc.id === _currentUser.uid;
+
+    // Dla własnego profilu uzupełnij brakujące pola z G (gdy ranking doc jest stary)
+    if(isMe) {
+      if(!d.homeAirport && G.homeAirport) d.homeAirport = {icao: G.homeAirport.icao, city: G.homeAirport.city, country: G.homeAirport.country};
+      if(!d.foundedAt && G.foundedAt) d.foundedAt = G.foundedAt;
+      if(!d.foundedAt && _currentUser.metadata && _currentUser.metadata.creationTime)
+        d.foundedAt = new Date(_currentUser.metadata.creationTime).getTime();
+      if(d.fleetSize === undefined) d.fleetSize = G.fleet.length;
+      if(!d.fleetModels) {
+        d.fleetModels = {};
+        G.fleet.forEach(function(ac){ d.fleetModels[ac.model] = (d.fleetModels[ac.model]||0)+1; });
+      }
+      if(!d.totalPassengers && G.totalPassengers) d.totalPassengers = G.totalPassengers;
+    }
+
     var accent = (d.color && d.color !== '#000000') ? d.color : '#00d4ff';
     var founded = d.foundedAt ? new Date(d.foundedAt).toLocaleDateString('pl-PL',{year:'numeric',month:'long',day:'numeric'}) : 'Nieznana';
 
