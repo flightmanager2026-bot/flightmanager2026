@@ -247,38 +247,10 @@ function getAuthError(code) {
 function onAuthSuccess(user, isNewUser) {
   _currentUser = user;
   var authEl = document.getElementById('authScreen');
-
-  if(isNewUser) {
-    if(authEl) document.body.removeChild(authEl);
-    showSetupScreen();
-  } else {
-    // Sprawdz flage globalnego resetu
-    _fbDb.collection('config').doc('global').get().then(function(cfg) {
-      var requiredVersion = cfg.exists ? (cfg.data().reset_version || 0) : 0;
-      loadPlayerData(user.uid, function(hasData) {
-        if(authEl) document.body.removeChild(authEl);
-        if(hasData && requiredVersion > (G.reset_version || 0)) {
-          // Reset wymagany - wyczysc dane gracza
-          localStorage.removeItem('sb_v3');
-          G.cash=500000; G.fleet=[]; G.routes=[]; G.slots=[]; G.airports=[];
-          G.homeAirport=null; G.points=0; G.level=1; G.totalFlights=0;
-          G.departurelog=[]; G.lastShopPayout=0; G.staff=null; G.jobMarket=null;
-          G.airline={name:'',iata:'',color:'#00d4ff'}; G.reset_version=requiredVersion;
-          _fbDb.collection('players').doc(user.uid).delete();
-          showSetupScreen();
-        } else if(hasData) {
-          startGame();
-        } else {
-          showSetupScreen();
-        }
-      });
-    }).catch(function() {
-      loadPlayerData(user.uid, function(hasData) {
-        if(authEl) document.body.removeChild(authEl);
-        if(hasData) startGame(); else showSetupScreen();
-      });
-    });
-  }
+  if(authEl) document.body.removeChild(authEl);
+  // Dla nowych graczy pokaż setup (boot.js onAuthStateChanged też to zrobi, guard blokuje duplikat)
+  if(isNewUser) showSetupScreen();
+  // Dla istniejących graczy boot.js onAuthStateChanged obsługuje ładowanie i start gry
 }
 
 function loadPlayerData(uid, callback) {
@@ -304,8 +276,6 @@ function loadPlayerData(uid, callback) {
         if(data.jobMarket) G.jobMarket = data.jobMarket;
         if(data.tutorialDone !== undefined) G.tutorialDone = data.tutorialDone;
         if(data.lastSalaryPay) G.lastSalaryPay = data.lastSalaryPay;
-        // Zapisz do localStorage jako backup
-        try { localStorage.setItem('sb_v3', JSON.stringify(data)); } catch(e) {}
         callback(true);
       } else {
         callback(false);
