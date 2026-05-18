@@ -52,6 +52,7 @@ window.addEventListener('load', function() {
             G.homeAirport=null; G.points=0; G.level=1; G.totalFlights=0;
             G.departurelog=[]; G.lastShopPayout=0; G.staff=null; G.jobMarket=null;
             G.airline={name:'',iata:'',color:'#00d4ff'};
+            G.reset_version=requiredVersion;
             _fbDb.collection('players').doc(user.uid).delete();
             showSetupScreen();
             return;
