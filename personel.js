@@ -61,7 +61,7 @@ function initStaff() {
 
 function getNeeded(type) {
   var st = STAFF_TYPES[type];
-  if(type==='engineer') return Math.max(1, Math.ceil(G.fleet.length * st.neededPerAc));
+  if(type==='engineer') return Math.max(1, Math.ceil(G.fleet.length / 3));
   return G.fleet.length * st.neededPerAc;
 }
 
@@ -360,7 +360,8 @@ function canAircraftDepart(ac) {
   if(pilots < 2)    return {ok:false, reason:'Brak pilotów ('+pilots+'/2) → Personel'};
   if(stewards < 2)  return {ok:false, reason:'Brak stewardów ('+stewards+'/2) → Personel'};
   if(mechs < 1)     return {ok:false, reason:'Brak mechanika (0/1) → Personel'};
-  if(engineers < 1) return {ok:false, reason:'Brak inżyniera (0/1) → Personel'};
+  // Inżynier może obsługiwać do 3 samolotów - wystarczy że jest przypisany
+  if(engineers < 1) return {ok:false, reason:'Brak inżyniera — przypisz inżyniera do tego samolotu → Personel'};
   return {ok:true};
 }
 
