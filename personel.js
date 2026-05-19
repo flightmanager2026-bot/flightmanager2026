@@ -338,7 +338,12 @@ function doAssign(type, empId, acId) {
   var maxCrew={pilot:2,steward:4,mechanic:1,engineer:1}[type]||1;
   if(ac.crew[type].length>=maxCrew){showMsg('Pełna obsada!');return;}
   if(ac.crew[type].indexOf(empId)>=0){showMsg('Już przypisany!');return;}
-  G.fleet.forEach(function(a){ if(a.id!==acId&&a.crew&&a.crew[type]) a.crew[type]=a.crew[type].filter(function(id){return id!==empId;}); });
+  // Piloci i stewardzi - przypisz tylko do 1 samolotu (usuń z poprzedniego)
+  // Mechanicy - tylko 1 samolot
+  // Inżynierowie - mogą być na wielu samolotach (max 3), nie usuwamy
+  if(type !== 'engineer') {
+    G.fleet.forEach(function(a){ if(a.id!==acId&&a.crew&&a.crew[type]) a.crew[type]=a.crew[type].filter(function(id){return id!==empId;}); });
+  }
   ac.crew[type].push(empId);
   G.staff[type].forEach(function(e){if(e.id===empId)e.assignedAcId=acId;});
   save(); closeModal();
