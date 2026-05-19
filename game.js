@@ -6,19 +6,18 @@ var G = {
   totalPassengers: 0, cargolicence: false, foundedAt: 0,
   fleet: []
 };
-
 var LMAP=null, AP_MARKERS={}, ROUTE_LINES=[], PL_MARKERS=[];
 var FLIGHT_LAYERS={}, TICK_INTERVAL=null;
 
 /* -- SAVE/LOAD -- */
 function save() {
-  // Tylko Firebase - brak localStorage
   if(typeof saveToCloud === 'function') saveToCloud();
   if(typeof updateRankingValue === 'function') {
     window._saveCount = (window._saveCount||0) + 1;
     if(window._saveCount % 5 === 0) updateRankingValue();
   }
 }
+
 function loadSave() {
   try {
     var d=localStorage.getItem('sb_v3');
@@ -26,10 +25,8 @@ function loadSave() {
     var g=JSON.parse(d);
     if(g.cash) G.cash=g.cash;
     if(g.airports) {
-      // Filtruj - zostaw tylko baze i sloty z prawdziwych lotnisk ADB
       G.airports = g.airports.filter(function(ap){
-        if(ap.isHome) return true; // baza gracza zawsze
-        // Sprawdz czy lotnisko jest w ADB
+        if(ap.isHome) return true;
         if(typeof ADB !== 'undefined') {
           return ADB.some(function(a){ return a.icao === ap.icao; });
         }
@@ -83,32 +80,33 @@ function updateHUD() {
   var bar=document.getElementById('hud-lv-bar');
   if(bar) {
     var prev=LEVEL_FLIGHTS[lv]||0;
-    var pct=next?Math.round((tf-prev)/(next-prev)*100):100;
+    var pct=next?Math.round(Math.max(0,tf-prev)/(next-prev)*100):100;
     bar.style.width=Math.min(100,Math.max(0,pct))+'%';
   }
   var lv2=document.getElementById('hud-lv-next');
-  if(lv2) lv2.textContent=next?(tf-(LEVEL_FLIGHTS[lv]||0))+'/'+(next-(LEVEL_FLIGHTS[lv]||0)):'MAX';
+  if(lv2) {
+    if(next) {
+      var prev2=LEVEL_FLIGHTS[lv]||0;
+      var progress=Math.max(0,tf-prev2);
+      lv2.textContent=progress+'/'+(next-prev2)+' LOT';
+    } else {
+      lv2.textContent='MAX';
+    }
+  }
 }
-
-
 
 var _nT;
 function showMsg(msg) {
   var n=document.getElementById('msg'); if(!n) return;
-  // Clear any existing timeout and animation
   clearTimeout(_nT);
   n.style.transition='none';
   n.style.opacity='0';
   n.style.transform='translateX(-50%) translateY(-80px)';
-  
-  // Force reflow then show
   void n.offsetHeight;
   n.style.transition='transform 0.3s ease, opacity 0.3s ease';
   n.textContent=msg;
   n.style.opacity='1';
   n.style.transform='translateX(-50%) translateY(0)';
-  
-  // Hide after 3 seconds
   _nT=setTimeout(function(){
     n.style.opacity='0';
     n.style.transform='translateX(-50%) translateY(-80px)';
