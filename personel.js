@@ -6,8 +6,8 @@ var BRAND_LOGOS = {
 };
 
 var STAFF_TYPES = {
-  pilot:    { label:'Pilot',       icon:'✈️', color:'#00d4ff', salaryMin:60,   salaryMax:120,  neededPerAc:2, desc:'Wymagany do lotu (2–4 zależnie od zasięgu)' },
-  steward:  { label:'Steward/essa',icon:'👩‍✈️', color:'#a78bfa', salaryMin:30,   salaryMax:70,   neededPerAc:1, desc:'Obsługa pasażerów (zależy od wielkości samolotu)' },
+  pilot:    { label:'Pilot',       icon:'✈️', color:'#00d4ff', salaryMin:60,   salaryMax:120,  neededPerAc:2, desc:'Wymagany do lotu (2 na samolot)' },
+  steward:  { label:'Steward/essa',icon:'👩‍✈️', color:'#a78bfa', salaryMin:30,   salaryMax:70,   neededPerAc:4, desc:'Obsługa pasażerów (4 na samolot)' },
   mechanic: { label:'Mechanik',    icon:'🔧', color:'#f5a623', salaryMin:40,   salaryMax:90,   neededPerAc:1, desc:'Konserwacja samolotu (1 na samolot)' },
   engineer: { label:'Inżynier',    icon:'👷', color:'#00e676', salaryMin:70,   salaryMax:150,  neededPerAc:0.33, desc:'Nadzór techniczny (1 na 3 samoloty)' }
 };
@@ -30,7 +30,7 @@ function randomName(type) {
 function generateCandidate(type) {
   var st = STAFF_TYPES[type];
   var exp = Math.floor(Math.random()*15)+1;
-  var salary = Math.round(st.salaryMin + (st.salaryMax-st.salaryMin)*(exp/15));
+  var salary = Math.round(st.salaryMin + (st.salaryMax-st.salaryMin)*(exp/15) + Math.random()*300);
   return {
     id: type+'_c_'+Date.now()+'_'+Math.random().toString(36).substr(2,5),
     name: randomName(type),
@@ -50,15 +50,6 @@ function initStaff() {
       for(var i=0;i<6;i++) G.jobMarket[type].push(generateCandidate(type));
     });
   }
-  // Napraw zawyżone pensje z poprzednich wersji
-  Object.keys(STAFF_TYPES).forEach(function(type){
-    var st = STAFF_TYPES[type];
-    (G.staff[type]||[]).forEach(function(e){
-      if(e.salary > st.salaryMax + 1) {
-        e.salary = Math.round(st.salaryMin + (st.salaryMax-st.salaryMin)*((e.experience||1)/15));
-      }
-    });
-  });
   // Auto-refresh market - add new candidates if < 4
   Object.keys(STAFF_TYPES).forEach(function(type){
     if(!G.jobMarket[type]) G.jobMarket[type]=[];
@@ -68,39 +59,7 @@ function initStaff() {
   });
 }
 
-// EASA: 1 FA per 50 seats, minimum 1
-function getRequiredStewards(seats) {
-  var s = seats || 0;
-  if(s <= 19)  return 0; // poniżej 20 miejsc – FA niewymagany
-  if(s <= 50)  return 1;
-  if(s <= 100) return 2;
-  if(s <= 150) return 3;
-  if(s <= 200) return 4;
-  if(s <= 250) return 5;
-  if(s <= 300) return 6;
-  if(s <= 400) return 8;
-  if(s <= 500) return 10;
-  return 12; // A380 itp.
-}
-
-// Zasięg samolotu → liczba pilotów (FAR 121 / EASA OPS)
-// ≤5500km / ~7h: 2 pilotów  |  ≤12000km / ~14h: 3 pilotów  |  >12000km: 4 pilotów
-function getRequiredPilots(range) {
-  var r = range || 0;
-  if(r <= 5500)  return 2;
-  if(r <= 12000) return 3;
-  return 4;
-}
-
 function getNeeded(type) {
-  if(type === 'steward') {
-    if(!G.fleet.length) return 0;
-    return G.fleet.reduce(function(sum, ac){ return sum + getRequiredStewards(ac.seats); }, 0);
-  }
-  if(type === 'pilot') {
-    if(!G.fleet.length) return 0;
-    return G.fleet.reduce(function(sum, ac){ return sum + getRequiredPilots(ac.range); }, 0);
-  }
   var st = STAFF_TYPES[type];
   if(type==='engineer') return Math.max(1, Math.ceil(G.fleet.length * st.neededPerAc));
   return G.fleet.length * st.neededPerAc;
@@ -157,7 +116,7 @@ function renderOverview(el) {
     +'</div>'
     +'<div style="background:linear-gradient(135deg,rgba(230,57,70,0.1),rgba(230,57,70,0.05));border:1px solid rgba(230,57,70,0.2);border-radius:12px;padding:12px;text-align:center;">'
     +'<div style="font-size:20px;font-weight:900;color:#e63946;">$'+totalSalary.toLocaleString()+'</div>'
-    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-top:2px;">PENSJE/24H</div>'
+    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-top:2px;">PENSJE/MIES.</div>'
     +'</div></div>';
 
   // Staff status per type
@@ -200,15 +159,39 @@ function renderStaffType(el, type) {
   var market=G.jobMarket[type]||[];
   var needed=getNeeded(type);
 
+  // Build per-aircraft breakdown for pilots/stewards
+  var breakdownHtml = '';
+  if((type==='pilot' || type==='steward') && G.fleet.length > 0) {
+    breakdownHtml = '<div style="margin-top:8px;background:rgba(0,0,0,0.2);border-radius:8px;padding:8px;">'
+      +'<div style="font-size:9px;color:#5580a0;letter-spacing:2px;margin-bottom:6px;">WYMAGANIA PER SAMOLOT</div>';
+    G.fleet.forEach(function(ac) {
+      var req = type==='pilot' ? getRequiredPilots(ac.range) : getRequiredStewards(ac.seats);
+      var crew = ac.crew || {};
+      var has = (crew[type]||[]).length;
+      var ok = has >= req;
+      var info = type==='pilot' ? ac.range+'km' : ac.seats+' miejsc';
+      breakdownHtml += '<div style="display:flex;justify-content:space-between;align-items:center;'
+        +'padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11px;">'
+        +'<span style="color:#e0f0ff;">'+ac.model+'</span>'
+        +'<span style="color:#5580a0;font-size:10px;">'+info+'</span>'
+        +'<span style="color:'+(ok?'#00e676':'#e63946')+';font-weight:700;">'+has+'/'+req+'</span>'
+        +'</div>';
+    });
+    breakdownHtml += '</div>';
+  }
+
   var html =
     // Stats bar
     '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);'
-    +'border-radius:12px;padding:12px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">'
+    +'border-radius:12px;padding:12px;margin-bottom:14px;">'
+    +'<div style="display:flex;align-items:center;gap:14px;">'
     +'<div style="font-size:28px;">'+st.icon+'</div>'
     +'<div style="flex:1;">'
     +'<div style="font-size:14px;font-weight:700;color:#e0f0ff;">'+st.label+'</div>'
     +'<div style="font-size:11px;color:#5580a0;">Zatrudnieni: <b style="color:'+(employed.length>=needed?'#00e676':'#e63946')+'">'+employed.length+'/'+needed+'</b></div>'
-    +'</div>'
+    +(type==='pilot'?'<div style="font-size:10px;color:#5580a0;">≤6500km: 2 pilotów | ≤12000km: 3 | >12000km: 4</div>'
+      :type==='steward'?'<div style="font-size:10px;color:#5580a0;">1 FA na każde 50 foteli (EASA)</div>':''
+    )+'</div>'
     +'<button onclick="refreshMarket(\''+type+'\')" '
     +'style="padding:6px 10px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);'
     +'border-radius:8px;color:#00d4ff;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">'
@@ -234,17 +217,14 @@ function renderStaffType(el, type) {
         +'<div style="flex:1;min-width:0;">'
         +'<div style="font-size:12px;font-weight:700;color:#e0f0ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+emp.name+'</div>'
         +'<div style="font-size:10px;color:#f5a623;">'+stars+'</div>'
-        +'<div style="font-size:10px;color:#5580a0;">Dośw: '+emp.experience+' lat &bull; <span style="color:#00e676;">$'+emp.salary.toLocaleString()+'/24h</span></div>'
+        +'<div style="font-size:10px;color:#5580a0;">Dośw: '+emp.experience+' lat &bull; <span style="color:#00e676;">$'+emp.salary.toLocaleString()+'/mies.</span></div>'
         +'<div style="font-size:10px;margin-top:2px;color:'+(assignedAc?'#00e676':'#f5a623')+';">'
         +(assignedAc?'✓ '+assignedAc.model+' ('+assignedAc.reg+')':'⚠ Nieprzypisany')
         +'</div></div>'
         +'<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">'
-        +(assignedAc
-          ? '<div style="padding:5px 8px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);border-radius:6px;color:#00e676;font-size:10px;font-weight:700;text-align:center;">✓ Przypisany</div>'
-          : (G.fleet.length>0?'<button onclick="assignStaff(\''+type+'\',\''+emp.id+'\')" '
-            +'style="padding:5px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);'
-            +'border-radius:6px;color:#00d4ff;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Przypisz</button>':'')
-        )
+        +(G.fleet.length>0?'<button onclick="assignStaff(\''+type+'\',\''+emp.id+'\')" '
+          +'style="padding:5px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);'
+          +'border-radius:6px;color:#00d4ff;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Przypisz</button>':'')
         +'<button onclick="fireStaff(\''+type+'\','+i+')" '
         +'style="padding:5px 8px;background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.2);'
         +'border-radius:6px;color:#e63946;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Zwolnij</button>'
@@ -271,7 +251,7 @@ function renderStaffType(el, type) {
         +'<div style="flex:1;min-width:0;">'
         +'<div style="font-size:12px;font-weight:700;color:#e0f0ff;">'+c.name+'</div>'
         +'<div style="font-size:10px;color:#f5a623;">'+stars+' Dośw: '+c.experience+' lat</div>'
-        +'<div style="font-size:11px;font-weight:700;color:#00e676;">$'+c.salary.toLocaleString()+'/24h</div>'
+        +'<div style="font-size:11px;font-weight:700;color:#00e676;">$'+c.salary.toLocaleString()+'/mies.</div>'
         +'</div>'
         +'<button onclick="hireStaff(\''+type+'\','+i+')" '
         +'style="padding:8px 14px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;'
@@ -301,7 +281,7 @@ function hireStaff(type, idx) {
   // Auto-add new candidate
   G.jobMarket[type].push(generateCandidate(type));
   save();
-  showMsg('✓ '+c.name+' zatrudniony/a! $'+c.salary.toLocaleString()+'/24h');
+  showMsg('✓ '+c.name+' zatrudniony/a! $'+c.salary.toLocaleString()+'/mies.');
   var content=document.getElementById('personel-content'); if(content) renderStaffType(content,type);
 }
 
@@ -322,24 +302,22 @@ function assignStaff(type, empId) {
   var emp=null; G.staff[type].forEach(function(e){if(e.id===empId)emp=e;});
   if(!emp) return;
 
+  var maxCrew={pilot:2,steward:4,mechanic:1,engineer:1}[type]||1;
+
   var html=
     '<div style="font-size:15px;font-weight:700;color:#00d4ff;margin-bottom:4px;">Przypisz do samolotu</div>'
     +'<div style="font-size:11px;color:#5580a0;margin-bottom:14px;">'+emp.name+'</div>';
 
   G.fleet.forEach(function(ac){
-    var maxCrew = type==='steward' ? getRequiredStewards(ac.seats)
-                : type==='pilot'   ? getRequiredPilots(ac.range)
-                : ({mechanic:1,engineer:1}[type]||1);
     var crew=ac.crew||{}; var typeCrew=crew[type]||[];
     var hasSlot=typeCrew.length<maxCrew;
     var already=typeCrew.indexOf(empId)>=0;
-    var rangeLabel = type==='pilot' ? ' &bull; '+ac.range+'km' : type==='steward' ? ' &bull; '+ac.seats+' miejsc' : '';
     html +=
       '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;'
       +'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;margin-bottom:6px;">'
       +'<div>'
       +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+ac.model+'</div>'
-      +'<div style="font-size:10px;color:#5580a0;">'+ac.reg+' &bull; obsada: '+typeCrew.length+'/'+maxCrew+rangeLabel+'</div>'
+      +'<div style="font-size:10px;color:#5580a0;">'+ac.reg+' &bull; obsada: '+typeCrew.length+'/'+maxCrew+'</div>'
       +'</div>'
       +(already?'<div style="font-size:10px;color:#00e676;font-weight:700;">✓ Przypisany</div>'
         :hasSlot?'<button onclick="doAssign(\''+type+'\',\''+empId+'\',\''+ac.id+'\')" '
@@ -357,9 +335,7 @@ function doAssign(type, empId, acId) {
   var ac=G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
   if(!ac.crew) ac.crew={};
   if(!ac.crew[type]) ac.crew[type]=[];
-  var maxCrew = type==='steward' ? getRequiredStewards(ac.seats)
-              : type==='pilot'   ? getRequiredPilots(ac.range)
-              : ({mechanic:1,engineer:1}[type]||1);
+  var maxCrew={pilot:2,steward:4,mechanic:1,engineer:1}[type]||1;
   if(ac.crew[type].length>=maxCrew){showMsg('Pełna obsada!');return;}
   if(ac.crew[type].indexOf(empId)>=0){showMsg('Już przypisany!');return;}
   G.fleet.forEach(function(a){ if(a.id!==acId&&a.crew&&a.crew[type]) a.crew[type]=a.crew[type].filter(function(id){return id!==empId;}); });
@@ -367,7 +343,6 @@ function doAssign(type, empId, acId) {
   G.staff[type].forEach(function(e){if(e.id===empId)e.assignedAcId=acId;});
   save(); closeModal();
   showMsg('✓ Przypisano do '+ac.model+'!');
-  var c=document.getElementById('personel-content'); if(c) renderStaffType(c,type);
 }
 
 function canAircraftDepart(ac) {
@@ -377,10 +352,8 @@ function canAircraftDepart(ac) {
   var stewards  = (crew.steward||[]).length;
   var mechs     = (crew.mechanic||[]).length;
   var engineers = (crew.engineer||[]).length;
-  var reqPilots   = getRequiredPilots(ac.range);
-  var reqStewards = getRequiredStewards(ac.seats);
-  if(pilots < reqPilots)      return {ok:false, reason:'Brak pilotów ('+pilots+'/'+reqPilots+') → Personel'};
-  if(stewards < reqStewards)  return {ok:false, reason:'Brak stewardów ('+stewards+'/'+reqStewards+') → Personel'};
+  if(pilots < 2)    return {ok:false, reason:'Brak pilotów ('+pilots+'/2) → Personel'};
+  if(stewards < 2)  return {ok:false, reason:'Brak stewardów ('+stewards+'/2) → Personel'};
   if(mechs < 1)     return {ok:false, reason:'Brak mechanika (0/1) → Personel'};
   if(engineers < 1) return {ok:false, reason:'Brak inżyniera (0/1) → Personel'};
   return {ok:true};
