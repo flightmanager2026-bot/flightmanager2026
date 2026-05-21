@@ -328,7 +328,12 @@ function doAssign(type, empId, acId) {
   G.staff[type].forEach(function(e){if(e.id===empId)e.assignedAcId=acId;});
   save(); closeModal();
   showMsg('✓ Przypisano do '+ac.model+'!');
-  var c=document.getElementById('personel-content'); if(c) renderStaffType(c,type);
+  // Refresh panel if open
+  var body = document.getElementById('panel-body');
+  if(body && typeof _activeTab !== 'undefined' && _activeTab==='personel') {
+    renderPersonel(body);
+    setTimeout(function(){ openPersonelTab(type); }, 50);
+  }
 }
 
 function canAircraftDepart(ac) {
