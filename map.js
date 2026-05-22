@@ -77,6 +77,73 @@ function renderRoutes() {
   });
 }
 
+function renderGroundPlanes() {
+  // Usuń stare markery samolotów na ziemi
+  if(!window.GROUND_MARKERS) window.GROUND_MARKERS=[];
+  GROUND_MARKERS.forEach(function(m){try{LMAP.removeLayer(m);}catch(e){}});
+  GROUND_MARKERS=[];
+
+  // Dodaj ikonkę dla każdego samolotu stojącego na ziemi
+  G.fleet.forEach(function(ac){
+    if(ac.status==='flying') return; // latające obsługuje flight.js
+    // Znajdź lotnisko bazowe
+    var ap = G.homeAirport;
+    if(!ap) return;
+    // Lekkie przesunięcie żeby się nie nakładały
+    var offset = GROUND_MARKERS.length * 0.003;
+    var lat = ap.lat + offset;
+    var lng = ap.lng + offset;
+
+    var planeHtml='<div style="position:relative;cursor:pointer;">'
+      +'<img src="https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/pngtree-vector-airplane-icon-png-image_515968-removebg-preview.png" '
+      +'width="28" height="28" style="opacity:0.7;filter:grayscale(30%);">'
+      +'</div>';
+    var icon=L.divIcon({className:'',html:planeHtml,iconSize:[28,28],iconAnchor:[14,14]});
+    var marker=L.marker([lat,lng],{icon:icon,zIndexOffset:1500}).addTo(LMAP);
+    marker.on('click', (function(aircraft){ return function(){ showGroundPlaneInfo(aircraft); }; })(ac));
+    GROUND_MARKERS.push(marker);
+  });
+}
+
+function showGroundPlaneInfo(ac) {
+  var speed = 850;
+  if(typeof AC_SPEEDS!=='undefined' && AC_SPEEDS[ac.model]) speed=AC_SPEEDS[ac.model];
+
+  // Znajdź trasę tego samolotu
+  var route = G.routes.filter(function(r){
+    return G.fleet.some(function(a){return a.id===ac.id && (r.acId===ac.id || a.routeId===r.id);});
+  })[0];
+
+  document.getElementById('modal-body').innerHTML =
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">'
+    +'<div style="font-size:32px;">✈</div>'
+    +'<div>'
+    +'<div style="font-size:16px;font-weight:900;color:#e0f0ff;">'+ac.model+'</div>'
+    +'<div style="font-size:11px;color:#5580a0;">'+ac.reg+' &bull; '+(G.homeAirport?G.homeAirport.icao:'')+'</div>'
+    +'</div>'
+    +'<div style="margin-left:auto;padding:5px 12px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);border-radius:20px;font-size:11px;font-weight:700;color:#00e676;">🅿 Na ziemi</div>'
+    +'</div>'
+
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">'
+    +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px;text-align:center;">'
+    +'<div style="font-size:16px;font-weight:900;color:#00e676;">'+ac.seats+'</div>'
+    +'<div style="font-size:9px;color:#5580a0;margin-top:2px;">FOTELI</div></div>'
+    +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px;text-align:center;">'
+    +'<div style="font-size:16px;font-weight:900;color:#f5a623;">'+speed+' km/h</div>'
+    +'<div style="font-size:9px;color:#5580a0;margin-top:2px;">PRĘDKOŚĆ PRZELOTOWA</div></div>'
+    +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px;text-align:center;">'
+    +'<div style="font-size:16px;font-weight:900;color:#00d4ff;">'+(ac.range||0)+' km</div>'
+    +'<div style="font-size:9px;color:#5580a0;margin-top:2px;">ZASIĘG</div></div>'
+    +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px;text-align:center;">'
+    +'<div style="font-size:16px;font-weight:900;color:#a78bfa;">'+(route?route.from+'→'+route.to:'Brak trasy')+'</div>'
+    +'<div style="font-size:9px;color:#5580a0;margin-top:2px;">PRZYPISANA TRASA</div></div>'
+    +'</div>'
+
+    +'<button onclick="closeModal()" style="width:100%;padding:11px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#5580a0;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Zamknij</button>';
+
+  document.getElementById('modal').style.display='flex';
+}
+
 function addPolishCheckpoints() {}
 function addCountryLabels() {}
 
