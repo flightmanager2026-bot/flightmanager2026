@@ -398,7 +398,14 @@ function doAssign(type, empId, acId) {
   var slots=getSlotsPerAc(type,ac);
   if(ac.crew[type].length>=slots){showMsg('Pełna obsada na tym samolocie!');return;}
   if(ac.crew[type].indexOf(empId)>=0){showMsg('Już przypisany!');return;}
-  // Pilot/steward/mechanik - usuń z poprzedniego samolotu
+  // Sprawdź limit inżyniera
+  if(type==='engineer') {
+    var currentCount = G.fleet.filter(function(a){
+      return a.crew&&a.crew.engineer&&a.crew.engineer.indexOf(empId)>=0;
+    }).length;
+    if(currentCount>=3){showMsg('Inżynier może obsługiwać max 3 samoloty!');return;}
+  }
+  // Pilot/steward/mechanik - usuń z poprzedniego samolotu (tylko 1 na raz)
   if(type!=='engineer') {
     G.fleet.forEach(function(a){
       if(a.id!==acId&&a.crew&&a.crew[type])
