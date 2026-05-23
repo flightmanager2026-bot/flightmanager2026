@@ -633,36 +633,49 @@ var POLISH_CITIES = [
 <script>window.addEventListener("load",function(){ setTimeout(function(){ if(typeof checkStripeReturn==="function") checkStripeReturn(); },2000); });</script>
 
 
-<!-- MUZYKA -->
+
+<!-- MUZYKA - bez paska na ekranie -->
 <audio id="bgMusic" loop preload="none">
   <source src="img/Chopin - Nocturne op.9 No.2.mp3" type="audio/mpeg">
 </audio>
-<div id="music-player" style="position:fixed;bottom:70px;right:12px;z-index:9999;display:flex;align-items:center;gap:8px;background:rgba(13,27,42,0.95);border:1px solid rgba(0,212,255,0.2);border-radius:50px;padding:7px 12px;backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(0,0,0,0.5);">
-  <button id="music-btn" onclick="toggleMusic()" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0;line-height:1;">&#128264;</button>
-  <div style="font-size:10px;color:#5580a0;max-width:100px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">Chopin &#8212; Nokturn</div>
-  <input type="range" id="music-vol" min="0" max="100" value="10" oninput="setMusicVol(this.value)" style="width:55px;accent-color:#00d4ff;cursor:pointer;">
-</div>
 <script>
-var _musicPlaying=false,_bgMusic=document.getElementById('bgMusic');
+var _musicPlaying = false;
+var _bgMusic = document.getElementById('bgMusic');
 (function(){
-  var v=parseFloat(localStorage.getItem('fm_music_vol')||'0.10');
-  _bgMusic.volume=v;
-  var s=document.getElementById('music-vol');
-  if(s)s.value=Math.round(v*100);
+  var v = parseFloat(localStorage.getItem('fm_music_vol') || '0.10');
+  _bgMusic.volume = v;
 })();
-function _startMusicOnce(){
-  if(_musicPlaying)return;
-  if(localStorage.getItem('fm_music_muted')==='true'){document.removeEventListener('click',_startMusicOnce);document.removeEventListener('touchstart',_startMusicOnce);return;}
-  _bgMusic.play().then(function(){_musicPlaying=true;document.getElementById('music-btn').textContent='&#127925;';}).catch(function(){});
-  document.removeEventListener('click',_startMusicOnce);document.removeEventListener('touchstart',_startMusicOnce);
+function _startMusicOnce() {
+  if(_musicPlaying) return;
+  if(localStorage.getItem('fm_music_muted') === 'true') {
+    document.removeEventListener('click', _startMusicOnce);
+    document.removeEventListener('touchstart', _startMusicOnce);
+    return;
+  }
+  _bgMusic.play().then(function(){
+    _musicPlaying = true;
+  }).catch(function(){});
+  document.removeEventListener('click', _startMusicOnce);
+  document.removeEventListener('touchstart', _startMusicOnce);
 }
-document.addEventListener('click',_startMusicOnce);
-document.addEventListener('touchstart',_startMusicOnce);
-function toggleMusic(){
-  if(_musicPlaying){_bgMusic.pause();_musicPlaying=false;document.getElementById('music-btn').textContent='&#128264;';localStorage.setItem('fm_music_muted','true');}
-  else{_bgMusic.play().then(function(){_musicPlaying=true;document.getElementById('music-btn').textContent='&#127925;';localStorage.setItem('fm_music_muted','false');}).catch(function(){});}
+document.addEventListener('click', _startMusicOnce);
+document.addEventListener('touchstart', _startMusicOnce);
+function toggleMusic() {
+  if(_musicPlaying) {
+    _bgMusic.pause(); _musicPlaying = false;
+    localStorage.setItem('fm_music_muted', 'true');
+  } else {
+    _bgMusic.play().then(function(){
+      _musicPlaying = true;
+      localStorage.setItem('fm_music_muted', 'false');
+    }).catch(function(){});
+  }
 }
-function setMusicVol(v){_bgMusic.volume=v/100;localStorage.setItem('fm_music_vol',String(v/100));document.getElementById('music-btn').textContent=parseInt(v)===0?'&#128264;':(_musicPlaying?'&#127925;':'&#128264;');}
+function setMusicVol(v) {
+  var vol = v / 100;
+  _bgMusic.volume = vol;
+  localStorage.setItem('fm_music_vol', String(vol));
+}
 </script>
 </body>
 </html>
