@@ -72,15 +72,16 @@ function getLv(n) {
 }
 
 function getNextLevelFlights(lv) {
-  if(lv<10) return LEVEL_FLIGHTS[lv+1]||3000;
-  // Po lvl 10
-  return 3000+(lv-9)*2000;
+  // Ile lotow potrzeba na nastepny lvl
+  if(lv < 10) return LEVEL_FLIGHTS[lv + 1] || 3000;
+  return 3000 + (lv - 9) * 2000;
 }
 
 function getPrevLevelFlights(lv) {
-  if(lv<10) return LEVEL_FLIGHTS[lv]||0;
-  if(lv===10) return 3000;
-  return 3000+(lv-10)*2000;
+  // Ile lotow bylo potrzeba zeby wejsc na ten lvl
+  if(lv <= 1) return 0;
+  if(lv <= 10) return LEVEL_FLIGHTS[lv] || 0;
+  return 3000 + (lv - 10) * 2000;
 }
 
 function checkLevelUp() {
@@ -93,32 +94,28 @@ function checkLevelUp() {
 }
 
 function updateHUD() {
-  var el=document.getElementById('hud-cash');
-  if(el) el.textContent='$'+G.cash.toLocaleString();
-  var ep=document.getElementById('hud-pts');
-  if(ep) ep.textContent=(G.points||0).toLocaleString();
+  var el = document.getElementById('hud-cash');
+  if(el) el.textContent = '$' + G.cash.toLocaleString();
+  var ep = document.getElementById('hud-pts');
+  if(ep) ep.textContent = (G.points||0).toLocaleString();
 
-  var lv=G.level||1;
-  var tf=G.totalFlights||0;
+  var lv = G.level || 1;
+  var tf = G.totalFlights || 0;
 
-  var elvEl=document.getElementById('hud-lv');
-  if(elvEl) elvEl.textContent=lv;
+  var elvEl = document.getElementById('hud-lv');
+  if(elvEl) elvEl.textContent = lv;
 
-  var next=getNextLevelFlights(lv);
-  var prev=getPrevLevelFlights(lv);
-  var range=next-prev;
-  var progress=Math.max(0,tf-prev);
+  var prev = getPrevLevelFlights(lv);
+  var next = getNextLevelFlights(lv);
+  var range = next - prev;
+  var progress = Math.max(0, tf - prev);
+  var pct = range > 0 ? Math.min(100, Math.floor(progress / range * 100)) : 100;
 
-  var bar=document.getElementById('hud-lv-bar');
-  if(bar) {
-    var pct=range>0?Math.round(progress/range*100):100;
-    bar.style.width=Math.min(100,Math.max(0,pct))+'%';
-  }
+  var bar = document.getElementById('hud-lv-bar');
+  if(bar) bar.style.width = pct + '%';
 
-  var lv2=document.getElementById('hud-lv-next');
-  if(lv2) {
-    lv2.textContent=progress+'/'+(range)+' LOT';
-  }
+  var lv2 = document.getElementById('hud-lv-next');
+  if(lv2) lv2.textContent = progress + '/' + range + ' LOT';
 }
 
 var _nT;
@@ -147,4 +144,3 @@ function openShop() {
   document.getElementById('modal-body').innerHTML = '<div style="padding:20px;color:#5580a0;text-align:center;">Ladowanie sklepu...</div>';
   document.getElementById('modal').style.display = 'flex';
 }
-
