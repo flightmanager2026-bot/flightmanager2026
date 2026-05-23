@@ -9,7 +9,6 @@ function renderFlotaMain(body) {
     return;
   }
   var manufacturers = {};
-
   function getBrandForModel(model) {
     if(typeof AIRCRAFT_CATALOG !== 'undefined') {
       var found = null;
@@ -18,18 +17,14 @@ function renderFlotaMain(body) {
       });
       if(found) return found;
     }
-    // Fallback
     if(model.indexOf('737')>=0||model.indexOf('747')>=0||model.indexOf('757')>=0||
-       model.indexOf('767')>=0||model.indexOf('777')>=0||model.indexOf('787')>=0||
-       model.indexOf('707')>=0||model.indexOf('717')>=0||model.indexOf('727')>=0||
-       model.indexOf('720')>=0) return 'Boeing';
+       model.indexOf('767')>=0||model.indexOf('777')>=0||model.indexOf('787')>=0) return 'Boeing';
     if(model.indexOf('A2')>=0||model.indexOf('A3')>=0||model.indexOf('A4')>=0) return 'Airbus';
     return model.split(' ')[0];
   }
-
   G.fleet.forEach(function(ac) {
     var brand = ac.brand || getBrandForModel(ac.model);
-    ac.brand = brand; // cache
+    ac.brand = brand;
     if(!manufacturers[brand]) manufacturers[brand]=[];
     manufacturers[brand].push(ac);
   });
@@ -106,22 +101,33 @@ function showBrandModal(brand) {
     list.forEach(function(ac) {
       var route=null; G.routes.forEach(function(r){if(r.id===ac.routeId)route=r;});
       var cfg=ac.config||{eco:ac.seats||150,biz:0};
-      out += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:8px 10px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">'
+      out += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:8px 10px;margin-bottom:6px;">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
         +'<div><div style="font-size:12px;font-weight:700;color:#e0f0ff;">'+ac.reg+'</div>'
         +'<div style="font-size:10px;color:#5580a0;">Eko:'+cfg.eco+' Biz:'+(cfg.biz||0)+(route?' | '+route.from+'->'+route.to:'')+'</div></div>'
-        +'<div style="display:flex;gap:6px;">'
+        +'<div style="display:flex;gap:5px;">'
         +(ac.status==='ground'
           ? '<button data-id="'+ac.id+'" onclick="closeModal();openModAc(this.dataset.id)" style="padding:5px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);border-radius:6px;color:#00d4ff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Konfig</button>'
           : '<div style="padding:5px 8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;color:#5580a0;font-size:10px;font-weight:700;">W locie</div>'
         )
         +(ac.routeId
-          ? '<div style="padding:5px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#5580a0;font-size:10px;font-weight:700;text-align:center;">Ma trasę</div>'
+          ? '<div style="padding:5px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#5580a0;font-size:10px;font-weight:700;">Ma trase</div>'
           : (ac.config && ac.config.total > 0
             ? '<button data-id="'+ac.id+'" onclick="closeModal();openAddRoute(this.dataset.id)" style="padding:5px 8px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:6px;color:#fff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">+Trasa</button>'
             : '<button data-id="'+ac.id+'" onclick="closeModal();openModAc(this.dataset.id)" style="padding:5px 8px;background:rgba(245,166,35,0.2);border:1px solid rgba(245,166,35,0.4);border-radius:6px;color:#f5a623;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Skonfiguruj</button>'
           )
         )
-        +'</div></div>';
+        +'</div></div>'
+        // Przyciski odlacz i sprzedaj
+        +'<div style="display:flex;gap:5px;">'
+        +(ac.routeId && ac.status!=='flying'
+          ? '<button data-id="'+ac.id+'" onclick="detachRoute(this.dataset.id)" style="padding:4px 10px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);border-radius:6px;color:#f5a623;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">&#8722; Odlacz trase</button>'
+          : '')
+        +(ac.status!=='flying'
+          ? '<button data-id="'+ac.id+'" onclick="sellAircraft(this.dataset.id)" style="padding:4px 10px;background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.2);border-radius:6px;color:#e63946;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">&#128179; Sprzedaj</button>'
+          : '')
+        +'</div>'
+        +'</div>';
     });
     out += '</div>';
   });
@@ -131,114 +137,54 @@ function showBrandModal(brand) {
 }
 
 function openBrandFleet(brand) { showBrandModal(brand); }
-function openBrandFleetByEl(el) { showBrandModal(el.getAttribute('data-brand')); }
 
-
-function setFlotaTab(el) { var tab=el.dataset?el.dataset.tab:el;
-  _flotaTab=tab;
-  var body=document.getElementById('panel-body');
-  if(body) renderFlotaMain(body);
-}
-
-function buildWkrotce(name) {
-  return '<div style="text-align:center;padding:24px 10px;">'
-    +'<div style="font-size:32px;margin-bottom:12px;">&#9881;</div>'
-    +'<div style="font-size:14px;font-weight:700;color:#e0f0ff;margin-bottom:8px;">'+name+'</div>'
-    +'<div style="margin-top:16px;display:inline-block;padding:6px 16px;border:1px solid #1e3a5f;border-radius:20px;font-size:11px;color:#4a7099;">Wkrotce</div>'
-    +'</div>';
-}
-
-function getAcSvg(model) {
-  var AC_IMAGES = {
-    'Boeing 737-800': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',
-    'Airbus A321neo': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A321_Neo.png',
-    'Airbus A380-800': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png'
-  };
-  if(AC_IMAGES[model]) {
-    return '<img src="'+AC_IMAGES[model]+'" style="width:200px;height:80px;object-fit:contain;background:#000;border-radius:6px;">';
-  }
-  var color=G.airline.color||'#e63946';
-  if(model.indexOf('787')>=0||model.indexOf('777')>=0) {
-    return '<svg viewBox="0 0 200 60" width="200" height="60"><ellipse cx="100" cy="32" rx="85" ry="12" fill="'+color+'"/><path d="M15 32 Q3 30 1 32 Q3 34 15 32Z" fill="'+color+'"/><path d="M175 32 L188 23 L188 32 L192 32 L188 41 L188 32Z" fill="'+color+'"/><path d="M85 32 L55 55 L115 47 Z" fill="'+color+'" opacity="0.9"/><path d="M85 32 L55 9 L115 17 Z" fill="'+color+'" opacity="0.65"/><ellipse cx="70" cy="51" rx="12" ry="5" fill="#555"/><ellipse cx="100" cy="49" rx="11" ry="5" fill="#555"/><g fill="rgba(255,255,255,0.65)"><rect x="35" y="28" width="6" height="5" rx="1"/><rect x="45" y="28" width="6" height="5" rx="1"/><rect x="55" y="28" width="6" height="5" rx="1"/><rect x="65" y="28" width="6" height="5" rx="1"/><rect x="75" y="28" width="6" height="5" rx="1"/><rect x="85" y="28" width="6" height="5" rx="1"/><rect x="95" y="28" width="6" height="5" rx="1"/><rect x="105" y="28" width="6" height="5" rx="1"/><rect x="115" y="28" width="6" height="5" rx="1"/><rect x="125" y="28" width="6" height="5" rx="1"/><rect x="135" y="28" width="6" height="5" rx="1"/></g></svg>';
-  }
-  if(model.indexOf('ATR')>=0) {
-    return '<svg viewBox="0 0 200 60" width="200" height="60"><ellipse cx="95" cy="36" rx="72" ry="9" fill="'+color+'"/><path d="M23 36 Q12 34 10 36 Q12 38 23 36Z" fill="'+color+'"/><path d="M163 36 L173 29 L173 36 L177 36 L173 43 L173 36Z" fill="'+color+'"/><path d="M90 30 L65 8 L115 15 Z" fill="'+color+'" opacity="0.85"/><path d="M90 30 L65 52 L115 45 Z" fill="'+color+'" opacity="0.5"/><circle cx="72" cy="18" r="5" fill="#444"/><circle cx="108" cy="16" r="5" fill="#444"/><g fill="rgba(255,255,255,0.7)"><rect x="40" y="33" width="5" height="4" rx="1"/><rect x="50" y="33" width="5" height="4" rx="1"/><rect x="60" y="33" width="5" height="4" rx="1"/><rect x="70" y="33" width="5" height="4" rx="1"/><rect x="80" y="33" width="5" height="4" rx="1"/><rect x="90" y="33" width="5" height="4" rx="1"/><rect x="100" y="33" width="5" height="4" rx="1"/></g></svg>';
-  }
-  return '<svg viewBox="0 0 200 60" width="200" height="60"><ellipse cx="100" cy="32" rx="85" ry="10" fill="'+color+'"/><path d="M15 32 Q5 30 3 32 Q5 34 15 32Z" fill="'+color+'"/><path d="M175 32 L185 25 L185 32 L190 32 L185 39 L185 32Z" fill="'+color+'"/><path d="M90 32 L70 52 L110 45 Z" fill="'+color+'" opacity="0.85"/><path d="M90 32 L70 12 L110 19 Z" fill="'+color+'" opacity="0.6"/><ellipse cx="80" cy="47" rx="10" ry="5" fill="#666"/><g fill="rgba(255,255,255,0.7)"><rect x="40" y="29" width="5" height="4" rx="1"/><rect x="50" y="29" width="5" height="4" rx="1"/><rect x="60" y="29" width="5" height="4" rx="1"/><rect x="70" y="29" width="5" height="4" rx="1"/><rect x="80" y="29" width="5" height="4" rx="1"/><rect x="90" y="29" width="5" height="4" rx="1"/><rect x="100" y="29" width="5" height="4" rx="1"/><rect x="110" y="29" width="5" height="4" rx="1"/><rect x="120" y="29" width="5" height="4" rx="1"/><rect x="130" y="29" width="5" height="4" rx="1"/></g></svg>';
-}
-
-function buildFlotaList() {
-  if(!G.fleet.length) return '<div style="padding:20px;color:#5580a0;text-align:center;">Brak samolotow</div>';
-  var groups={};
-  G.fleet.forEach(function(ac){if(!groups[ac.model])groups[ac.model]=[];groups[ac.model].push(ac);});
-  var out='';
-  Object.keys(groups).forEach(function(model) {
-    var list=groups[model];
-    var inFlight=list.filter(function(a){return a.status==='flying';}).length;
-    var onGround=list.filter(function(a){return a.status==='ground';}).length;
-    var isLanded=list.filter(function(a){return a.status==='landed';}).length;
-    var sl='';
-    if(inFlight) sl+='<span style="color:#00e676;font-weight:700;">'+inFlight+' w locie</span> ';
-    if(isLanded) sl+='<span style="color:#f5a623;font-weight:700;">'+isLanded+' wylad.</span> ';
-    if(onGround) sl+='<span style="color:#5580a0;">'+onGround+' na ziemi</span>';
-    out+='<div onclick="openModelDetail(this)" data-model="'+model+'" style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:14px;margin-bottom:10px;cursor:pointer;overflow:hidden;">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px 0;">'
-      +'<div style="font-size:14px;font-weight:700;color:#e0f0ff;">'+model+'</div>'
-      +'<div style="background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.3);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:#00d4ff;">'+list.length+' szt.</div>'
-      +'</div>'
-      +'<div style="padding:2px 14px 8px;font-size:11px;">'+sl+'</div>'
-      +'<div style="background:linear-gradient(135deg,rgba(26,86,219,0.08),rgba(0,212,255,0.04));padding:12px 20px;display:flex;align-items:center;justify-content:center;">'+getAcSvg(model)+'</div>'
-      +'<div style="padding:8px 14px 12px;font-size:11px;color:#5580a0;">Kliknij aby zarzadzac</div>'
-      +'</div>';
-  });
-  return out;
-}
-
-function openModelDetail(el) { var model=el.dataset?el.dataset.model:el;
-  var list=G.fleet.filter(function(a){return a.model===model;});
-  if(!list.length) return;
-  var items='';
-  list.forEach(function(ac) {
-    var seats=getAcSeats(ac);
-    var route=null; G.routes.forEach(function(r){if(r.id===ac.routeId)route=r;});
-    var sc=ac.status==='flying'?'#00e676':ac.status==='landed'?'#f5a623':'#5580a0';
-    var st=ac.status==='flying'?'W LOCIE':ac.status==='landed'?'WYLADOWAL':'NA ZIEMI';
-    var btn='';
-    if(ac.status==='ground') btn='<button onclick="doAddRoute(this)" data-id="'+ac.id+'" style="padding:8px 14px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">+ Dodaj trase</button>';
-    else if(ac.status==='landed') btn='<button onclick="doReturn(this)" data-id="'+ac.id+'" style="padding:8px 14px;background:linear-gradient(135deg,#0a5a1a,#00e676);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Odlec z powrotem</button>';
-    else if(route) btn='<div style="font-size:11px;color:#00e676;">'+route.from+' > '+route.to+' | '+calcETA(route)+'</div>';
-    items+='<div style="border-top:1px solid rgba(255,255,255,0.07);padding:12px 0;display:flex;justify-content:space-between;align-items:center;">'
-      +'<div>'
-      +'<div style="font-size:12px;font-weight:700;color:#e0f0ff;">'+ac.reg+'</div>'
-      +'<div style="font-size:11px;margin-top:2px;">'
-      +(seats.biz>0?'<span style="color:#f5a623;">'+seats.biz+' Biz</span> ':'')
-      +'<span style="color:#00d4ff;">'+seats.eco+' Eco</span>'
-      +' &bull; <span style="color:'+sc+';">'+st+'</span>'
-      +'</div></div>'
-      +'<div>'+btn+'</div></div>';
-  });
-  document.getElementById('modal-body').innerHTML=
-    '<div style="background:linear-gradient(135deg,rgba(26,86,219,0.1),rgba(0,212,255,0.05));border-radius:12px;padding:12px 20px;margin-bottom:12px;display:flex;justify-content:center;">'+getAcSvg(model)+'</div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">'
-    +'<div style="font-size:16px;font-weight:700;color:#e0f0ff;">'+model+'</div>'
-    +'<div style="background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.3);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:#00d4ff;">'+list.length+' sztuk</div>'
-    +'</div>'+items;
-  document.getElementById('modal').style.display='flex';
-}
-
-function doAddRoute(el) { openAddRoute(el.dataset.id); }
-function doReturn(el) {
-  var ac=G.fleet.filter(function(a){return a.id===el.dataset.id;})[0];
+/* -- ODLACZ TRASE -- */
+function detachRoute(acId) {
+  var ac = G.fleet.filter(function(a){return a.id===acId;})[0];
   if(!ac) return;
-  var r=G.routes.filter(function(x){return x.id===ac.routeId;})[0];
-  if(!r) return;
-  var t=r.from; r.from=r.to; r.to=t;
-  t=r.fromLat; r.fromLat=r.toLat; r.toLat=t;
-  t=r.fromLng; r.fromLng=r.toLng; r.toLng=t;
-  r.startTime=Date.now(); r.duration=5000; ac.status='flying';
-  removeFlightLayer(r.id); drawFlightLayer(r);
-  save(); document.getElementById('modal').style.display='none';
-  showMsg('Odlecial '+ac.model+'!');
+  if(ac.status==='flying'){showMsg('Nie mozna odlaczyc w trakcie lotu!');return;}
+  if(!ac.routeId){showMsg('Ten samolot nie ma trasy!');return;}
+  G.routes = G.routes.filter(function(r){return r.id!==ac.routeId;});
+  if(typeof removeFlightLayer==='function') removeFlightLayer(ac.routeId);
+  ac.routeId = null;
+  ac.status = 'ground';
+  save();
+  showMsg('Trasa odlaczona. Samolot wolny.');
+  closeModal();
+}
+
+/* -- SPRZEDAJ SAMOLOT -- */
+function sellAircraft(acId) {
+  var ac = G.fleet.filter(function(a){return a.id===acId;})[0];
+  if(!ac) return;
+  if(ac.status==='flying'){showMsg('Nie mozna sprzedac w trakcie lotu!');return;}
+  var price = 0;
+  if(typeof AIRCRAFT_CATALOG!=='undefined'){
+    Object.keys(AIRCRAFT_CATALOG).forEach(function(brand){
+      AIRCRAFT_CATALOG[brand].forEach(function(a){if(a.model===ac.model)price=a.price;});
+    });
+  }
+  var sellPrice = Math.round(price*0.6);
+  if(!confirm('Sprzedac '+ac.model+' ('+ac.reg+') za $'+sellPrice.toLocaleString()+'?\n(60% wartosci katalogowej)')) return;
+  if(ac.routeId){
+    G.routes = G.routes.filter(function(r){return r.id!==ac.routeId;});
+    if(typeof removeFlightLayer==='function') removeFlightLayer(ac.routeId);
+  }
+  G.fleet = G.fleet.filter(function(a){return a.id!==acId;});
+  G.cash += sellPrice;
+  save(); updateHUD();
+  showMsg('Sprzedano '+ac.model+' za $'+sellPrice.toLocaleString()+'!');
+  closeModal();
+}
+
+/* -- 1 SAMOLOT NA LOTNISKO -- */
+function airportHasPlane(toIcao) {
+  return G.fleet.some(function(ac){
+    if(!ac.routeId) return false;
+    var route = G.routes.filter(function(r){return r.id===ac.routeId;})[0];
+    if(!route) return false;
+    return route.to===toIcao || route.from===toIcao;
+  });
 }
 
 /* -- ADD ROUTE -- */
@@ -247,252 +193,143 @@ var _pendingAcId=null;
 function openAddRoute(acId) {
   var ac = G.fleet.filter(function(a){return a.id===acId;})[0];
   if(!ac) return;
-  // Sprawdz czy samolot juz ma trase
-  if(ac.routeId) {
+  if(ac.routeId){
     var existing = G.routes.filter(function(r){return r.id===ac.routeId;})[0];
-    if(existing) { showMsg('Ten samolot juz ma trase '+existing.from+' - '+existing.to+'!'); return; }
+    if(existing){showMsg('Ten samolot juz ma trase '+existing.from+' - '+existing.to+'!');return;}
   }
   _pendingAcId = acId;
-
-  var hasEco   = true; // always
   var hasBiz   = ac.config && ac.config.biz > 0;
   var hasPrem  = ac.config && ac.config.prem > 0;
   var hasFirst = ac.config && ac.config.first > 0;
-
   var owned = {};
   G.slots.forEach(function(s){owned[s]=true;});
   if(G.homeAirport) owned[G.homeAirport.icao] = true;
 
-  var cfg = ac.config || {eco: ac.seats||150, biz:0, total: ac.seats||150};
-  var hasEco = cfg.eco > 0;
-  var hasBiz = cfg.biz > 0;
-
   var opts = '<option value="">-- Wybierz lotnisko --</option>';
-  // Pokazuj tylko lotniska z slotem
-  ADB.forEach(function(ap){
-    if(G.homeAirport && ap.icao === G.homeAirport.icao) return;
-    if(!owned[ap.icao]) return; // tylko sloty gracza
-    opts += '<option value="'+ap.icao+'">'+ap.icao+' - '+ap.city+' ('+ap.country+')</option>';
-  });
-  if(opts === '<option value="">-- Wybierz lotnisko --</option>') {
-    opts += '<option disabled>Brak slotow - kup w Sklepie!</option>';
+  if(typeof ADB!=='undefined'){
+    ADB.forEach(function(ap){
+      if(G.homeAirport && ap.icao===G.homeAirport.icao) return;
+      if(!owned[ap.icao]) return;
+      if(airportHasPlane(ap.icao)) return; // juz ma samolot
+      opts += '<option value="'+ap.icao+'">'+ap.icao+' - '+ap.city+' ('+ap.country+')</option>';
+    });
+  }
+  if(opts==='<option value="">-- Wybierz lotnisko --</option>'){
+    opts+='<option disabled>Brak slotow - kup w Sklepie!</option>';
   }
 
   document.getElementById('modal-body').innerHTML =
     '<div style="font-size:15px;font-weight:700;color:#00d4ff;margin-bottom:12px;">Nowa trasa - '+ac.model+'</div>'
-
-    // Destination select
     +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-bottom:6px;">LOTNISKO DOCELOWE</div>'
     +'<select id="route-dest" data-acid="'+acId+'" onchange="updateRouteInfo(this.dataset.acid,this.value)" style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:13px;font-family:Arial,sans-serif;margin-bottom:8px;outline:none;box-sizing:border-box;">'
     +opts+'</select>'
-
-    // Route info (updated on change)
     +'<div id="route-info" style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:10px;margin-bottom:12px;font-size:12px;color:#5580a0;">Wybierz lotnisko aby zobaczyc informacje o trasie</div>'
-
-    // Ticket prices - all 4 classes
-    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-bottom:8px;">CENY BILETÓW (zł/pasażer)</div>'
+    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-bottom:8px;">CENY BILETOW (zl/pasazer)</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">'
-    +'<div>'
-    +'<div style="font-size:10px;color:#00d4ff;margin-bottom:3px;">💺 EKONOMIA</div>'
-    +'<input id="price-eco" type="number" min="0" max="9999" value="0" '
-    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:6px;padding:8px;color:#fff;font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
-    +'<div>'
-    +'<div style="font-size:10px;color:#f5a623;margin-bottom:3px;">🎩 BIZNES</div>'
+    +'<div><div style="font-size:10px;color:#00d4ff;margin-bottom:3px;">&#128186; EKONOMIA</div>'
+    +'<input id="price-eco" type="number" min="0" max="9999" value="0" style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:6px;padding:8px;color:#fff;font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
+    +'<div><div style="font-size:10px;color:#f5a623;margin-bottom:3px;">&#127913; BIZNES</div>'
     +'<input id="price-biz" type="number" min="0" max="99999" value="0" '+(hasBiz?'':' disabled ')
     +'style="width:100%;background:#0d1b2a;border:1px solid rgba(245,166,35,'+(hasBiz?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasBiz?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
-    +'<div>'
-    +'<div style="font-size:10px;color:#a78bfa;margin-bottom:3px;">💎 PREMIUM</div>'
+    +'<div><div style="font-size:10px;color:#a78bfa;margin-bottom:3px;">&#128142; PREMIUM</div>'
     +'<input id="price-prem" type="number" min="0" max="99999" value="0" '+(hasPrem?'':' disabled ')
     +'style="width:100%;background:#0d1b2a;border:1px solid rgba(168,139,250,'+(hasPrem?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasPrem?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
-    +'<div>'
-    +'<div style="font-size:10px;color:#ffd700;margin-bottom:3px;">⭐ PIERWSZA</div>'
+    +'<div><div style="font-size:10px;color:#ffd700;margin-bottom:3px;">&#11088; PIERWSZA</div>'
     +'<input id="price-first" type="number" min="0" max="99999" value="0" '+(hasFirst?'':' disabled ')
     +'style="width:100%;background:#0d1b2a;border:1px solid rgba(255,215,0,'+(hasFirst?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasFirst?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
     +'</div>'
     +'<div id="price-hint" style="font-size:11px;color:#5580a0;margin-bottom:14px;">Wybierz lotnisko aby zobaczyc sugerowane ceny</div>'
-
-    // Buttons
     +'<button onclick="confirmRouteGlobal()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:9px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-bottom:6px;">Dodaj trase</button>'
     +'<button onclick="closeModal()" style="width:100%;padding:10px;background:none;border:1px solid rgba(255,255,255,0.1);border-radius:9px;color:#5580a0;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Anuluj</button>';
 
   document.getElementById('modal').style.display = 'flex';
-
-  // onchange attached directly on select element
 }
-
 
 function updateRouteInfo(acId, toIcaoParam) {
   var ac = G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
   var toIcao = toIcaoParam;
-  if(!toIcao) {
-    var dest = document.getElementById('route-dest');
-    if(!dest || !dest.value) return;
-    toIcao = dest.value;
-  }
+  if(!toIcao){var dest=document.getElementById('route-dest');if(!dest||!dest.value)return;toIcao=dest.value;}
   var fromIcao = G.homeAirport ? G.homeAirport.icao : '';
-
-  // Build info manually if flight_calc not loaded
   var info = null;
-  if(typeof getRouteInfo === 'function') {
-    info = getRouteInfo(fromIcao, toIcao, ac.model);
-  }
-  if(!info) {
-    // Fallback - basic info without distance calc
-    var toAp = null; ADB.forEach(function(a){if(a.icao===toIcao)toAp=a;});
-    var fromAp = null; ADB.forEach(function(a){if(a.icao===fromIcao)fromAp=a;});
-    // Fallback: use homeAirport coordinates if fromAp not in ADB
-    if(!fromAp && G.homeAirport) fromAp = G.homeAirport;
+  if(typeof getRouteInfo==='function') info=getRouteInfo(fromIcao,toIcao,ac.model);
+  if(!info){
+    var toAp=null,fromAp=null;
+    if(typeof ADB!=='undefined'){ADB.forEach(function(a){if(a.icao===toIcao)toAp=a;if(a.icao===fromIcao)fromAp=a;});}
+    if(!fromAp&&G.homeAirport) fromAp=G.homeAirport;
     if(!toAp) return;
-    var dist = 500; // default
+    var dist=500;
     if(typeof calcDistance==='function') dist=Math.round(calcDistance(fromAp.lat,fromAp.lng,toAp.lat,toAp.lng));
-    info = {dist:dist, minutes:Math.round(dist/800*60)+20, timeStr:Math.round(dist/800)+'h', inRange:true, range:99999, fromAp:fromAp, toAp:toAp};
+    info={dist:dist,minutes:Math.round(dist/800*60)+20,timeStr:Math.round(dist/800)+'h',inRange:true,range:99999,fromAp:fromAp,toAp:toAp};
   }
-
-  var infoBox = document.getElementById('route-info');
-  var priceBox = document.getElementById('route-price-box');
-  var hint = document.getElementById('price-hint');
-
-  if(!info.inRange) {
-    infoBox.style.display = 'block';
-    infoBox.innerHTML = '<div style="color:#e63946;font-weight:700;font-size:13px;">&#9888; Zbyt duzy dystans!</div>'
-      +'<div style="font-size:12px;color:#5580a0;margin-top:4px;">Dystans: '+info.dist+' km &bull; Zasieg '+ac.model+': '+info.range+' km</div>';
-    if(priceBox) priceBox.style.display = 'none';
+  var infoBox=document.getElementById('route-info');
+  var hint=document.getElementById('price-hint');
+  if(!info.inRange){
+    if(infoBox) infoBox.innerHTML='<div style="color:#e63946;font-weight:700;">&#9888; Zbyt duzy dystans!</div><div style="font-size:12px;color:#5580a0;">Dystans: '+info.dist+' km &bull; Zasieg: '+info.range+' km</div>';
     return;
   }
-
-  infoBox.style.display = 'block';
-  infoBox.innerHTML =
-    '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">'
-    +'<span style="color:#5580a0;">Dystans:</span><span style="color:#e0f0ff;font-weight:700;">'+info.dist+' km</span></div>'
-    +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">'
-    +'<span style="color:#5580a0;">Czas lotu:</span><span style="color:#00d4ff;font-weight:700;">'+info.timeStr+'</span></div>'
-    +'<div style="display:flex;justify-content:space-between;font-size:12px;">'
-    +'<span style="color:#5580a0;">Lotnisko:</span><span style="color:#e0f0ff;">'+info.fromAp.city+' &#8594; '+info.toAp.city+'</span></div>';
-
-  if(priceBox) priceBox.style.display = 'block';
-
-  // Show suggested min price and SET it automatically
-  // 1.6 zł × minuty lotu = cena biletu
-  var mins = info.minutes || 40;
-  var minPrice = Math.max(10, Math.round(1.6 * mins));
-  if(hint) hint.textContent = 'Cena: '+minPrice+' zł/os ('+mins+' min × 1.6 zł)';
-
-  // Zawsze ustaw cene od razu
-  var ecoIn = document.getElementById('price-eco');
-  var bizIn = document.getElementById('price-biz');
-  if(ecoIn) { ecoIn.disabled = false; ecoIn.value = minPrice; }
-  if(bizIn) { bizIn.value = Math.round(minPrice * 2.5); }
+  if(infoBox) infoBox.innerHTML=
+    '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#5580a0;">Dystans:</span><span style="color:#e0f0ff;font-weight:700;">'+info.dist+' km</span></div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#5580a0;">Czas lotu:</span><span style="color:#00d4ff;font-weight:700;">'+info.timeStr+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:#5580a0;">Trasa:</span><span style="color:#e0f0ff;">'+info.fromAp.city+' &#8594; '+info.toAp.city+'</span></div>';
+  var mins=info.minutes||40;
+  var minPrice=Math.max(10,Math.round(1.6*mins));
+  if(hint) hint.textContent='Sugerowana cena: '+minPrice+' zl/os ('+mins+' min x 1.6 zl)';
+  var ecoIn=document.getElementById('price-eco');
+  var bizIn=document.getElementById('price-biz');
+  if(ecoIn){ecoIn.disabled=false;ecoIn.value=minPrice;}
+  if(bizIn&&!bizIn.disabled) bizIn.value=Math.round(minPrice*2.5);
 }
 
 function confirmAddRoute(acId) {
-  var ac = G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
-  var dest = document.getElementById('route-dest');
-  if(!dest || !dest.value) { showMsg('Wybierz lotnisko!'); return; }
-  var toIcao = dest.value;
-  var fromIcao = G.homeAirport ? G.homeAirport.icao : '';
-
-  // Check if slot owned
-  var owned = {};
+  var ac=G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac) return;
+  var dest=document.getElementById('route-dest');
+  if(!dest||!dest.value){showMsg('Wybierz lotnisko!');return;}
+  var toIcao=dest.value;
+  var fromIcao=G.homeAirport?G.homeAirport.icao:'';
+  var owned={};
   G.slots.forEach(function(s){owned[s]=true;});
   if(G.homeAirport) owned[G.homeAirport.icao]=true;
-  if(!owned[toIcao]){ showMsg('Brak slotu na tym lotnisku!'); return; }
-
-  // Try getRouteInfo, fallback to manual calc
-  var info = null;
-  if(typeof getRouteInfo === 'function') info = getRouteInfo(fromIcao, toIcao, ac.model);
-  if(!info) {
-    var fromAp=null, toAp2=null;
-    ADB.forEach(function(a){ if(a.icao===fromIcao) fromAp=a; if(a.icao===toIcao) toAp2=a; });
-    if(!fromAp && G.homeAirport) fromAp=G.homeAirport;
-    if(!toAp2) { showMsg('Nieznane lotnisko docelowe!'); return; }
-    var dist2 = typeof calcDistance==='function' ? Math.round(calcDistance(fromAp.lat,fromAp.lng,toAp2.lat,toAp2.lng)) : 500;
-    info = {dist:dist2, minutes:Math.round(dist2/800*60)+20, timeStr:Math.round(dist2/800)+'h', inRange:true, range:99999, fromAp:fromAp, toAp:toAp2};
+  if(!owned[toIcao]){showMsg('Brak slotu na tym lotnisku!');return;}
+  if(airportHasPlane(toIcao)){showMsg('To lotnisko juz ma przypisany samolot!');return;}
+  var info=null;
+  if(typeof getRouteInfo==='function') info=getRouteInfo(fromIcao,toIcao,ac.model);
+  if(!info){
+    var fromAp=null,toAp2=null;
+    if(typeof ADB!=='undefined'){ADB.forEach(function(a){if(a.icao===fromIcao)fromAp=a;if(a.icao===toIcao)toAp2=a;});}
+    if(!fromAp&&G.homeAirport) fromAp=G.homeAirport;
+    if(!toAp2){showMsg('Nieznane lotnisko docelowe!');return;}
+    var dist2=typeof calcDistance==='function'?Math.round(calcDistance(fromAp.lat,fromAp.lng,toAp2.lat,toAp2.lng)):500;
+    info={dist:dist2,minutes:Math.round(dist2/800*60)+20,timeStr:Math.round(dist2/800)+'h',inRange:true,range:99999,fromAp:fromAp,toAp:toAp2};
   }
-  if(!info.inRange){ showMsg('Zbyt duzy dystans dla '+ac.model+'!'); return; }
-
-  var ecoIn = document.getElementById('price-eco');
-  var bizIn = document.getElementById('price-biz');
-  var hours = info.minutes / 60;
-  var defaultPrice = Math.round(85 * hours);
-  var ecoPrice = ecoIn && !ecoIn.disabled ? (parseInt(ecoIn.value)||defaultPrice) : 0;
-  var bizPrice = bizIn && !bizIn.disabled ? (parseInt(bizIn.value)||(defaultPrice*2)) : 0;
-  // Ensure minimum price
-  if(ecoPrice < 1 && (ac.config ? ac.config.eco : ac.seats) > 0) ecoPrice = defaultPrice;
-
-  var toAp = info.toAp;
-  var routeId = 'rt_'+Date.now();
-  // Oblicz przychod od razu
-  var _mins = info.minutes || 40;
-  var _eco = ac.config ? (ac.config.eco||0) : (ac.seats||150);
-  var _biz = ac.config ? (ac.config.biz||0) : 0;
-  var _rev = Math.round(_eco * _mins * 1.6 + _biz * _mins * 1.6 * 2.5);
-
-  var route = {
-    id: routeId,
-    acId: acId,
-    from: fromIcao,
-    to: toIcao,
-    fromLat: G.homeAirport.lat,
-    fromLng: G.homeAirport.lng,
-    toLat: toAp.lat,
-    toLng: toAp.lng,
-    distKm: info.dist,
-    durationMin: info.minutes,
-    duration: info.minutes * 60000,
-    ticketPriceEco: ecoPrice,
-    ticketPriceBiz: bizPrice,
-    revenue: _rev,
-    startTime: null
+  if(!info.inRange){showMsg('Zbyt duzy dystans dla '+ac.model+'!');return;}
+  var ecoIn=document.getElementById('price-eco');
+  var bizIn=document.getElementById('price-biz');
+  var hours=info.minutes/60;
+  var defaultPrice=Math.round(85*hours);
+  var ecoPrice=ecoIn&&!ecoIn.disabled?(parseInt(ecoIn.value)||defaultPrice):0;
+  var bizPrice=bizIn&&!bizIn.disabled?(parseInt(bizIn.value)||(defaultPrice*2)):0;
+  if(ecoPrice<1&&(ac.config?ac.config.eco:ac.seats)>0) ecoPrice=defaultPrice;
+  var toAp=info.toAp;
+  var routeId='rt_'+Date.now();
+  var _mins=info.minutes||40;
+  var _eco=ac.config?(ac.config.eco||0):(ac.seats||150);
+  var _biz=ac.config?(ac.config.biz||0):0;
+  var _rev=Math.round(_eco*_mins*1.6+_biz*_mins*1.6*2.5);
+  var route={
+    id:routeId,acId:acId,from:fromIcao,to:toIcao,
+    fromLat:G.homeAirport.lat,fromLng:G.homeAirport.lng,toLat:toAp.lat,toLng:toAp.lng,
+    distKm:info.dist,durationMin:info.minutes,duration:info.minutes*60000,
+    ticketPriceEco:ecoPrice,ticketPriceBiz:bizPrice,revenue:_rev,startTime:null
   };
-
   G.routes.push(route);
-  ac.routeId = routeId;
-  save();
-  closeModal();
+  ac.routeId=routeId;
+  save(); closeModal();
   showMsg('Trasa '+fromIcao+' - '+toIcao+' dodana! ('+info.timeStr+')');
-  var body = document.getElementById('panel-body');
+  var body=document.getElementById('panel-body');
   if(body) renderFlotaMain(body);
 }
 
-
-function doStartFlight() { startFlight(_pendingAcId); }
-
-function startFlight(acId) {
-  var ac=G.fleet.filter(function(a){return a.id===acId;})[0];
-  var destIcao=document.getElementById('dest-select').value;
-  var price=parseInt(document.getElementById('ticket-price').value)||350;
-  if(!ac||!G.homeAirport) return;
-  var owned={}; G.slots.forEach(function(s){owned[s]=true;}); if(G.homeAirport) owned[G.homeAirport.icao]=true;
-  var destAp=G.airports.filter(function(a){return a.icao===destIcao;})[0];
-  if(!owned[destIcao]) {
-    var db=ADB.filter(function(a){return a.icao===destIcao;})[0];
-    if(!db){showMsg('Nieznane lotnisko!');return;}
-    if(G.cash<db.cost){showMsg('Za malo gotowki na slot!');return;}
-    G.cash-=db.cost; G.slots.push(destIcao);
-    G.airports.push({id:'AP_'+destIcao,icao:destIcao,city:db.city,country:db.country,lat:db.lat,lng:db.lng,isHome:false,level:1});
-    destAp=G.airports.filter(function(a){return a.icao===destIcao;})[0];
-  }
-  if(!destAp) return;
-  // Calculate real flight time
-  var distKm = 500;
-  if(typeof calcDistance==='function') {
-    distKm = Math.round(calcDistance(G.homeAirport.lat,G.homeAirport.lng,destAp.lat,destAp.lng));
-  }
-  var speed = (typeof AC_SPEEDS!=='undefined'&&AC_SPEEDS[ac.model]) ? AC_SPEEDS[ac.model] : 800;
-  var durationMin = Math.round(distKm/speed*60) + 20;
-  // 1 real second = 1 game minute
-  var durationMs = durationMin * 60000;
-
-  var rid='rt_'+Date.now();
-  var route={id:rid,acId:acId,from:G.homeAirport.icao,to:destIcao,
-    fromLat:G.homeAirport.lat,fromLng:G.homeAirport.lng,toLat:destAp.lat,toLng:destAp.lng,
-    startTime:Date.now(),duration:durationMs,durationMin:durationMin,distKm:distKm,
-    revenue:0,price:price,ticketPriceEco:price};
-  G.routes.push(route); ac.status='flying'; ac.routeId=rid;
-  document.getElementById('modal').style.display='none';
-  save(); drawFlightLayer(route); updateHUD();
-  showMsg('Odlecial '+ac.model+'!');
-}
+function confirmRouteGlobal(){ confirmAddRoute(_pendingAcId); }
 
 /* -- MODYFIKACJE -- */
 var AC_DEFS={
@@ -513,230 +350,104 @@ function getAcSeats(ac) {
   return {biz:biz,eco:eco,total:biz+eco};
 }
 
-function buildModyfikacje() {
-  if(!G.fleet.length) return '<div style="padding:20px;color:#5580a0;text-align:center;">Brak samolotow</div>';
-  var groups={}; G.fleet.forEach(function(ac){if(!groups[ac.model])groups[ac.model]=[];groups[ac.model].push(ac);});
-  var out='<div style="font-size:10px;color:#5580a0;margin-bottom:12px;letter-spacing:1px;">Wybierz model:</div>';
-  Object.keys(groups).forEach(function(model) {
-    var list=groups[model]; var def=AC_DEFS[model]||{};
-    out+='<div onclick="openModGroup(this)" data-model="'+model+'" style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">'
-      +'<div><div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+model+'</div>'
-      +'<div style="font-size:11px;color:#5580a0;margin-top:2px;">'+list.length+' sztuk'+(def.rows?' &bull; '+def.rows+' rzedow':'')+'</div></div>'
-      +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5580a0" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
-      +'</div>';
-  });
-  return out;
-}
-
-function openModGroup(el) { var model=el.dataset?el.dataset.model:el;
-  var list=G.fleet.filter(function(a){return a.model===model;});
-  var def=AC_DEFS[model]||{};
-  var items='';
-  list.forEach(function(ac){
-    var seats=getAcSeats(ac);
-    var sc=ac.status==='flying'?'#00e676':ac.status==='landed'?'#f5a623':'#5580a0';
-    var st=ac.status==='flying'?'W LOCIE':ac.status==='landed'?'WYLADOWAL':'NA ZIEMI';
-    var fb=ac.fuelUpgrade?'<span style="font-size:9px;padding:2px 6px;background:rgba(0,230,118,0.15);border-radius:4px;color:#00e676;margin-left:6px;">Silnik+</span>':'';
-    items+='<div onclick="openModAc(this)" data-id="'+ac.id+'" style="border-top:1px solid rgba(255,255,255,0.07);padding:13px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">'
-      +'<div><div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+ac.reg+fb+'</div>'
-      +'<div style="font-size:11px;margin-top:3px;">'
-      +(seats.biz>0?'<span style="color:#f5a623;">'+seats.biz+' Biz</span> ':'')
-      +'<span style="color:#00d4ff;">'+seats.eco+' Eco</span>'
-      +' &bull; <span style="color:'+sc+';">'+st+'</span></div></div>'
-      +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5580a0" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
-      +'</div>';
-  });
-  document.getElementById('modal-body').innerHTML=
-    '<div style="background:linear-gradient(135deg,rgba(26,86,219,0.1),rgba(0,212,255,0.05));border-radius:12px;padding:10px 20px;margin-bottom:12px;display:flex;justify-content:center;">'+getAcSvg(model)+'</div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'
-    +'<div style="font-size:16px;font-weight:700;color:#e0f0ff;">'+model+'</div>'
-    +'<div style="background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.3);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:#00d4ff;">'+list.length+' sztuk</div>'
-    +'</div>'
-    +'<div style="font-size:11px;color:#5580a0;margin-bottom:2px;">Wybierz egzemplarz:</div>'
-    +items;
-  document.getElementById('modal').style.display='flex';
+function getAcSvg(model) {
+  var AC_IMAGES = {
+    'Boeing 737-800':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/B737-7-8-9.png',
+    'Airbus A321neo':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A321_Neo.png',
+    'Airbus A380-800':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png'
+  };
+  if(AC_IMAGES[model]) return '<img src="'+AC_IMAGES[model]+'" style="width:200px;height:80px;object-fit:contain;background:#000;border-radius:6px;">';
+  return '<div style="font-size:40px;text-align:center;">&#9992;</div>';
 }
 
 function openModAc(el) {
-  var acId = el&&el.dataset ? el.dataset.id : el;
-  var ac = G.fleet.filter(function(a){return a.id===acId;})[0];
+  var acId=el&&el.dataset?el.dataset.id:el;
+  var ac=G.fleet.filter(function(a){return a.id===acId;})[0];
   if(!ac) return;
-  if(ac.status !== 'ground') { showMsg('Konfiguracja możliwa tylko na ziemi!'); return; }
-  window._modAcId = acId;
+  if(ac.status!=='ground'){showMsg('Konfiguracja mozliwa tylko na ziemi!');return;}
+  window._modAcId=acId;
+  var totalSeats=ac.seats||150;
+  var cfg=ac.config||{first:0,prem:0,biz:0,eco:totalSeats};
+  var maxFirst=Math.floor(totalSeats/4);
+  var maxPrem=Math.floor(totalSeats/3);
+  var maxBiz=Math.floor(totalSeats/2);
 
-  var totalSeats = ac.seats || 150;
-  var cfg = ac.config || {first:0, prem:0, biz:0, eco:totalSeats};
-  // totalSlots = total eco-equivalent slots
-  // 1 first=4, 1 prem=3, 1 biz=2, 1 eco=1
-  var usedSlots = (cfg.first||0)*4 + (cfg.prem||0)*3 + (cfg.biz||0)*2 + (cfg.eco||0);
-  if(usedSlots===0) usedSlots = totalSeats;
-
-  function slotsUsed(f,p,b,e){ return f*4+p*3+b*2+e; }
-  var maxFirst = Math.floor(totalSeats/4);
-  var maxPrem  = Math.floor(totalSeats/3);
-  var maxBiz   = Math.floor(totalSeats/2);
-
-  document.getElementById('modal-body').innerHTML =
+  document.getElementById('modal-body').innerHTML=
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">'
     +'<button onclick="closeModal()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;padding:0;">&#8592;</button>'
     +'<div><div style="font-size:15px;font-weight:700;color:#00d4ff;">'+ac.model+'</div>'
-    +'<div style="font-size:11px;color:#5580a0;">'+ac.reg+' &bull; '+totalSeats+' miejsc fizycznych</div></div></div>'
-
-    // Legend
+    +'<div style="font-size:11px;color:#5580a0;">'+ac.reg+' &bull; '+totalSeats+' miejsc</div></div></div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;">'
-    +'<div style="padding:8px;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:8px;text-align:center;">'
-    +'<div style="font-size:11px;font-weight:700;color:#ffd700;">⭐ Pierwsza</div>'
-    +'<div style="font-size:10px;color:#5580a0;">4.0 zł/min &bull; zajmuje 4 eco</div></div>'
-    +'<div style="padding:8px;background:rgba(168,139,250,0.08);border:1px solid rgba(168,139,250,0.2);border-radius:8px;text-align:center;">'
-    +'<div style="font-size:11px;font-weight:700;color:#a78bfa;">💎 Premium</div>'
-    +'<div style="font-size:10px;color:#5580a0;">3.0 zł/min &bull; zajmuje 3 eco</div></div>'
-    +'<div style="padding:8px;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:8px;text-align:center;">'
-    +'<div style="font-size:11px;font-weight:700;color:#f5a623;">🎩 Biznes</div>'
-    +'<div style="font-size:10px;color:#5580a0;">2.0 zł/min &bull; zajmuje 2 eco</div></div>'
-    +'<div style="padding:8px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:8px;text-align:center;">'
-    +'<div style="font-size:11px;font-weight:700;color:#00d4ff;">💺 Ekonomia</div>'
-    +'<div style="font-size:10px;color:#5580a0;">1.6 zł/min &bull; zajmuje 1 eco</div></div>'
+    +'<div style="padding:8px;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:8px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#ffd700;">&#11088; Pierwsza</div><div style="font-size:10px;color:#5580a0;">4.0 zl/min &bull; 4 eco</div></div>'
+    +'<div style="padding:8px;background:rgba(168,139,250,0.08);border:1px solid rgba(168,139,250,0.2);border-radius:8px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#a78bfa;">&#128142; Premium</div><div style="font-size:10px;color:#5580a0;">3.0 zl/min &bull; 3 eco</div></div>'
+    +'<div style="padding:8px;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:8px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#f5a623;">&#127913; Biznes</div><div style="font-size:10px;color:#5580a0;">2.0 zl/min &bull; 2 eco</div></div>'
+    +'<div style="padding:8px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:8px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#00d4ff;">&#128186; Ekonomia</div><div style="font-size:10px;color:#5580a0;">1.6 zl/min &bull; 1 eco</div></div>'
     +'</div>'
-
-    // Capacity bar
     +'<div style="margin-bottom:14px;">'
-    +'<div style="display:flex;justify-content:space-between;font-size:10px;color:#5580a0;margin-bottom:4px;">'
-    +'<span>Zajęte miejsca</span><span id="md-slots-used">0</span><span>/ '+totalSeats+'</span></div>'
-    +'<div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;">'
-    +'<div id="md-slots-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#ffd700,#00d4ff);border-radius:3px;transition:width 0.2s;"></div>'
-    +'</div></div>'
-
-    // Sliders
-    +'<div style="margin-bottom:10px;">'
-    +'<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">'
-    +'<span style="color:#ffd700;font-weight:700;">⭐ Pierwsza klasa</span>'
-    +'<span style="color:#ffd700;font-weight:900;" id="md-first-val">'+(cfg.first||0)+'</span></div>'
-    +'<input type="range" id="md-first" min="0" max="'+maxFirst+'" value="'+(cfg.first||0)+'" step="1" '
-    +'oninput="modUpdateSeats()" style="width:100%;accent-color:#ffd700;">'
+    +'<div style="display:flex;justify-content:space-between;font-size:10px;color:#5580a0;margin-bottom:4px;"><span>Zajete miejsca</span><span id="md-slots-used">0</span><span>/ '+totalSeats+'</span></div>'
+    +'<div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;"><div id="md-slots-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#ffd700,#00d4ff);border-radius:3px;transition:width 0.2s;"></div></div>'
     +'</div>'
-
-    +'<div style="margin-bottom:10px;">'
-    +'<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">'
-    +'<span style="color:#a78bfa;font-weight:700;">💎 Premium</span>'
-    +'<span style="color:#a78bfa;font-weight:900;" id="md-prem-val">'+(cfg.prem||0)+'</span></div>'
-    +'<input type="range" id="md-prem" min="0" max="'+maxPrem+'" value="'+(cfg.prem||0)+'" step="1" '
-    +'oninput="modUpdateSeats()" style="width:100%;accent-color:#a78bfa;">'
-    +'</div>'
-
-    +'<div style="margin-bottom:10px;">'
-    +'<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">'
-    +'<span style="color:#f5a623;font-weight:700;">🎩 Biznes</span>'
-    +'<span style="color:#f5a623;font-weight:900;" id="md-biz-val">'+(cfg.biz||0)+'</span></div>'
-    +'<input type="range" id="md-biz" min="0" max="'+maxBiz+'" value="'+(cfg.biz||0)+'" step="1" '
-    +'oninput="modUpdateSeats()" style="width:100%;accent-color:#f5a623;">'
-    +'</div>'
-
-    // Eco auto
+    +'<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:#ffd700;font-weight:700;">&#11088; Pierwsza</span><span style="color:#ffd700;font-weight:900;" id="md-first-val">'+(cfg.first||0)+'</span></div>'
+    +'<input type="range" id="md-first" min="0" max="'+maxFirst+'" value="'+(cfg.first||0)+'" oninput="modUpdateSeats()" style="width:100%;accent-color:#ffd700;"></div>'
+    +'<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:#a78bfa;font-weight:700;">&#128142; Premium</span><span style="color:#a78bfa;font-weight:900;" id="md-prem-val">'+(cfg.prem||0)+'</span></div>'
+    +'<input type="range" id="md-prem" min="0" max="'+maxPrem+'" value="'+(cfg.prem||0)+'" oninput="modUpdateSeats()" style="width:100%;accent-color:#a78bfa;"></div>'
+    +'<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:#f5a623;font-weight:700;">&#127913; Biznes</span><span style="color:#f5a623;font-weight:900;" id="md-biz-val">'+(cfg.biz||0)+'</span></div>'
+    +'<input type="range" id="md-biz" min="0" max="'+maxBiz+'" value="'+(cfg.biz||0)+'" oninput="modUpdateSeats()" style="width:100%;accent-color:#f5a623;"></div>'
     +'<div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:12px;margin-bottom:12px;">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;">'
-    +'<span style="font-size:12px;color:#00d4ff;font-weight:700;">💺 Ekonomia (pozostałe)</span>'
-    +'<span style="font-size:18px;font-weight:900;color:#00d4ff;" id="md-eco-val">'+(cfg.eco||totalSeats)+'</span>'
-    +'</div></div>'
-
-    // Revenue preview
+    +'<div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12px;color:#00d4ff;font-weight:700;">&#128186; Ekonomia (pozostale)</span><span style="font-size:18px;font-weight:900;color:#00d4ff;" id="md-eco-val">'+(cfg.eco||totalSeats)+'</span></div></div>'
     +'<div style="background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.15);border-radius:10px;padding:10px 12px;margin-bottom:12px;">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;">'
-    +'<div style="font-size:11px;color:#5580a0;">Przychód/lot (40 min)</div>'
-    +'<div style="font-size:15px;font-weight:900;color:#00e676;" id="md-rev-val">$'+calcModRevenue(cfg,40).toLocaleString()+'</div>'
-    +'</div></div>'
-
+    +'<div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-size:11px;color:#5580a0;">Przychod/lot (40 min)</div><div style="font-size:15px;font-weight:900;color:#00e676;" id="md-rev-val">$'+calcModRevenue(cfg,40).toLocaleString()+'</div></div></div>'
     +'<div id="md-warn" style="display:none;color:#e63946;font-size:11px;margin-bottom:8px;padding:8px;background:rgba(230,57,70,0.1);border-radius:8px;text-align:center;"></div>'
-    +'<button onclick="applySeatsNew()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">✓ Zastosuj układ</button>';
+    +'<button onclick="applySeatsNew()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">&#10003; Zastosuj uklad</button>';
 
   document.getElementById('modal').style.display='flex';
+  modUpdateSeats();
 }
 
-function calcModRevenue(cfg, mins) {
-  return Math.round(
-    (cfg.first||0)*mins*4.0 +
-    (cfg.prem||0)*mins*3.0 +
-    (cfg.biz||0)*mins*2.0 +
-    (cfg.eco||0)*mins*1.6
-  );
+function calcModRevenue(cfg,mins) {
+  return Math.round((cfg.first||0)*mins*4.0+(cfg.prem||0)*mins*3.0+(cfg.biz||0)*mins*2.0+(cfg.eco||0)*mins*1.6);
 }
 
 function modUpdateSeats() {
-  var ac = G.fleet.filter(function(a){return a.id===window._modAcId;})[0];
-  if(!ac) return;
-  var totalSeats = ac.seats || 150;
-  var first = parseInt(document.getElementById('md-first').value)||0;
-  var prem  = parseInt(document.getElementById('md-prem').value)||0;
-  var biz   = parseInt(document.getElementById('md-biz').value)||0;
-  // Slots used: first=4, prem=3, biz=2, eco=1
-  var slotsUsed = first*4 + prem*3 + biz*2;
-  var ecoSlots  = Math.max(0, totalSeats - slotsUsed);
-
-  document.getElementById('md-first-val').textContent = first;
-  document.getElementById('md-prem-val').textContent  = prem;
-  document.getElementById('md-biz-val').textContent   = biz;
-  document.getElementById('md-eco-val').textContent   = ecoSlots;
-
-  var pct = Math.min(100, Math.round(slotsUsed/totalSeats*100));
-  var bar = document.getElementById('md-slots-bar');
-  var used_el = document.getElementById('md-slots-used');
-  if(bar) bar.style.width = pct+'%';
-  if(bar) bar.style.background = pct>95?'#e63946':pct>75?'#f5a623':'linear-gradient(90deg,#ffd700,#00d4ff)';
-  if(used_el) used_el.textContent = slotsUsed;
-
-  var warn = document.getElementById('md-warn');
-  if(slotsUsed > totalSeats) {
-    warn.style.display='block';
-    warn.textContent='Przekroczono pojemność! Zmniejsz liczby klas.';
-  } else {
-    warn.style.display='none';
-  }
-
-  var route = ac.routeId ? G.routes.filter(function(r){return r.id===ac.routeId;})[0] : null;
-  var mins = route ? (route.durationMin||40) : 40;
-  var rev = document.getElementById('md-rev-val');
-  if(rev) rev.textContent = '$'+calcModRevenue({first:first,prem:prem,biz:biz,eco:ecoSlots},mins).toLocaleString();
+  var ac=G.fleet.filter(function(a){return a.id===window._modAcId;})[0]; if(!ac) return;
+  var totalSeats=ac.seats||150;
+  var first=parseInt(document.getElementById('md-first').value)||0;
+  var prem=parseInt(document.getElementById('md-prem').value)||0;
+  var biz=parseInt(document.getElementById('md-biz').value)||0;
+  var slotsUsed=first*4+prem*3+biz*2;
+  var eco=Math.max(0,totalSeats-slotsUsed);
+  document.getElementById('md-first-val').textContent=first;
+  document.getElementById('md-prem-val').textContent=prem;
+  document.getElementById('md-biz-val').textContent=biz;
+  document.getElementById('md-eco-val').textContent=eco;
+  var pct=Math.min(100,Math.round(slotsUsed/totalSeats*100));
+  var bar=document.getElementById('md-slots-bar');
+  var usedEl=document.getElementById('md-slots-used');
+  if(bar){bar.style.width=pct+'%';bar.style.background=pct>95?'#e63946':pct>75?'#f5a623':'linear-gradient(90deg,#ffd700,#00d4ff)';}
+  if(usedEl) usedEl.textContent=slotsUsed;
+  var warn=document.getElementById('md-warn');
+  if(slotsUsed>totalSeats){warn.style.display='block';warn.textContent='Przekroczono pojemnosc!';}
+  else warn.style.display='none';
+  var route=ac.routeId?G.routes.filter(function(r){return r.id===ac.routeId;})[0]:null;
+  var mins=route?(route.durationMin||40):40;
+  var rev=document.getElementById('md-rev-val');
+  if(rev) rev.textContent='$'+calcModRevenue({first:first,prem:prem,biz:biz,eco:eco},mins).toLocaleString();
 }
 
 function applySeatsNew() {
-  var ac = G.fleet.filter(function(a){return a.id===window._modAcId;})[0];
-  if(!ac) return;
-  var totalSeats = ac.seats || 150;
-  var first = parseInt(document.getElementById('md-first').value)||0;
-  var prem  = parseInt(document.getElementById('md-prem').value)||0;
-  var biz   = parseInt(document.getElementById('md-biz').value)||0;
-  var slotsUsed = first*4 + prem*3 + biz*2;
-  var eco = Math.max(0, totalSeats - slotsUsed);
-
-  if(slotsUsed > totalSeats) {
-    showMsg('Przekroczono pojemność!'); return;
-  }
-
-  ac.config = {first:first, prem:prem, biz:biz, eco:eco, total:totalSeats};
-
-  // Aktualizuj przychod na trasie
-  var route = ac.routeId ? G.routes.filter(function(r){return r.id===ac.routeId;})[0] : null;
-  if(route) {
-    var mins = route.durationMin||40;
-    route.revenue = calcModRevenue(ac.config, mins);
-  }
-
-  save(); updateHUD();
-  closeModal();
-  showMsg('Układ zapisany! 1kl:'+first+' Prem:'+prem+' Biz:'+biz+' Eko:'+eco);
+  var ac=G.fleet.filter(function(a){return a.id===window._modAcId;})[0]; if(!ac) return;
+  var totalSeats=ac.seats||150;
+  var first=parseInt(document.getElementById('md-first').value)||0;
+  var prem=parseInt(document.getElementById('md-prem').value)||0;
+  var biz=parseInt(document.getElementById('md-biz').value)||0;
+  var slotsUsed=first*4+prem*3+biz*2;
+  var eco=Math.max(0,totalSeats-slotsUsed);
+  if(slotsUsed>totalSeats){showMsg('Przekroczono pojemnosc!');return;}
+  ac.config={first:first,prem:prem,biz:biz,eco:eco,total:totalSeats};
+  var route=ac.routeId?G.routes.filter(function(r){return r.id===ac.routeId;})[0]:null;
+  if(route){var mins=route.durationMin||40;route.revenue=calcModRevenue(ac.config,mins);}
+  save(); updateHUD(); closeModal();
+  showMsg('Uklad zapisany! 1kl:'+first+' Prem:'+prem+' Biz:'+biz+' Eko:'+eco);
 }
-
-function liveModSlider() {} // zachowane dla kompatybilnosci
-function applySeats(el) { applySeatsNew(); }
-
-
-function applyFuelUpg(el) { var acId=el&&el.dataset?el.dataset.id:el;
-  if(G.cash<50000){showMsg('Za malo gotowki ($50,000)');return;}
-  var ac=G.fleet.filter(function(a){return a.id===acId;})[0]; if(!ac||ac.fuelUpgrade) return;
-  G.cash-=50000; ac.fuelUpgrade=true; save(); updateHUD();
-  openModAc(acId); showMsg('Ulepszenie zainstalowane!');
-}
-
-
-function confirmRouteGlobal() { confirmAddRoute(_pendingAcId); }
 
 function goBackToFlota(){ closeModal(); }
