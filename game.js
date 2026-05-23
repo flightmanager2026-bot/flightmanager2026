@@ -52,13 +52,37 @@ function loadSave() {
   } catch(e) { return false; }
 }
 
-/* -- LEVEL -- */
+/* -- LEVEL - NIESKONCZONOSC -- */
+// Progi do lvl 10, potem co 2000 lotow = +1 lvl
 var LEVEL_FLIGHTS=[0,0,10,25,50,100,200,400,750,1500,3000];
+
 function getLv(n) {
   var lv=1;
-  for(var i=1;i<LEVEL_FLIGHTS.length;i++) { if(n>=LEVEL_FLIGHTS[i]) lv=i; else break; }
+  // Lvl 1-10 wg tablicy
+  for(var i=1;i<LEVEL_FLIGHTS.length;i++){
+    if(n>=LEVEL_FLIGHTS[i]) lv=i;
+    else break;
+  }
+  // Po lvl 10: kazde 2000 lotow = +1 lvl
+  if(n>=3000) {
+    var extra=Math.floor((n-3000)/2000);
+    lv=10+extra;
+  }
   return lv;
 }
+
+function getNextLevelFlights(lv) {
+  if(lv<10) return LEVEL_FLIGHTS[lv+1]||3000;
+  // Po lvl 10
+  return 3000+(lv-9)*2000;
+}
+
+function getPrevLevelFlights(lv) {
+  if(lv<10) return LEVEL_FLIGHTS[lv]||0;
+  if(lv===10) return 3000;
+  return 3000+(lv-10)*2000;
+}
+
 function checkLevelUp() {
   var newLv=getLv(G.totalFlights||0);
   if(newLv>(G.level||1)) {
@@ -67,31 +91,33 @@ function checkLevelUp() {
   }
   updateHUD();
 }
+
 function updateHUD() {
   var el=document.getElementById('hud-cash');
   if(el) el.textContent='$'+G.cash.toLocaleString();
   var ep=document.getElementById('hud-pts');
   if(ep) ep.textContent=(G.points||0).toLocaleString();
+
   var lv=G.level||1;
   var tf=G.totalFlights||0;
-  var next=LEVEL_FLIGHTS[lv+1];
+
   var elvEl=document.getElementById('hud-lv');
   if(elvEl) elvEl.textContent=lv;
+
+  var next=getNextLevelFlights(lv);
+  var prev=getPrevLevelFlights(lv);
+  var range=next-prev;
+  var progress=Math.max(0,tf-prev);
+
   var bar=document.getElementById('hud-lv-bar');
   if(bar) {
-    var prev=LEVEL_FLIGHTS[lv]||0;
-    var pct=next?Math.round(Math.max(0,tf-prev)/(next-prev)*100):100;
+    var pct=range>0?Math.round(progress/range*100):100;
     bar.style.width=Math.min(100,Math.max(0,pct))+'%';
   }
+
   var lv2=document.getElementById('hud-lv-next');
   if(lv2) {
-    if(next) {
-      var prev2=LEVEL_FLIGHTS[lv]||0;
-      var progress=Math.max(0,tf-prev2);
-      lv2.textContent=progress+'/'+(next-prev2)+' LOT';
-    } else {
-      lv2.textContent='MAX';
-    }
+    lv2.textContent=progress+'/'+(range)+' LOT';
   }
 }
 
