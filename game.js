@@ -27,18 +27,14 @@ function loadSave() {
     if(g.airports) {
       G.airports = g.airports.filter(function(ap){
         if(ap.isHome) return true;
-        if(typeof ADB !== 'undefined') {
-          return ADB.some(function(a){ return a.icao === ap.icao; });
-        }
+        if(typeof ADB !== 'undefined') return ADB.some(function(a){return a.icao===ap.icao;});
         return false;
       });
     }
     if(g.routes) G.routes=g.routes;
     if(g.slots) {
       G.slots = g.slots.filter(function(icao){
-        if(typeof ADB !== 'undefined') {
-          return ADB.some(function(a){ return a.icao === icao; });
-        }
+        if(typeof ADB !== 'undefined') return ADB.some(function(a){return a.icao===icao;});
         return true;
       });
     }
@@ -52,43 +48,39 @@ function loadSave() {
   } catch(e) { return false; }
 }
 
-/* -- LEVEL - NIESKONCZONOSC -- */
-// Progi do lvl 10, potem co 2000 lotow = +1 lvl
-var LEVEL_FLIGHTS=[0,0,10,25,50,100,200,400,750,1500,3000];
+/* -- LEVEL SYSTEM - bez limitu -- */
+// Progi: LEVEL_FLIGHTS[i] = ile lotow potrzeba zeby osiagnac poziom i
+var LEVEL_FLIGHTS = [0, 0, 10, 25, 50, 100, 200, 400, 750, 1500, 3000];
 
 function getLv(n) {
-  var lv=1;
-  // Lvl 1-10 wg tablicy
-  for(var i=1;i<LEVEL_FLIGHTS.length;i++){
-    if(n>=LEVEL_FLIGHTS[i]) lv=i;
-    else break;
+  // Po lvl 10 (3000+ lotow): co 2000 lotow = +1 lvl
+  if(n >= 3000) {
+    return 10 + Math.floor((n - 3000) / 2000);
   }
-  // Po lvl 10: kazde 2000 lotow = +1 lvl
-  if(n>=3000) {
-    var extra=Math.floor((n-3000)/2000);
-    lv=10+extra;
+  var lv = 1;
+  for(var i = 1; i < LEVEL_FLIGHTS.length; i++) {
+    if(n >= LEVEL_FLIGHTS[i]) lv = i;
   }
   return lv;
 }
 
 function getNextLevelFlights(lv) {
-  // Ile lotow potrzeba na nastepny lvl
-  if(lv < 10) return LEVEL_FLIGHTS[lv + 1] || 3000;
+  if(lv < 10) return LEVEL_FLIGHTS[lv + 1];
   return 3000 + (lv - 9) * 2000;
 }
 
 function getPrevLevelFlights(lv) {
-  // Ile lotow bylo potrzeba zeby wejsc na ten lvl
   if(lv <= 1) return 0;
-  if(lv <= 10) return LEVEL_FLIGHTS[lv] || 0;
+  if(lv <= 10) return LEVEL_FLIGHTS[lv];
   return 3000 + (lv - 10) * 2000;
 }
 
 function checkLevelUp() {
-  var newLv=getLv(G.totalFlights||0);
-  if(newLv>(G.level||1)) {
-    G.level=newLv; save();
-    showMsg('POZIOM '+newLv+' odblokowany!');
+  var newLv = getLv(G.totalFlights || 0);
+  if(newLv > (G.level || 1)) {
+    G.level = newLv;
+    save();
+    showMsg('POZIOM ' + newLv + ' odblokowany!');
   }
   updateHUD();
 }
@@ -101,6 +93,13 @@ function updateHUD() {
 
   var lv = G.level || 1;
   var tf = G.totalFlights || 0;
+
+  // Synchronizuj level z totalFlights (na wypadek gdyby sie rozjechalo)
+  var correctLv = getLv(tf);
+  if(correctLv !== lv) {
+    G.level = correctLv;
+    lv = correctLv;
+  }
 
   var elvEl = document.getElementById('hud-lv');
   if(elvEl) elvEl.textContent = lv;
