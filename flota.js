@@ -5,7 +5,7 @@ var _flotaTab='samoloty';
 
 function renderFlotaMain(body) {
   if(!G.fleet.length) {
-    body.innerHTML='<div style="padding:20px;color:#5580a0;text-align:center;">Brak samolotow. Kup w Sklepie.</div>';
+    body.innerHTML='<div style="padding:20px;color:#94a3b8;text-align:center;">Brak samolotow. Kup w Sklepie.</div>';
     return;
   }
   var manufacturers = {};
@@ -47,16 +47,16 @@ function renderFlotaMain(body) {
     var imgSrc = BRAND_LOGOS[brand] || null;
     if(!imgSrc) planes.forEach(function(ac){ if(!imgSrc && AC_IMAGES[ac.model]) imgSrc=AC_IMAGES[ac.model]; });
     out += '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;" data-b="'+brand+'" onclick="showBrandModal(this.dataset.b)">'
-      +(imgSrc?'<img src="'+imgSrc+'" style="width:90px;height:48px;object-fit:contain;background:#000;border-radius:8px;flex-shrink:0;">':'<div style="width:90px;height:48px;background:#0d1b2a;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;">&#9992;</div>')
-      +'<div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#e0f0ff;margin-bottom:4px;">'
+      +(imgSrc?'<img src="'+imgSrc+'" style="width:90px;height:48px;object-fit:contain;background:#000;border-radius:8px;flex-shrink:0;">':'<div style="width:90px;height:48px;background:#0f0f1a;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;">&#9992;</div>')
+      +'<div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#f1f5f9;margin-bottom:4px;">'
       +(brand==='Airbus'?'<img src="img/AIRBUS_Blue.png" style="height:14px;margin-right:6px;vertical-align:middle;">':brand==='Embraer'?'<img src="img/embraer-vector-logo-removebg-preview.png" style="height:14px;margin-right:6px;vertical-align:middle;">':'')
       +brand+'</div>'
-      +'<div style="font-size:11px;color:#5580a0;">'+planes.length+' samolot'+(planes.length>1?'y':'')+'</div>'
+      +'<div style="font-size:11px;color:#94a3b8;">'+planes.length+' samolot'+(planes.length>1?'y':'')+'</div>'
       +'<div style="display:flex;gap:8px;margin-top:4px;">'
-      +(flying?'<span style="font-size:10px;color:#00e676;font-weight:700;">&#9992; '+flying+' w locie</span>':'')
-      +(ground?'<span style="font-size:10px;color:#5580a0;">&#9634; '+ground+' na ziemi</span>':'')
+      +(flying?'<span style="font-size:10px;color:#10b981;font-weight:700;">&#9992; '+flying+' w locie</span>':'')
+      +(ground?'<span style="font-size:10px;color:#94a3b8;">&#9634; '+ground+' na ziemi</span>':'')
       +'</div></div>'
-      +'<div style="color:#5580a0;font-size:20px;">&#8250;</div></div>';
+      +'<div style="color:#94a3b8;font-size:20px;">&#8250;</div></div>';
   });
   body.innerHTML = out;
 }
@@ -83,48 +83,48 @@ function showBrandModal(brand) {
   planes.forEach(function(ac){ if(!models[ac.model])models[ac.model]=[]; models[ac.model].push(ac); });
 
   var out = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
-    +'<button onclick="closeModal()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:24px;padding:0;">&#8592;</button>'
-    +'<div style="font-size:16px;font-weight:700;color:#00d4ff;">'+brand+'</div></div>';
+    +'<button onclick="closeModal()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:24px;padding:0;">&#8592;</button>'
+    +'<div style="font-size:16px;font-weight:700;color:#06b6d4;">'+brand+'</div></div>';
 
   Object.keys(models).forEach(function(model) {
     var list = models[model];
     var imgSrc = AC_IMAGES[model];
     var inFlight = list.filter(function(a){return a.status==='flying';}).length;
     var onGround = list.filter(function(a){return a.status!=='flying';}).length;
-    out += '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:12px;margin-bottom:10px;">';
+    out += '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(6,182,212,0.12);border-radius:12px;padding:12px;margin-bottom:10px;">';
     if(imgSrc) out += '<img src="'+imgSrc+'" style="width:100%;max-height:90px;object-fit:contain;background:#000;border-radius:8px;margin-bottom:10px;">';
-    out += '<div style="font-size:14px;font-weight:700;color:#e0f0ff;margin-bottom:4px;">'+model+' <span style="font-size:11px;color:#5580a0;">x'+list.length+'</span></div>';
+    out += '<div style="font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:4px;">'+model+' <span style="font-size:11px;color:#94a3b8;">x'+list.length+'</span></div>';
     out += '<div style="display:flex;gap:8px;margin-bottom:10px;">';
-    if(inFlight) out += '<span style="font-size:11px;color:#00e676;">&#9992; '+inFlight+' w locie</span>';
-    if(onGround) out += '<span style="font-size:11px;color:#5580a0;">&#9634; '+onGround+' na ziemi</span>';
+    if(inFlight) out += '<span style="font-size:11px;color:#10b981;">&#9992; '+inFlight+' w locie</span>';
+    if(onGround) out += '<span style="font-size:11px;color:#94a3b8;">&#9634; '+onGround+' na ziemi</span>';
     out += '</div>';
     list.forEach(function(ac) {
       var route=null; G.routes.forEach(function(r){if(r.id===ac.routeId)route=r;});
       var cfg=ac.config||{eco:ac.seats||150,biz:0};
       out += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:8px 10px;margin-bottom:6px;">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
-        +'<div><div style="font-size:12px;font-weight:700;color:#e0f0ff;">'+ac.reg+'</div>'
-        +'<div style="font-size:10px;color:#5580a0;">Eko:'+cfg.eco+' Biz:'+(cfg.biz||0)+(route?' | '+route.from+'->'+route.to:'')+'</div></div>'
+        +'<div><div style="font-size:12px;font-weight:700;color:#f1f5f9;">'+ac.reg+'</div>'
+        +'<div style="font-size:10px;color:#94a3b8;">Eko:'+cfg.eco+' Biz:'+(cfg.biz||0)+(route?' | '+route.from+'->'+route.to:'')+'</div></div>'
         +'<div style="display:flex;gap:5px;">'
         +(ac.status==='ground'
-          ? '<button data-id="'+ac.id+'" onclick="closeModal();openModAc(this.dataset.id)" style="padding:5px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);border-radius:6px;color:#00d4ff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Konfig</button>'
-          : '<div style="padding:5px 8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;color:#5580a0;font-size:10px;font-weight:700;">W locie</div>'
+          ? '<button data-id="'+ac.id+'" onclick="closeModal();openModAc(this.dataset.id)" style="padding:5px 8px;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.3);border-radius:6px;color:#06b6d4;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Konfig</button>'
+          : '<div style="padding:5px 8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;color:#94a3b8;font-size:10px;font-weight:700;">W locie</div>'
         )
         +(ac.routeId
-          ? '<div style="padding:5px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#5580a0;font-size:10px;font-weight:700;">Ma trase</div>'
+          ? '<div style="padding:5px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#94a3b8;font-size:10px;font-weight:700;">Ma trase</div>'
           : (ac.config && ac.config.total > 0
-            ? '<button data-id="'+ac.id+'" onclick="closeModal();openAddRoute(this.dataset.id)" style="padding:5px 8px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:6px;color:#fff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">+Trasa</button>'
-            : '<button data-id="'+ac.id+'" onclick="closeModal();openModAc(this.dataset.id)" style="padding:5px 8px;background:rgba(245,166,35,0.2);border:1px solid rgba(245,166,35,0.4);border-radius:6px;color:#f5a623;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Skonfiguruj</button>'
+            ? '<button data-id="'+ac.id+'" onclick="closeModal();openAddRoute(this.dataset.id)" style="padding:5px 8px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:6px;color:#fff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">+Trasa</button>'
+            : '<button data-id="'+ac.id+'" onclick="closeModal();openModAc(this.dataset.id)" style="padding:5px 8px;background:rgba(249,115,22,0.2);border:1px solid rgba(249,115,22,0.4);border-radius:6px;color:#f97316;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Skonfiguruj</button>'
           )
         )
         +'</div></div>'
         // Przyciski odlacz i sprzedaj
         +'<div style="display:flex;gap:5px;">'
         +(ac.routeId && ac.status!=='flying'
-          ? '<button data-id="'+ac.id+'" onclick="detachRoute(this.dataset.id)" style="padding:4px 10px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);border-radius:6px;color:#f5a623;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">&#8722; Odlacz trase</button>'
+          ? '<button data-id="'+ac.id+'" onclick="detachRoute(this.dataset.id)" style="padding:4px 10px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.3);border-radius:6px;color:#f97316;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">&#8722; Odlacz trase</button>'
           : '')
         +(ac.status!=='flying'
-          ? '<button data-id="'+ac.id+'" onclick="sellAircraft(this.dataset.id)" style="padding:4px 10px;background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.2);border-radius:6px;color:#e63946;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">&#128179; Sprzedaj</button>'
+          ? '<button data-id="'+ac.id+'" onclick="sellAircraft(this.dataset.id)" style="padding:4px 10px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:6px;color:#ef4444;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">&#128179; Sprzedaj</button>'
           : '')
         +'</div>'
         +'</div>';
@@ -219,28 +219,28 @@ function openAddRoute(acId) {
   }
 
   document.getElementById('modal-body').innerHTML =
-    '<div style="font-size:15px;font-weight:700;color:#00d4ff;margin-bottom:12px;">Nowa trasa - '+ac.model+'</div>'
-    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-bottom:6px;">LOTNISKO DOCELOWE</div>'
-    +'<select id="route-dest" data-acid="'+acId+'" onchange="updateRouteInfo(this.dataset.acid,this.value)" style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:10px;color:#fff;font-size:13px;font-family:Arial,sans-serif;margin-bottom:8px;outline:none;box-sizing:border-box;">'
+    '<div style="font-size:15px;font-weight:700;color:#06b6d4;margin-bottom:12px;">Nowa trasa - '+ac.model+'</div>'
+    +'<div style="font-size:10px;color:#94a3b8;letter-spacing:1px;margin-bottom:6px;">LOTNISKO DOCELOWE</div>'
+    +'<select id="route-dest" data-acid="'+acId+'" onchange="updateRouteInfo(this.dataset.acid,this.value)" style="width:100%;background:#0f0f1a;border:1px solid rgba(6,182,212,0.3);border-radius:8px;padding:10px;color:#fff;font-size:13px;font-family:Arial,sans-serif;margin-bottom:8px;outline:none;box-sizing:border-box;">'
     +opts+'</select>'
-    +'<div id="route-info" style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:10px;margin-bottom:12px;font-size:12px;color:#5580a0;">Wybierz lotnisko aby zobaczyc informacje o trasie</div>'
-    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-bottom:8px;">CENY BILETOW (zl/pasazer)</div>'
+    +'<div id="route-info" style="background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.15);border-radius:10px;padding:10px;margin-bottom:12px;font-size:12px;color:#94a3b8;">Wybierz lotnisko aby zobaczyc informacje o trasie</div>'
+    +'<div style="font-size:10px;color:#94a3b8;letter-spacing:1px;margin-bottom:8px;">CENY BILETOW (zl/pasazer)</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">'
-    +'<div><div style="font-size:10px;color:#00d4ff;margin-bottom:3px;">&#128186; EKONOMIA</div>'
-    +'<input id="price-eco" type="number" min="0" max="9999" value="0" style="width:100%;background:#0d1b2a;border:1px solid rgba(0,212,255,0.3);border-radius:6px;padding:8px;color:#fff;font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
-    +'<div><div style="font-size:10px;color:#f5a623;margin-bottom:3px;">&#127913; BIZNES</div>'
+    +'<div><div style="font-size:10px;color:#06b6d4;margin-bottom:3px;">&#128186; EKONOMIA</div>'
+    +'<input id="price-eco" type="number" min="0" max="9999" value="0" style="width:100%;background:#0f0f1a;border:1px solid rgba(6,182,212,0.3);border-radius:6px;padding:8px;color:#fff;font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
+    +'<div><div style="font-size:10px;color:#f97316;margin-bottom:3px;">&#127913; BIZNES</div>'
     +'<input id="price-biz" type="number" min="0" max="99999" value="0" '+(hasBiz?'':' disabled ')
-    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(245,166,35,'+(hasBiz?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasBiz?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
-    +'<div><div style="font-size:10px;color:#a78bfa;margin-bottom:3px;">&#128142; PREMIUM</div>'
+    +'style="width:100%;background:#0f0f1a;border:1px solid rgba(249,115,22,'+(hasBiz?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasBiz?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
+    +'<div><div style="font-size:10px;color:#8b5cf6;margin-bottom:3px;">&#128142; PREMIUM</div>'
     +'<input id="price-prem" type="number" min="0" max="99999" value="0" '+(hasPrem?'':' disabled ')
-    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(168,139,250,'+(hasPrem?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasPrem?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
+    +'style="width:100%;background:#0f0f1a;border:1px solid rgba(139,92,246,'+(hasPrem?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasPrem?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
     +'<div><div style="font-size:10px;color:#ffd700;margin-bottom:3px;">&#11088; PIERWSZA</div>'
     +'<input id="price-first" type="number" min="0" max="99999" value="0" '+(hasFirst?'':' disabled ')
-    +'style="width:100%;background:#0d1b2a;border:1px solid rgba(255,215,0,'+(hasFirst?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasFirst?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
+    +'style="width:100%;background:#0f0f1a;border:1px solid rgba(255,215,0,'+(hasFirst?'0.3':'0.1')+');border-radius:6px;padding:8px;color:'+(hasFirst?'#fff':'#2a3a4a')+';font-size:13px;font-family:Arial,sans-serif;outline:none;box-sizing:border-box;"></div>'
     +'</div>'
-    +'<div id="price-hint" style="font-size:11px;color:#5580a0;margin-bottom:14px;">Wybierz lotnisko aby zobaczyc sugerowane ceny</div>'
-    +'<button onclick="confirmRouteGlobal()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:9px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-bottom:6px;">Dodaj trase</button>'
-    +'<button onclick="closeModal()" style="width:100%;padding:10px;background:none;border:1px solid rgba(255,255,255,0.1);border-radius:9px;color:#5580a0;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Anuluj</button>';
+    +'<div id="price-hint" style="font-size:11px;color:#94a3b8;margin-bottom:14px;">Wybierz lotnisko aby zobaczyc sugerowane ceny</div>'
+    +'<button onclick="confirmRouteGlobal()" style="width:100%;padding:12px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:9px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;margin-bottom:6px;">Dodaj trase</button>'
+    +'<button onclick="closeModal()" style="width:100%;padding:10px;background:none;border:1px solid rgba(255,255,255,0.1);border-radius:9px;color:#94a3b8;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Anuluj</button>';
 
   document.getElementById('modal').style.display = 'flex';
 }
@@ -264,13 +264,13 @@ function updateRouteInfo(acId, toIcaoParam) {
   var infoBox=document.getElementById('route-info');
   var hint=document.getElementById('price-hint');
   if(!info.inRange){
-    if(infoBox) infoBox.innerHTML='<div style="color:#e63946;font-weight:700;">&#9888; Zbyt duzy dystans!</div><div style="font-size:12px;color:#5580a0;">Dystans: '+info.dist+' km &bull; Zasieg: '+info.range+' km</div>';
+    if(infoBox) infoBox.innerHTML='<div style="color:#ef4444;font-weight:700;">&#9888; Zbyt duzy dystans!</div><div style="font-size:12px;color:#94a3b8;">Dystans: '+info.dist+' km &bull; Zasieg: '+info.range+' km</div>';
     return;
   }
   if(infoBox) infoBox.innerHTML=
-    '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#5580a0;">Dystans:</span><span style="color:#e0f0ff;font-weight:700;">'+info.dist+' km</span></div>'
-    +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#5580a0;">Czas lotu:</span><span style="color:#00d4ff;font-weight:700;">'+info.timeStr+'</span></div>'
-    +'<div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:#5580a0;">Trasa:</span><span style="color:#e0f0ff;">'+info.fromAp.city+' &#8594; '+info.toAp.city+'</span></div>';
+    '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#94a3b8;">Dystans:</span><span style="color:#f1f5f9;font-weight:700;">'+info.dist+' km</span></div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#94a3b8;">Czas lotu:</span><span style="color:#06b6d4;font-weight:700;">'+info.timeStr+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:#94a3b8;">Trasa:</span><span style="color:#f1f5f9;">'+info.fromAp.city+' &#8594; '+info.toAp.city+'</span></div>';
   var mins=info.minutes||40;
   var minPrice=Math.max(10,Math.round(1.6*mins));
   if(hint) hint.textContent='Sugerowana cena: '+minPrice+' zl/os ('+mins+' min x 1.6 zl)';
@@ -374,31 +374,31 @@ function openModAc(el) {
 
   document.getElementById('modal-body').innerHTML=
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">'
-    +'<button onclick="closeModal()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:22px;padding:0;">&#8592;</button>'
-    +'<div><div style="font-size:15px;font-weight:700;color:#00d4ff;">'+ac.model+'</div>'
-    +'<div style="font-size:11px;color:#5580a0;">'+ac.reg+' &bull; '+totalSeats+' miejsc</div></div></div>'
+    +'<button onclick="closeModal()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:22px;padding:0;">&#8592;</button>'
+    +'<div><div style="font-size:15px;font-weight:700;color:#06b6d4;">'+ac.model+'</div>'
+    +'<div style="font-size:11px;color:#94a3b8;">'+ac.reg+' &bull; '+totalSeats+' miejsc</div></div></div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;">'
-    +'<div style="padding:8px;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:8px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#ffd700;">&#11088; Pierwsza</div><div style="font-size:10px;color:#5580a0;">4.0 zl/min &bull; 4 eco</div></div>'
-    +'<div style="padding:8px;background:rgba(168,139,250,0.08);border:1px solid rgba(168,139,250,0.2);border-radius:8px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#a78bfa;">&#128142; Premium</div><div style="font-size:10px;color:#5580a0;">3.0 zl/min &bull; 3 eco</div></div>'
-    +'<div style="padding:8px;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:8px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#f5a623;">&#127913; Biznes</div><div style="font-size:10px;color:#5580a0;">2.0 zl/min &bull; 2 eco</div></div>'
-    +'<div style="padding:8px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:8px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#00d4ff;">&#128186; Ekonomia</div><div style="font-size:10px;color:#5580a0;">1.6 zl/min &bull; 1 eco</div></div>'
+    +'<div style="padding:8px;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:8px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#ffd700;">&#11088; Pierwsza</div><div style="font-size:10px;color:#94a3b8;">4.0 zl/min &bull; 4 eco</div></div>'
+    +'<div style="padding:8px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:8px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#8b5cf6;">&#128142; Premium</div><div style="font-size:10px;color:#94a3b8;">3.0 zl/min &bull; 3 eco</div></div>'
+    +'<div style="padding:8px;background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);border-radius:8px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#f97316;">&#127913; Biznes</div><div style="font-size:10px;color:#94a3b8;">2.0 zl/min &bull; 2 eco</div></div>'
+    +'<div style="padding:8px;background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.2);border-radius:8px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#06b6d4;">&#128186; Ekonomia</div><div style="font-size:10px;color:#94a3b8;">1.6 zl/min &bull; 1 eco</div></div>'
     +'</div>'
     +'<div style="margin-bottom:14px;">'
-    +'<div style="display:flex;justify-content:space-between;font-size:10px;color:#5580a0;margin-bottom:4px;"><span>Zajete miejsca</span><span id="md-slots-used">0</span><span>/ '+totalSeats+'</span></div>'
-    +'<div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;"><div id="md-slots-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#ffd700,#00d4ff);border-radius:3px;transition:width 0.2s;"></div></div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-bottom:4px;"><span>Zajete miejsca</span><span id="md-slots-used">0</span><span>/ '+totalSeats+'</span></div>'
+    +'<div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;"><div id="md-slots-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#ffd700,#06b6d4);border-radius:3px;transition:width 0.2s;"></div></div>'
     +'</div>'
     +'<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:#ffd700;font-weight:700;">&#11088; Pierwsza</span><span style="color:#ffd700;font-weight:900;" id="md-first-val">'+(cfg.first||0)+'</span></div>'
     +'<input type="range" id="md-first" min="0" max="'+maxFirst+'" value="'+(cfg.first||0)+'" oninput="modUpdateSeats()" style="width:100%;accent-color:#ffd700;"></div>'
-    +'<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:#a78bfa;font-weight:700;">&#128142; Premium</span><span style="color:#a78bfa;font-weight:900;" id="md-prem-val">'+(cfg.prem||0)+'</span></div>'
-    +'<input type="range" id="md-prem" min="0" max="'+maxPrem+'" value="'+(cfg.prem||0)+'" oninput="modUpdateSeats()" style="width:100%;accent-color:#a78bfa;"></div>'
-    +'<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:#f5a623;font-weight:700;">&#127913; Biznes</span><span style="color:#f5a623;font-weight:900;" id="md-biz-val">'+(cfg.biz||0)+'</span></div>'
-    +'<input type="range" id="md-biz" min="0" max="'+maxBiz+'" value="'+(cfg.biz||0)+'" oninput="modUpdateSeats()" style="width:100%;accent-color:#f5a623;"></div>'
-    +'<div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:12px;margin-bottom:12px;">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12px;color:#00d4ff;font-weight:700;">&#128186; Ekonomia (pozostale)</span><span style="font-size:18px;font-weight:900;color:#00d4ff;" id="md-eco-val">'+(cfg.eco||totalSeats)+'</span></div></div>'
-    +'<div style="background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.15);border-radius:10px;padding:10px 12px;margin-bottom:12px;">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-size:11px;color:#5580a0;">Przychod/lot (40 min)</div><div style="font-size:15px;font-weight:900;color:#00e676;" id="md-rev-val">$'+calcModRevenue(cfg,40).toLocaleString()+'</div></div></div>'
-    +'<div id="md-warn" style="display:none;color:#e63946;font-size:11px;margin-bottom:8px;padding:8px;background:rgba(230,57,70,0.1);border-radius:8px;text-align:center;"></div>'
-    +'<button onclick="applySeatsNew()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">&#10003; Zastosuj uklad</button>';
+    +'<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:#8b5cf6;font-weight:700;">&#128142; Premium</span><span style="color:#8b5cf6;font-weight:900;" id="md-prem-val">'+(cfg.prem||0)+'</span></div>'
+    +'<input type="range" id="md-prem" min="0" max="'+maxPrem+'" value="'+(cfg.prem||0)+'" oninput="modUpdateSeats()" style="width:100%;accent-color:#8b5cf6;"></div>'
+    +'<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:#f97316;font-weight:700;">&#127913; Biznes</span><span style="color:#f97316;font-weight:900;" id="md-biz-val">'+(cfg.biz||0)+'</span></div>'
+    +'<input type="range" id="md-biz" min="0" max="'+maxBiz+'" value="'+(cfg.biz||0)+'" oninput="modUpdateSeats()" style="width:100%;accent-color:#f97316;"></div>'
+    +'<div style="background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.15);border-radius:10px;padding:12px;margin-bottom:12px;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12px;color:#06b6d4;font-weight:700;">&#128186; Ekonomia (pozostale)</span><span style="font-size:18px;font-weight:900;color:#06b6d4;" id="md-eco-val">'+(cfg.eco||totalSeats)+'</span></div></div>'
+    +'<div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:10px;padding:10px 12px;margin-bottom:12px;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-size:11px;color:#94a3b8;">Przychod/lot (40 min)</div><div style="font-size:15px;font-weight:900;color:#10b981;" id="md-rev-val">$'+calcModRevenue(cfg,40).toLocaleString()+'</div></div></div>'
+    +'<div id="md-warn" style="display:none;color:#ef4444;font-size:11px;margin-bottom:8px;padding:8px;background:rgba(239,68,68,0.1);border-radius:8px;text-align:center;"></div>'
+    +'<button onclick="applySeatsNew()" style="width:100%;padding:12px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">&#10003; Zastosuj uklad</button>';
 
   document.getElementById('modal').style.display='flex';
   modUpdateSeats();
@@ -423,7 +423,7 @@ function modUpdateSeats() {
   var pct=Math.min(100,Math.round(slotsUsed/totalSeats*100));
   var bar=document.getElementById('md-slots-bar');
   var usedEl=document.getElementById('md-slots-used');
-  if(bar){bar.style.width=pct+'%';bar.style.background=pct>95?'#e63946':pct>75?'#f5a623':'linear-gradient(90deg,#ffd700,#00d4ff)';}
+  if(bar){bar.style.width=pct+'%';bar.style.background=pct>95?'#ef4444':pct>75?'#f97316':'linear-gradient(90deg,#ffd700,#06b6d4)';}
   if(usedEl) usedEl.textContent=slotsUsed;
   var warn=document.getElementById('md-warn');
   if(slotsUsed>totalSeats){warn.style.display='block';warn.textContent='Przekroczono pojemnosc!';}
