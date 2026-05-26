@@ -1,10 +1,10 @@
 /* -- PERSONEL -- */
 
 var STAFF_TYPES = {
-  pilot:    { label:'Pilot',        icon:'&#9992;',  color:'#00d4ff', salaryMin:60,  salaryMax:120, desc:'Wymagany do lotu' },
-  steward:  { label:'Steward/essa', icon:'&#128105;', color:'#a78bfa', salaryMin:30,  salaryMax:70,  desc:'Obsluga pasazerow' },
-  mechanic: { label:'Mechanik',     icon:'&#128295;', color:'#f5a623', salaryMin:40,  salaryMax:90,  desc:'1 na samolot' },
-  engineer: { label:'Inzynier',     icon:'&#128119;', color:'#00e676', salaryMin:70,  salaryMax:150, desc:'1 na 3 samoloty' }
+  pilot:    { label:'Pilot',        icon:'&#9992;',  color:'#06b6d4', salaryMin:60,  salaryMax:120, desc:'Wymagany do lotu' },
+  steward:  { label:'Steward/essa', icon:'&#128105;', color:'#8b5cf6', salaryMin:30,  salaryMax:70,  desc:'Obsluga pasazerow' },
+  mechanic: { label:'Mechanik',     icon:'&#128295;', color:'#f97316', salaryMin:40,  salaryMax:90,  desc:'1 na samolot' },
+  engineer: { label:'Inzynier',     icon:'&#128119;', color:'#10b981', salaryMin:70,  salaryMax:150, desc:'1 na 3 samoloty' }
 };
 
 var FIRST_NAMES_M = ['Adam','Piotr','Marek','Tomasz','Pawel','Michal','Andrzej','Grzegorz','Rafal','Lukasz'];
@@ -89,7 +89,7 @@ function renderPersonel(body) {
   tabs.forEach(function(t){
     html += '<button onclick="openPersonelTab(\''+t.id+'\')" id="ptab-'+t.id+'" '
       +'style="padding:6px 11px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);'
-      +'border-radius:20px;color:#5580a0;font-size:11px;font-weight:700;cursor:pointer;'
+      +'border-radius:20px;color:#94a3b8;font-size:11px;font-weight:700;cursor:pointer;'
       +'font-family:Arial,sans-serif;white-space:nowrap;flex-shrink:0;">'+t.label+'</button>';
   });
   html += '</div><div id="personel-content"></div>';
@@ -100,9 +100,9 @@ function renderPersonel(body) {
 function openPersonelTab(tab) {
   ['overview','pilot','steward','mechanic','engineer'].forEach(function(t){
     var el=document.getElementById('ptab-'+t); if(!el) return;
-    el.style.background  = t===tab?'rgba(0,212,255,0.15)':'rgba(255,255,255,0.05)';
-    el.style.color       = t===tab?'#00d4ff':'#5580a0';
-    el.style.borderColor = t===tab?'rgba(0,212,255,0.4)':'rgba(255,255,255,0.1)';
+    el.style.background  = t===tab?'rgba(6,182,212,0.15)':'rgba(255,255,255,0.05)';
+    el.style.color       = t===tab?'#06b6d4':'#94a3b8';
+    el.style.borderColor = t===tab?'rgba(6,182,212,0.4)':'rgba(255,255,255,0.1)';
   });
   var c=document.getElementById('personel-content'); if(!c) return;
   if(tab==='overview') renderOverview(c); else renderStaffType(c,tab);
@@ -116,12 +116,12 @@ function renderOverview(el) {
 
   var html =
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">'
-    +'<div style="background:linear-gradient(135deg,rgba(0,212,255,0.12),rgba(26,86,219,0.08));border:1px solid rgba(0,212,255,0.25);border-radius:14px;padding:14px;text-align:center;">'
-    +'<div style="font-size:28px;font-weight:900;color:#00d4ff;">'+totalStaff+'</div>'
-    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-top:3px;">PRACOWNIKOW</div></div>'
-    +'<div style="background:linear-gradient(135deg,rgba(230,57,70,0.1),rgba(230,57,70,0.05));border:1px solid rgba(230,57,70,0.25);border-radius:14px;padding:14px;text-align:center;">'
-    +'<div style="font-size:22px;font-weight:900;color:#e63946;">$'+totalSalary.toLocaleString()+'</div>'
-    +'<div style="font-size:10px;color:#5580a0;letter-spacing:1px;margin-top:3px;">PENSJE / 24H</div></div></div>';
+    +'<div style="background:linear-gradient(135deg,rgba(6,182,212,0.12),rgba(139,92,246,0.08));border:1px solid rgba(6,182,212,0.25);border-radius:14px;padding:14px;text-align:center;">'
+    +'<div style="font-size:28px;font-weight:900;color:#06b6d4;">'+totalStaff+'</div>'
+    +'<div style="font-size:10px;color:#94a3b8;letter-spacing:1px;margin-top:3px;">PRACOWNIKOW</div></div>'
+    +'<div style="background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.05));border:1px solid rgba(239,68,68,0.25);border-radius:14px;padding:14px;text-align:center;">'
+    +'<div style="font-size:22px;font-weight:900;color:#ef4444;">$'+totalSalary.toLocaleString()+'</div>'
+    +'<div style="font-size:10px;color:#94a3b8;letter-spacing:1px;margin-top:3px;">PENSJE / 24H</div></div></div>';
 
   Object.keys(STAFF_TYPES).forEach(function(type){
     var st=STAFF_TYPES[type];
@@ -129,7 +129,7 @@ function renderOverview(el) {
     var needed=getNeeded(type);
     var pct=needed>0?Math.min(100,Math.round(count/needed*100)):100;
     var ok=count>=needed;
-    var col=ok?'#00e676':pct>50?'#f5a623':'#e63946';
+    var col=ok?'#10b981':pct>50?'#f97316':'#ef4444';
     html +=
       '<div onclick="openPersonelTab(\''+type+'\')" style="background:rgba(255,255,255,0.03);'
       +'border:1px solid rgba(255,255,255,0.07);border-left:3px solid '+col+';'
@@ -139,13 +139,13 @@ function renderOverview(el) {
       +'display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;">'+st.icon+'</div>'
       +'<div style="flex:1;">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;">'
-      +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+st.label+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:#f1f5f9;">'+st.label+'</div>'
       +'<div style="font-size:13px;font-weight:900;color:'+col+';">'+count+'/'+needed+'</div></div>'
-      +'<div style="font-size:10px;color:#5580a0;margin-top:2px;">'+st.desc+'</div>'
+      +'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">'+st.desc+'</div>'
       +'</div></div>'
       +'<div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;">'
       +'<div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:3px;transition:width 0.4s;"></div></div>'
-      +(!ok?'<div style="margin-top:8px;font-size:10px;color:#f5a623;background:rgba(245,166,35,0.08);'
+      +(!ok?'<div style="margin-top:8px;font-size:10px;color:#f97316;background:rgba(249,115,22,0.08);'
         +'border-radius:6px;padding:5px 8px;">&#9888; Potrzeba jeszcze '+(needed-count)+' osob</div>':'')
       +'</div>';
   });
@@ -166,29 +166,29 @@ function renderStaffType(el, type) {
     +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">'
     +'<div style="font-size:26px;">'+st.icon+'</div>'
     +'<div style="flex:1;">'
-    +'<div style="font-size:14px;font-weight:800;color:#e0f0ff;">'+st.label+'</div>'
+    +'<div style="font-size:14px;font-weight:800;color:#f1f5f9;">'+st.label+'</div>'
     +'<div style="font-size:11px;margin-top:2px;">Zatrudnieni: '
-    +'<span style="color:'+(ok?'#00e676':'#e63946')+';font-weight:700;">'+employed.length+'/'+needed+'</span></div>'
-    +(type==='pilot'   ?'<div style="font-size:10px;color:#5580a0;margin-top:2px;">do 6500km: 2 | do 12000km: 3 | dalej: 4</div>':'')
-    +(type==='steward' ?'<div style="font-size:10px;color:#5580a0;margin-top:2px;">1 FA na kazde 50 foteli (EASA)</div>':'')
-    +(type==='engineer'?'<div style="font-size:10px;color:#5580a0;margin-top:2px;">1 inzynier obsluguje do 3 samolotow</div>':'')
-    +(type==='mechanic'?'<div style="font-size:10px;color:#5580a0;margin-top:2px;">1 mechanik na 1 samolot</div>':'')
+    +'<span style="color:'+(ok?'#10b981':'#ef4444')+';font-weight:700;">'+employed.length+'/'+needed+'</span></div>'
+    +(type==='pilot'   ?'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">do 6500km: 2 | do 12000km: 3 | dalej: 4</div>':'')
+    +(type==='steward' ?'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">1 FA na kazde 50 foteli (EASA)</div>':'')
+    +(type==='engineer'?'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">1 inzynier obsluguje do 3 samolotow</div>':'')
+    +(type==='mechanic'?'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">1 mechanik na 1 samolot</div>':'')
     +'</div>'
-    +'<button onclick="refreshMarket(\''+type+'\')" style="padding:7px 10px;background:rgba(0,212,255,0.1);'
-    +'border:1px solid rgba(0,212,255,0.2);border-radius:8px;color:#00d4ff;font-size:11px;'
+    +'<button onclick="refreshMarket(\''+type+'\')" style="padding:7px 10px;background:rgba(6,182,212,0.1);'
+    +'border:1px solid rgba(6,182,212,0.2);border-radius:8px;color:#06b6d4;font-size:11px;'
     +'font-weight:700;cursor:pointer;font-family:Arial,sans-serif;flex-shrink:0;">&#8635; Odswiez</button>'
     +'</div>';
 
   if(G.fleet&&G.fleet.length>0) {
     html += '<div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:10px;">'
-      +'<div style="font-size:9px;color:#5580a0;letter-spacing:2px;margin-bottom:8px;">WYMAGANIA NA SAMOLOT</div>';
+      +'<div style="font-size:9px;color:#94a3b8;letter-spacing:2px;margin-bottom:8px;">WYMAGANIA NA SAMOLOT</div>';
     G.fleet.forEach(function(ac){
       var req=getSlotsPerAc(type,ac);
       var has=((ac.crew||{})[type]||[]).length;
       var acOk=has>=req;
       html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);">'
-        +'<div style="font-size:12px;color:#e0f0ff;font-weight:600;">'+ac.model+' ('+ac.reg+')</div>'
-        +'<div style="font-size:12px;font-weight:800;color:'+(acOk?'#00e676':'#e63946')+';">'+has+'/'+req+'</div>'
+        +'<div style="font-size:12px;color:#f1f5f9;font-weight:600;">'+ac.model+' ('+ac.reg+')</div>'
+        +'<div style="font-size:12px;font-weight:800;color:'+(acOk?'#10b981':'#ef4444')+';">'+has+'/'+req+'</div>'
         +'</div>';
     });
     html += '</div>';
@@ -197,33 +197,33 @@ function renderStaffType(el, type) {
 
   // Zatrudnieni
   if(employed.length>0) {
-    html += '<div style="font-size:9px;color:#5580a0;letter-spacing:3px;margin-bottom:10px;">ZATRUDNIENI</div>';
+    html += '<div style="font-size:9px;color:#94a3b8;letter-spacing:3px;margin-bottom:10px;">ZATRUDNIENI</div>';
     employed.forEach(function(emp, i){
       var assignedAcs=G.fleet?G.fleet.filter(function(ac){return ac.crew&&ac.crew[type]&&ac.crew[type].indexOf(emp.id)>=0;}):[]; 
       var isAssigned=assignedAcs.length>0;
       var stars='';
-      for(var s=0;s<5;s++) stars+=s<emp.rating?'<span style="color:#f5a623;">&#9733;</span>':'<span style="color:#2a3f5a;">&#9733;</span>';
+      for(var s=0;s<5;s++) stars+=s<emp.rating?'<span style="color:#f97316;">&#9733;</span>':'<span style="color:#2a3f5a;">&#9733;</span>';
 
       html +=
-        '<div style="background:'+(isAssigned?'rgba(0,230,118,0.05)':'rgba(255,255,255,0.03)')+';'
-        +'border:1px solid '+(isAssigned?'rgba(0,230,118,0.2)':'rgba(255,255,255,0.08)')+';'
+        '<div style="background:'+(isAssigned?'rgba(16,185,129,0.05)':'rgba(255,255,255,0.03)')+';'
+        +'border:1px solid '+(isAssigned?'rgba(16,185,129,0.2)':'rgba(255,255,255,0.08)')+';'
         +'border-radius:14px;padding:14px;margin-bottom:8px;">'
         +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">'
         +'<div style="width:42px;height:42px;border-radius:50%;flex-shrink:0;'
-        +'background:'+(isAssigned?'rgba(0,230,118,0.15)':'rgba(255,255,255,0.07)')+';'
-        +'border:2px solid '+(isAssigned?'rgba(0,230,118,0.5)':'rgba(255,255,255,0.15)')+';'
+        +'background:'+(isAssigned?'rgba(16,185,129,0.15)':'rgba(255,255,255,0.07)')+';'
+        +'border:2px solid '+(isAssigned?'rgba(16,185,129,0.5)':'rgba(255,255,255,0.15)')+';'
         +'display:flex;align-items:center;justify-content:center;font-size:18px;">'+st.icon+'</div>'
         +'<div style="flex:1;min-width:0;">'
-        +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+emp.name+'</div>'
+        +'<div style="font-size:13px;font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+emp.name+'</div>'
         +'<div style="font-size:11px;margin-top:2px;">'+stars+'</div>'
-        +'<div style="font-size:10px;color:#5580a0;margin-top:2px;">'
-        +'Dosw: <b style="color:#e0f0ff;">'+emp.experience+' lat</b> &nbsp;|&nbsp; '
-        +'Pensja: <b style="color:#00e676;">$'+emp.salary+'/24h</b></div>'
+        +'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">'
+        +'Dosw: <b style="color:#f1f5f9;">'+emp.experience+' lat</b> &nbsp;|&nbsp; '
+        +'Pensja: <b style="color:#10b981;">$'+emp.salary+'/24h</b></div>'
         +'</div></div>'
         +'<div style="padding:8px 10px;border-radius:9px;margin-bottom:10px;font-size:11px;font-weight:600;'
-        +'background:'+(isAssigned?'rgba(0,230,118,0.1)':'rgba(245,166,35,0.08)')+';'
-        +'border:1px solid '+(isAssigned?'rgba(0,230,118,0.25)':'rgba(245,166,35,0.2)')+';'
-        +'color:'+(isAssigned?'#00e676':'#f5a623')+'">'
+        +'background:'+(isAssigned?'rgba(16,185,129,0.1)':'rgba(249,115,22,0.08)')+';'
+        +'border:1px solid '+(isAssigned?'rgba(16,185,129,0.25)':'rgba(249,115,22,0.2)')+';'
+        +'color:'+(isAssigned?'#10b981':'#f97316')+'">'
         +(isAssigned
           ?'&#10003; Przypisany do: '+assignedAcs.map(function(a){return a.model+' ('+a.reg+')';}).join(', ')
           :'&#9888; Nieprzypisany')
@@ -234,42 +234,42 @@ function renderStaffType(el, type) {
             +'style="flex:1;padding:9px;border-radius:9px;font-size:11px;font-weight:700;'
             +'cursor:pointer;font-family:Arial,sans-serif;'
             +(isAssigned
-              ?'background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.25);color:#00d4ff;">&#8635; Zmien przypisanie'
-              :'background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;color:#fff;">&#43; Przypisz')
+              ?'background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.25);color:#06b6d4;">&#8635; Zmien przypisanie'
+              :'background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff;">&#43; Przypisz')
             +'</button>'
           :'')
         +'<button onclick="fireStaff(\''+type+'\','+i+')" '
-        +'style="padding:9px 14px;background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.2);'
-        +'border-radius:9px;color:#e63946;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Zwolnij</button>'
+        +'style="padding:9px 14px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);'
+        +'border-radius:9px;color:#ef4444;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Zwolnij</button>'
         +'</div></div>';
     });
   }
 
   // Rynek pracy
-  html += '<div style="font-size:9px;color:#5580a0;letter-spacing:3px;margin:16px 0 10px;">RYNEK PRACY</div>';
+  html += '<div style="font-size:9px;color:#94a3b8;letter-spacing:3px;margin:16px 0 10px;">RYNEK PRACY</div>';
   if(!market.length) {
-    html += '<div style="padding:20px;text-align:center;color:#5580a0;font-size:12px;">Brak kandydatow - kliknij Odswiez</div>';
+    html += '<div style="padding:20px;text-align:center;color:#94a3b8;font-size:12px;">Brak kandydatow - kliknij Odswiez</div>';
   } else {
     market.forEach(function(c,i){
       var stars='';
-      for(var s=0;s<5;s++) stars+=s<c.rating?'<span style="color:#f5a623;">&#9733;</span>':'<span style="color:#2a3f5a;">&#9733;</span>';
+      for(var s=0;s<5;s++) stars+=s<c.rating?'<span style="color:#f97316;">&#9733;</span>':'<span style="color:#2a3f5a;">&#9733;</span>';
       html +=
-        '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);'
+        '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);'
         +'border-radius:14px;padding:14px;margin-bottom:8px;">'
         +'<div style="display:flex;align-items:center;gap:12px;">'
         +'<div style="width:42px;height:42px;border-radius:50%;flex-shrink:0;'
-        +'background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);'
+        +'background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.25);'
         +'display:flex;align-items:center;justify-content:center;font-size:18px;">'+st.icon+'</div>'
         +'<div style="flex:1;min-width:0;">'
-        +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+c.name+'</div>'
-        +'<div style="font-size:11px;margin-top:3px;">'+stars+' <span style="color:#5580a0;font-size:10px;">'+c.experience+' lat dosw.</span></div>'
-        +'<div style="font-size:12px;font-weight:700;color:#00e676;margin-top:2px;">$'+c.salary+' / 24h</div>'
+        +'<div style="font-size:13px;font-weight:700;color:#f1f5f9;">'+c.name+'</div>'
+        +'<div style="font-size:11px;margin-top:3px;">'+stars+' <span style="color:#94a3b8;font-size:10px;">'+c.experience+' lat dosw.</span></div>'
+        +'<div style="font-size:12px;font-weight:700;color:#10b981;margin-top:2px;">$'+c.salary+' / 24h</div>'
         +'</div>'
         +'<button onclick="hireStaff(\''+type+'\','+i+')" '
-        +'style="padding:10px 16px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;'
+        +'style="padding:10px 16px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;'
         +'border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;'
         +'font-family:Arial,sans-serif;white-space:nowrap;flex-shrink:0;'
-        +'box-shadow:0 3px 10px rgba(0,212,255,0.25);">Zatrudnij</button>'
+        +'box-shadow:0 3px 10px rgba(6,182,212,0.25);">Zatrudnij</button>'
         +'</div></div>';
     });
   }
@@ -329,9 +329,9 @@ function assignStaff(type, empId) {
   var maxAssign=getMaxAssignments(type);
 
   var html =
-    '<div style="font-size:15px;font-weight:800;color:#e0f0ff;margin-bottom:4px;">Przypisz pracownika</div>'
-    +'<div style="font-size:12px;color:#00d4ff;font-weight:700;margin-bottom:4px;">'+emp.name+'</div>'
-    +'<div style="font-size:11px;color:#5580a0;margin-bottom:14px;">'
+    '<div style="font-size:15px;font-weight:800;color:#f1f5f9;margin-bottom:4px;">Przypisz pracownika</div>'
+    +'<div style="font-size:12px;color:#06b6d4;font-weight:700;margin-bottom:4px;">'+emp.name+'</div>'
+    +'<div style="font-size:11px;color:#94a3b8;margin-bottom:14px;">'
     +(type==='engineer'?'Inzynier - max 3 samoloty (aktualnie: '+assignedAcs.length+')'
       :'Przypisz do 1 samolotu')
     +'</div>';
@@ -344,26 +344,26 @@ function assignStaff(type, empId) {
 
     html +=
       '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;'
-      +'background:'+(already?'rgba(0,230,118,0.06)':'rgba(255,255,255,0.03)')+';'
-      +'border:1px solid '+(already?'rgba(0,230,118,0.2)':'rgba(255,255,255,0.07)')+';'
+      +'background:'+(already?'rgba(16,185,129,0.06)':'rgba(255,255,255,0.03)')+';'
+      +'border:1px solid '+(already?'rgba(16,185,129,0.2)':'rgba(255,255,255,0.07)')+';'
       +'border-radius:12px;margin-bottom:6px;">'
       +'<div>'
-      +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;">'+ac.model+'</div>'
-      +'<div style="font-size:10px;color:#5580a0;margin-top:2px;">'+ac.reg+' &bull; obsada: '+crew.length+'/'+slots+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:#f1f5f9;">'+ac.model+'</div>'
+      +'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">'+ac.reg+' &bull; obsada: '+crew.length+'/'+slots+'</div>'
       +'</div>'
       +(already
         ?'<div style="display:flex;align-items:center;gap:6px;">'
-          +'<div style="font-size:11px;color:#00e676;font-weight:700;">&#10003; Przypisany</div>'
+          +'<div style="font-size:11px;color:#10b981;font-weight:700;">&#10003; Przypisany</div>'
           +'<button onclick="doUnassign(\''+type+'\',\''+empId+'\',\''+ac.id+'\')" '
-          +'style="padding:5px 10px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.2);'
-          +'border-radius:7px;color:#e63946;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Odepnij</button>'
+          +'style="padding:5px 10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);'
+          +'border-radius:7px;color:#ef4444;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Odepnij</button>'
           +'</div>'
         :full
-          ?'<div style="font-size:10px;color:#e63946;">Pelna obsada</div>'
+          ?'<div style="font-size:10px;color:#ef4444;">Pelna obsada</div>'
           :(assignedAcs.length>=maxAssign&&type!=='engineer')
-            ?'<div style="font-size:10px;color:#5580a0;">Juz przypisany</div>'
+            ?'<div style="font-size:10px;color:#94a3b8;">Juz przypisany</div>'
             :'<button onclick="doAssign(\''+type+'\',\''+empId+'\',\''+ac.id+'\')" '
-              +'style="padding:7px 14px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;'
+              +'style="padding:7px 14px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;'
               +'border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Przypisz</button>'
       )
       +'</div>';
