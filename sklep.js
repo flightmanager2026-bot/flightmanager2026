@@ -13,44 +13,44 @@ function closeModal(){ document.getElementById("modal").style.display="none"; }
 
 function openShop() {
   var html =
-    '<div style="font-size:15px;font-weight:900;color:#e0f0ff;margin-bottom:16px;">&#128722; Sklep</div>'
+    '<div style="font-size:15px;font-weight:900;color:#f1f5f9;margin-bottom:16px;">&#128722; Sklep</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">'
-    +'<div onclick="openNewAircraftShop()" style="background:linear-gradient(135deg,rgba(26,86,219,0.15),rgba(0,212,255,0.08));border:1px solid rgba(0,212,255,0.25);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
+    +'<div onclick="openNewAircraftShop()" style="background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(6,182,212,0.08));border:1px solid rgba(6,182,212,0.25);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
     +'<div style="font-size:32px;margin-bottom:8px;">&#9992;</div>'
-    +'<div style="font-size:13px;font-weight:700;color:#00d4ff;">Samoloty</div>'
-    +'<div style="font-size:10px;color:#5580a0;margin-top:3px;">'+Object.values(AIRCRAFT_CATALOG).reduce(function(s,a){return s+a.length;},0)+' modeli</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#06b6d4;">Samoloty</div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">'+Object.values(AIRCRAFT_CATALOG).reduce(function(s,a){return s+a.length;},0)+' modeli</div>'
     +'</div>'
-    +'<div onclick="openSlotShop()" style="background:linear-gradient(135deg,rgba(168,139,250,0.12),rgba(168,139,250,0.06));border:1px solid rgba(168,139,250,0.25);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
+    +'<div onclick="openSlotShop()" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(139,92,246,0.06));border:1px solid rgba(139,92,246,0.25);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
     +'<div style="font-size:32px;margin-bottom:8px;">&#127915;</div>'
-    +'<div style="font-size:13px;font-weight:700;color:#a78bfa;">Sloty</div>'
-    +'<div style="font-size:10px;color:#5580a0;margin-top:3px;">Dostep do lotnisk</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#8b5cf6;">Sloty</div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Dostep do lotnisk</div>'
     +'</div>'
-    +'<div onclick="openCargoShop()" style="background:linear-gradient(135deg,rgba(245,166,35,0.1),rgba(245,166,35,0.04));border:1px solid rgba(245,166,35,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
+    +'<div onclick="openCargoShop()" style="background:linear-gradient(135deg,rgba(249,115,22,0.1),rgba(249,115,22,0.04));border:1px solid rgba(249,115,22,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
     +'<div style="font-size:32px;margin-bottom:8px;">&#128230;</div>'
-    +'<div style="font-size:13px;font-weight:700;color:#f5a623;">Cargo</div>'
-    +'<div style="font-size:10px;color:#5580a0;margin-top:3px;">Wkrotce</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#f97316;">Cargo</div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Wkrotce</div>'
     +'</div>'
-    +'<div onclick="openTopUp()" style="background:linear-gradient(135deg,rgba(0,230,118,0.1),rgba(0,230,118,0.04));border:1px solid rgba(0,230,118,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
+    +'<div onclick="openTopUp()" style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.04));border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
     +'<div style="font-size:32px;margin-bottom:8px;">&#128179;</div>'
-    +'<div style="font-size:13px;font-weight:700;color:#00e676;">Doladuj</div>'
-    +'<div style="font-size:10px;color:#5580a0;margin-top:3px;">Kup $ i PKT</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#10b981;">Doladuj</div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Kup $ i PKT</div>'
     +'</div>'
     +'</div>'
-    +'<div style="background:linear-gradient(135deg,rgba(255,215,0,0.06),rgba(245,166,35,0.04));border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:14px;margin-bottom:12px;cursor:pointer;" onclick="showRewardedAdShop()">'
+    +'<div style="background:linear-gradient(135deg,rgba(255,215,0,0.06),rgba(249,115,22,0.04));border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:14px;margin-bottom:12px;cursor:pointer;" onclick="showRewardedAdShop()">'
     +'<div style="display:flex;align-items:center;gap:12px;">'
     +'<div style="font-size:28px;">&#127916;</div>'
     +'<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#ffd700;">Obejrzyj reklame - odbierz nagrode</div>'
-    +'<div style="font-size:10px;color:#5580a0;margin-top:2px;">Losowa nagroda za kazdy obejrzany film</div></div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">Losowa nagroda za kazdy obejrzany film</div></div>'
     +'<div style="padding:6px 12px;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);border-radius:8px;font-size:11px;font-weight:700;color:#ffd700;">&#9654; Play</div>'
     +'</div></div>'
     +'<div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px;">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;">'
-    +'<div style="font-size:11px;color:#5580a0;">Twoje saldo</div>'
-    +'<div style="font-size:14px;font-weight:700;color:#00e676;">$'+Math.round(G.cash).toLocaleString()+'</div>'
+    +'<div style="font-size:11px;color:#94a3b8;">Twoje saldo</div>'
+    +'<div style="font-size:14px;font-weight:700;color:#10b981;">$'+Math.round(G.cash).toLocaleString()+'</div>'
     +'</div>'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">'
-    +'<div style="font-size:11px;color:#5580a0;">Hangar</div>'
-    +'<div style="font-size:12px;font-weight:700;color:#00d4ff;">'+G.fleet.length+'/'+getHangarCapacity()+' samolotow</div>'
+    +'<div style="font-size:11px;color:#94a3b8;">Hangar</div>'
+    +'<div style="font-size:12px;font-weight:700;color:#06b6d4;">'+G.fleet.length+'/'+getHangarCapacity()+' samolotow</div>'
     +'</div></div>';
   document.getElementById('modal-body').innerHTML=html;
   document.getElementById('modal').style.display='flex';
@@ -178,11 +178,11 @@ function openSlotShop() {
   });
 
   var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">'
-    +'<button onclick="openShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:20px;">&#8592;</button>'
-    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">KUP SLOT</div></div>'
-    +'<div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#5580a0;">'
-    +'LVL <span style="color:#f5a623;font-weight:700;">'+lvl+'</span> &bull; '
-    +'Odblokowane: <span style="color:#00e676;font-weight:700;">'+unlocked.length+'</span> krajow &bull; '
+    +'<button onclick="openShop()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:20px;">&#8592;</button>'
+    +'<div style="font-size:15px;font-weight:700;color:#06b6d4;">KUP SLOT</div></div>'
+    +'<div style="background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.15);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#94a3b8;">'
+    +'LVL <span style="color:#f97316;font-weight:700;">'+lvl+'</span> &bull; '
+    +'Odblokowane: <span style="color:#10b981;font-weight:700;">'+unlocked.length+'</span> krajow &bull; '
     +'Azja: LVL 15 &bull; USA/Kanada: LVL 25 &bull; Australia: LVL 35'
     +'</div>';
 
@@ -200,7 +200,7 @@ function openSlotShop() {
 
     if(!isUnlocked && reqLvl !== lastReqLvl) {
       lastReqLvl = reqLvl;
-      html += '<div style="font-size:9px;color:#5580a0;letter-spacing:2px;margin:10px 0 6px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);">ODBLOKUJ PRZY LVL '+reqLvl+'</div>';
+      html += '<div style="font-size:9px;color:#94a3b8;letter-spacing:2px;margin:10px 0 6px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);">ODBLOKUJ PRZY LVL '+reqLvl+'</div>';
     }
 
     html += '<div '+(isUnlocked?'data-c="'+c+'" onclick="openCountrySlots(this.dataset.c)"':'')
@@ -210,12 +210,12 @@ function openSlotShop() {
       +'margin-bottom:5px;cursor:'+(isUnlocked?'pointer':'default')+';opacity:'+(isUnlocked?'1':'0.45')+'">'
       +'<span style="font-size:20px;">'+flag+'</span>'
       +'<div style="flex:1;">'
-      +'<div style="font-size:13px;font-weight:700;color:'+(isUnlocked?'#e0f0ff':'#5580a0')+';">'+c+'</div>'
-      +'<div style="font-size:10px;color:#5580a0;">'+available+' lotnisk &bull; $'+cost.toLocaleString()+'/slot</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+(isUnlocked?'#f1f5f9':'#94a3b8')+';">'+c+'</div>'
+      +'<div style="font-size:10px;color:#94a3b8;">'+available+' lotnisk &bull; $'+cost.toLocaleString()+'/slot</div>'
       +'</div>'
       +(isUnlocked
-        ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5580a0" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
-        : '<span style="font-size:10px;font-weight:700;color:#e63946;">LVL '+reqLvl+'</span>'
+        ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
+        : '<span style="font-size:10px;font-weight:700;color:#ef4444;">LVL '+reqLvl+'</span>'
       )+'</div>';
   });
 
@@ -240,19 +240,19 @@ function openCountrySlots(country) {
   }
 
   var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
-    +'<button onclick="openSlotShop()" style="background:none;border:none;color:#5580a0;cursor:pointer;font-size:20px;">&#8592;</button>'
+    +'<button onclick="openSlotShop()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:20px;">&#8592;</button>'
     +'<span style="font-size:20px;">'+flag+'</span>'
-    +'<div style="font-size:15px;font-weight:700;color:#00d4ff;">'+country+'</div></div>';
+    +'<div style="font-size:15px;font-weight:700;color:#06b6d4;">'+country+'</div></div>';
 
   if(!slots.length) {
-    html += '<div style="padding:20px;text-align:center;color:#5580a0;">Brak dostepnych lotnisk lub wszystkie kupione</div>';
+    html += '<div style="padding:20px;text-align:center;color:#94a3b8;">Brak dostepnych lotnisk lub wszystkie kupione</div>';
   } else {
     slots.forEach(function(ap){
       html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);">'
-        +'<div><div style="font-size:13px;font-weight:600;color:#e0f0ff;">'+ap.icao+' - '+ap.city+'</div>'
-        +'<div style="font-size:10px;color:#5580a0;">$'+cost.toLocaleString()+'</div></div>'
+        +'<div><div style="font-size:13px;font-weight:600;color:#f1f5f9;">'+ap.icao+' - '+ap.city+'</div>'
+        +'<div style="font-size:10px;color:#94a3b8;">$'+cost.toLocaleString()+'</div></div>'
         +'<button data-icao="'+ap.icao+'" data-cost="'+cost+'" onclick="buySlotByEl(this)" '
-        +'style="padding:6px 14px;background:linear-gradient(135deg,#1a56db,#00d4ff);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Kup</button>'
+        +'style="padding:6px 14px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Kup</button>'
         +'</div>';
     });
   }
@@ -282,36 +282,36 @@ function openCargoShop() {
   var canAfford = G.cash >= CARGO_PRICE && (G.points||0) >= CARGO_PTS;
   var html =
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
-    +'<button onclick="openShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e0f0ff;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;line-height:1.4;font-family:Arial,sans-serif;">&#8592;</button>'
-    +'<div style="font-size:15px;font-weight:800;color:#e0f0ff;">Cargo</div></div>'
+    +'<button onclick="openShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#f1f5f9;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;line-height:1.4;font-family:Arial,sans-serif;">&#8592;</button>'
+    +'<div style="font-size:15px;font-weight:800;color:#f1f5f9;">Cargo</div></div>'
     +(hasLicence
-      ? '<div style="border-radius:13px;padding:16px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.2);margin-bottom:14px;text-align:center;">'
+      ? '<div style="border-radius:13px;padding:16px;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);margin-bottom:14px;text-align:center;">'
         +'<div style="font-size:32px;margin-bottom:8px;">&#128230;</div>'
-        +'<div style="font-size:14px;font-weight:800;color:#f5a623;margin-bottom:4px;">Masz licencje Cargo!</div>'
-        +'<div style="font-size:11px;color:#5580a0;">Flota cargo bedzie dostepna wkrotce.</div></div>'
+        +'<div style="font-size:14px;font-weight:800;color:#f97316;margin-bottom:4px;">Masz licencje Cargo!</div>'
+        +'<div style="font-size:11px;color:#94a3b8;">Flota cargo bedzie dostepna wkrotce.</div></div>'
       : '<div style="border-radius:13px;padding:16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);margin-bottom:14px;">'
         +'<div style="font-size:28px;margin-bottom:10px;text-align:center;">&#128230;</div>'
-        +'<div style="font-size:14px;font-weight:800;color:#e0f0ff;margin-bottom:6px;text-align:center;">Licencja Cargo</div>'
-        +'<div style="font-size:11px;color:#5580a0;line-height:1.6;margin-bottom:14px;text-align:center;">Odblokuj dostep do transportu towarow.</div>'
+        +'<div style="font-size:14px;font-weight:800;color:#f1f5f9;margin-bottom:6px;text-align:center;">Licencja Cargo</div>'
+        +'<div style="font-size:11px;color:#94a3b8;line-height:1.6;margin-bottom:14px;text-align:center;">Odblokuj dostep do transportu towarow.</div>'
         +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">'
         +'<div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px;text-align:center;">'
-        +'<div style="font-size:10px;color:#5580a0;margin-bottom:2px;">Koszt</div>'
-        +'<div style="font-size:14px;font-weight:800;color:'+(G.cash>=CARGO_PRICE?'#00e676':'#e63946')+';">$'+CARGO_PRICE.toLocaleString()+'</div></div>'
+        +'<div style="font-size:10px;color:#94a3b8;margin-bottom:2px;">Koszt</div>'
+        +'<div style="font-size:14px;font-weight:800;color:'+(G.cash>=CARGO_PRICE?'#10b981':'#ef4444')+';">$'+CARGO_PRICE.toLocaleString()+'</div></div>'
         +'<div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px;text-align:center;">'
-        +'<div style="font-size:10px;color:#5580a0;margin-bottom:2px;">Punkty</div>'
-        +'<div style="font-size:14px;font-weight:800;color:'+((G.points||0)>=CARGO_PTS?'#00e676':'#e63946')+';">'+CARGO_PTS+' PKT</div></div>'
+        +'<div style="font-size:10px;color:#94a3b8;margin-bottom:2px;">Punkty</div>'
+        +'<div style="font-size:14px;font-weight:800;color:'+((G.points||0)>=CARGO_PTS?'#10b981':'#ef4444')+';">'+CARGO_PTS+' PKT</div></div>'
         +'</div>'
         +(canAfford
-          ? '<button onclick="buyCargoLicence()" style="width:100%;padding:12px;background:linear-gradient(135deg,#e67e22,#f5a623);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:800;font-family:Arial,sans-serif;cursor:pointer;">&#128230; Kup licencje Cargo</button>'
-          : '<div style="padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;text-align:center;font-size:11px;color:#5580a0;">Potrzebujesz $'+CARGO_PRICE.toLocaleString()+' i '+CARGO_PTS+' PKT</div>'
+          ? '<button onclick="buyCargoLicence()" style="width:100%;padding:12px;background:linear-gradient(135deg,#e67e22,#f97316);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:800;font-family:Arial,sans-serif;cursor:pointer;">&#128230; Kup licencje Cargo</button>'
+          : '<div style="padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;text-align:center;font-size:11px;color:#94a3b8;">Potrzebujesz $'+CARGO_PRICE.toLocaleString()+' i '+CARGO_PTS+' PKT</div>'
         )+'</div>'
     )
-    +'<div style="font-size:9px;color:#5580a0;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Planowane modele cargo</div>'
+    +'<div style="font-size:9px;color:#94a3b8;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Planowane modele cargo</div>'
     +'<div style="display:flex;gap:7px;flex-wrap:wrap;">'
-    +'<div style="padding:6px 12px;background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.18);border-radius:20px;font-size:11px;color:#f5a623;">&#128230; A330-200F</div>'
-    +'<div style="padding:6px 12px;background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.18);border-radius:20px;font-size:11px;color:#f5a623;">&#128230; 747-8F</div>'
-    +'<div style="padding:6px 12px;background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.18);border-radius:20px;font-size:11px;color:#f5a623;">&#128230; 777F</div>'
-    +'<div style="padding:6px 12px;background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.18);border-radius:20px;font-size:11px;color:#f5a623;">&#128230; 737-800BCF</div>'
+    +'<div style="padding:6px 12px;background:rgba(249,115,22,0.07);border:1px solid rgba(249,115,22,0.18);border-radius:20px;font-size:11px;color:#f97316;">&#128230; A330-200F</div>'
+    +'<div style="padding:6px 12px;background:rgba(249,115,22,0.07);border:1px solid rgba(249,115,22,0.18);border-radius:20px;font-size:11px;color:#f97316;">&#128230; 747-8F</div>'
+    +'<div style="padding:6px 12px;background:rgba(249,115,22,0.07);border:1px solid rgba(249,115,22,0.18);border-radius:20px;font-size:11px;color:#f97316;">&#128230; 777F</div>'
+    +'<div style="padding:6px 12px;background:rgba(249,115,22,0.07);border:1px solid rgba(249,115,22,0.18);border-radius:20px;font-size:11px;color:#f97316;">&#128230; 737-800BCF</div>'
     +'</div>';
   document.getElementById('modal-body').innerHTML = html;
   document.getElementById('modal').style.display = 'flex';
@@ -342,11 +342,11 @@ function openNewAircraftShop() {
   };
   var html =
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">'
-    +'<button onclick="openShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e0f0ff;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;line-height:1.4;font-family:Arial,sans-serif;">&#8592;</button>'
-    +'<div style="flex:1;"><div style="font-size:15px;font-weight:800;color:#e0f0ff;">Kup samolot</div>'
-    +'<div style="font-size:10px;color:#5580a0;margin-top:1px;">Saldo: <span style="color:#00e676;font-weight:700;">$'+Math.round(G.cash).toLocaleString()+'</span> &nbsp;&bull;&nbsp; Hangar: <span style="color:#00d4ff;font-weight:700;">'+G.fleet.length+'/'+getHangarCapacity()+'</span></div>'
+    +'<button onclick="openShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#f1f5f9;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;line-height:1.4;font-family:Arial,sans-serif;">&#8592;</button>'
+    +'<div style="flex:1;"><div style="font-size:15px;font-weight:800;color:#f1f5f9;">Kup samolot</div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:1px;">Saldo: <span style="color:#10b981;font-weight:700;">$'+Math.round(G.cash).toLocaleString()+'</span> &nbsp;&bull;&nbsp; Hangar: <span style="color:#06b6d4;font-weight:700;">'+G.fleet.length+'/'+getHangarCapacity()+'</span></div>'
     +'</div></div>'
-    +'<div style="font-size:9px;color:#5580a0;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Wybierz producenta</div>';
+    +'<div style="font-size:9px;color:#94a3b8;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Wybierz producenta</div>';
 
   brands.forEach(function(brand) {
     var planes = AIRCRAFT_CATALOG[brand];
@@ -354,14 +354,14 @@ function openNewAircraftShop() {
     var minPrice = availablePlanes.length ? Math.min.apply(null,availablePlanes.map(function(p){return p.price;})) : 0;
     var affordable = availablePlanes.filter(function(p){return G.cash>=p.price && G.level>=(p.level||1);}).length;
     var logo = LOGOS[brand];
-    var logoBg = LOGO_BG[brand] || '#0d1b2a';
-    var accent = BRAND_COLOR[brand] || '#5580a0';
+    var logoBg = LOGO_BG[brand] || '#0f0f1a';
+    var accent = BRAND_COLOR[brand] || '#94a3b8';
     var abbr = brand.substring(0,3).toUpperCase();
 
     html +=
       '<div data-brand="'+brand+'" onclick="openManufacturerByName(this)" '
       +'style="display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:13px;'
-      +'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);'
+      +'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);'
       +'border-left:3px solid '+accent+';margin-bottom:7px;cursor:pointer;">'
       +(logo
         ?'<div style="width:66px;height:36px;background:'+logoBg+';border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:5px;box-sizing:border-box;">'
@@ -370,9 +370,9 @@ function openNewAircraftShop() {
           +'<span style="font-size:11px;font-weight:800;color:'+accent+';">'+abbr+'</span></div>'
       )
       +'<div style="flex:1;min-width:0;">'
-      +'<div style="font-size:13px;font-weight:700;color:#e0f0ff;margin-bottom:2px;">'+brand+'</div>'
-      +'<div style="font-size:10px;color:#5580a0;">'+planes.length+' modeli'+(minPrice>0?' &bull; od $'+Math.round(minPrice/1000000)+'M':'')+'</div>'
-      +(affordable>0?'<div style="display:inline-flex;align-items:center;gap:3px;margin-top:4px;padding:2px 8px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);border-radius:20px;font-size:9px;font-weight:700;color:#00e676;">&#10003; '+affordable+' dostepnych</div>':'')
+      +'<div style="font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:2px;">'+brand+'</div>'
+      +'<div style="font-size:10px;color:#94a3b8;">'+planes.length+' modeli'+(minPrice>0?' &bull; od $'+Math.round(minPrice/1000000)+'M':'')+'</div>'
+      +(affordable>0?'<div style="display:inline-flex;align-items:center;gap:3px;margin-top:4px;padding:2px 8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:20px;font-size:9px;font-weight:700;color:#10b981;">&#10003; '+affordable+' dostepnych</div>':'')
       +'</div>'
       +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2.5" opacity="0.7"><polyline points="9 18 15 12 9 6"/></svg>'
       +'</div>';
@@ -394,17 +394,17 @@ function openManufacturer(brand) {
     'Antonow':'#27ae60','Dassault':'#2980b9','DHC':'#1abc9c','COMAC':'#c0392b'
   };
   var logo = LOGOS[brand];
-  var accent = BRAND_COLOR[brand] || '#00d4ff';
+  var accent = BRAND_COLOR[brand] || '#06b6d4';
   var availCount = aircraft.filter(function(a){return !a.locked;}).length;
   var affordCount = aircraft.filter(function(a){return !a.locked&&G.cash>=a.price&&G.level>=(a.level||1);}).length;
 
   var html =
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">'
-    +'<button onclick="openNewAircraftShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e0f0ff;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;line-height:1.4;font-family:Arial,sans-serif;">&#8592;</button>'
-    +(logo?'<div style="background:'+(LOGO_BG[brand]||'#0d1b2a')+';border-radius:8px;padding:4px 10px;flex-shrink:0;"><img src="'+logo+'" style="height:22px;object-fit:contain;vertical-align:middle;"></div>':'')
+    +'<button onclick="openNewAircraftShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#f1f5f9;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;line-height:1.4;font-family:Arial,sans-serif;">&#8592;</button>'
+    +(logo?'<div style="background:'+(LOGO_BG[brand]||'#0f0f1a')+';border-radius:8px;padding:4px 10px;flex-shrink:0;"><img src="'+logo+'" style="height:22px;object-fit:contain;vertical-align:middle;"></div>':'')
     +'<div style="flex:1;min-width:0;">'
-    +'<div style="font-size:15px;font-weight:800;color:#e0f0ff;">'+brand+'</div>'
-    +'<div style="font-size:10px;color:#5580a0;">'+availCount+' modeli &bull; <span style="color:#00e676;">'+affordCount+' stac cie</span></div>'
+    +'<div style="font-size:15px;font-weight:800;color:#f1f5f9;">'+brand+'</div>'
+    +'<div style="font-size:10px;color:#94a3b8;">'+availCount+' modeli &bull; <span style="color:#10b981;">'+affordCount+' stac cie</span></div>'
     +'</div></div>';
 
   aircraft.forEach(function(ac) {
@@ -414,32 +414,32 @@ function openManufacturer(brand) {
     var canBuy = !isLocked && !levelLocked && !tooExpensive;
 
     var statusBadge = '';
-    if(isLocked) statusBadge='<span style="padding:2px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;font-size:9px;color:#5580a0;white-space:nowrap;">&#128274; Wkrotce</span>';
-    else if(canBuy) statusBadge='<span style="padding:2px 8px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.25);border-radius:20px;font-size:9px;font-weight:700;color:#00e676;white-space:nowrap;">&#10003; Dostepny</span>';
-    else if(levelLocked) statusBadge='<span style="padding:2px 8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);border-radius:20px;font-size:9px;font-weight:700;color:#f5a623;white-space:nowrap;">LVL '+ac.level+'</span>';
-    else if(tooExpensive) statusBadge='<span style="padding:2px 8px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.2);border-radius:20px;font-size:9px;color:#e63946;white-space:nowrap;">Za drogi</span>';
+    if(isLocked) statusBadge='<span style="padding:2px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;font-size:9px;color:#94a3b8;white-space:nowrap;">&#128274; Wkrotce</span>';
+    else if(canBuy) statusBadge='<span style="padding:2px 8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:20px;font-size:9px;font-weight:700;color:#10b981;white-space:nowrap;">&#10003; Dostepny</span>';
+    else if(levelLocked) statusBadge='<span style="padding:2px 8px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.25);border-radius:20px;font-size:9px;font-weight:700;color:#f97316;white-space:nowrap;">LVL '+ac.level+'</span>';
+    else if(tooExpensive) statusBadge='<span style="padding:2px 8px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:20px;font-size:9px;color:#ef4444;white-space:nowrap;">Za drogi</span>';
 
     html +=
       '<div style="border-radius:13px;overflow:hidden;margin-bottom:10px;border:1px solid '+(isLocked?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.09)')+';opacity:'+(isLocked?'0.5':'1')+'">'
       +'<div style="padding:10px 12px;background:rgba(255,255,255,0.04);display:flex;align-items:flex-start;justify-content:space-between;gap:8px;border-bottom:1px solid rgba(255,255,255,0.05);border-left:3px solid '+accent+'">'
-      +'<div style="min-width:0;"><div style="font-size:14px;font-weight:800;color:'+(isLocked?'#5580a0':'#e0f0ff')+';margin-bottom:2px;">'+(isLocked?'&#128274; ':'')+ac.model+'</div>'
-      +'<div style="font-size:10px;color:#5580a0;line-height:1.3;">'+ac.desc+'</div></div>'
+      +'<div style="min-width:0;"><div style="font-size:14px;font-weight:800;color:'+(isLocked?'#94a3b8':'#f1f5f9')+';margin-bottom:2px;">'+(isLocked?'&#128274; ':'')+ac.model+'</div>'
+      +'<div style="font-size:10px;color:#94a3b8;line-height:1.3;">'+ac.desc+'</div></div>'
       +statusBadge+'</div>'
       +(ac.img?'<img src="'+ac.img+'" style="width:100%;max-height:100px;object-fit:cover;object-position:center;background:#060e17;display:block;">':'')
       +'<div style="padding:10px 12px;background:rgba(0,0,0,0.25);">'
       +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:'+(isLocked?'0':'10px')+'">'
-      +'<div style="padding:4px 8px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.14);border-radius:7px;font-size:10px;color:#7dd3fc;">&#128186; '+ac.seats+' miejsc</div>'
-      +'<div style="padding:4px 8px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.14);border-radius:7px;font-size:10px;color:#7dd3fc;">&#9992; '+ac.range+' km</div>'
-      +'<div style="padding:4px 8px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.14);border-radius:7px;font-size:10px;color:#7dd3fc;">'+ac.engines+'</div>'
+      +'<div style="padding:4px 8px;background:rgba(6,182,212,0.07);border:1px solid rgba(6,182,212,0.14);border-radius:7px;font-size:10px;color:#06b6d4;">&#128186; '+ac.seats+' miejsc</div>'
+      +'<div style="padding:4px 8px;background:rgba(6,182,212,0.07);border:1px solid rgba(6,182,212,0.14);border-radius:7px;font-size:10px;color:#06b6d4;">&#9992; '+ac.range+' km</div>'
+      +'<div style="padding:4px 8px;background:rgba(6,182,212,0.07);border:1px solid rgba(6,182,212,0.14);border-radius:7px;font-size:10px;color:#06b6d4;">'+ac.engines+'</div>'
       +'</div>'
       +(!isLocked
         ? (canBuy
           ? '<button data-model="'+ac.model+'" onclick="buyAircraftByEl(this)" style="width:100%;padding:10px;background:linear-gradient(135deg,'+accent+','+accent+'cc);border:none;border-radius:9px;color:#fff;font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Kup za $'+ac.price.toLocaleString()+'</button>'
           : levelLocked
-            ? '<div style="padding:9px 12px;background:rgba(245,166,35,0.05);border:1px solid rgba(245,166,35,0.15);border-radius:9px;text-align:center;font-size:11px;color:#f5a623;">Wymagany poziom '+ac.level+'</div>'
-            : '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(230,57,70,0.05);border:1px solid rgba(230,57,70,0.12);border-radius:9px;">'
-              +'<span style="font-size:11px;color:#e63946;">Za malo gotowki</span>'
-              +'<span style="font-size:12px;font-weight:700;color:#e0f0ff;">$'+ac.price.toLocaleString()+'</span></div>'
+            ? '<div style="padding:9px 12px;background:rgba(249,115,22,0.05);border:1px solid rgba(249,115,22,0.15);border-radius:9px;text-align:center;font-size:11px;color:#f97316;">Wymagany poziom '+ac.level+'</div>'
+            : '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.12);border-radius:9px;">'
+              +'<span style="font-size:11px;color:#ef4444;">Za malo gotowki</span>'
+              +'<span style="font-size:12px;font-weight:700;color:#f1f5f9;">$'+ac.price.toLocaleString()+'</span></div>'
         )
         :''
       )+'</div></div>';
@@ -476,13 +476,13 @@ function showRewardedAdShop() {
   try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
   var sec=5,timerEl=document.getElementById('ad-timer-txt'),closeBtn=document.getElementById('ad-close-btn');
   if(timerEl) timerEl.textContent='Zamknij za '+sec+'s';
-  if(closeBtn){closeBtn.disabled=true;closeBtn.style.color='#5580a0';closeBtn.style.cursor='not-allowed';closeBtn.style.background='rgba(255,255,255,0.04)';}
+  if(closeBtn){closeBtn.disabled=true;closeBtn.style.color='#94a3b8';closeBtn.style.cursor='not-allowed';closeBtn.style.background='rgba(255,255,255,0.04)';}
   var interval=setInterval(function(){
     sec--;
     if(timerEl) timerEl.textContent=sec>0?'Zamknij za '+sec+'s':'Mozesz zamknac!';
     if(sec<=0){
       clearInterval(interval);
-      if(closeBtn){closeBtn.disabled=false;closeBtn.style.color='#fff';closeBtn.style.background='linear-gradient(135deg,#1a56db,#00d4ff)';closeBtn.style.cursor='pointer';closeBtn.onclick=function(){closeAdAndReward();};}
+      if(closeBtn){closeBtn.disabled=false;closeBtn.style.color='#fff';closeBtn.style.background='linear-gradient(135deg,#8b5cf6,#ec4899)';closeBtn.style.cursor='pointer';closeBtn.onclick=function(){closeAdAndReward();};}
     }
   },1000);
 }
