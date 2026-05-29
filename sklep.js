@@ -30,15 +30,15 @@ function openShop() {
     +'<div style="font-size:13px;font-weight:700;color:#f97316;">Cargo</div>'
     +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Wkrotce</div>'
     +'</div>'
-    +'<div onclick="openDemandShop()" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(236,72,153,0.06));border:1px solid rgba(139,92,246,0.25);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
-    +'<div style="font-size:32px;margin-bottom:8px;">&#128200;</div>'
-    +'<div style="font-size:13px;font-weight:700;color:#8b5cf6;">Popyt</div>'
-    +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Obłożenie tras</div>'
-    +'</div>'
     +'<div onclick="openTopUp()" style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.04));border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
     +'<div style="font-size:32px;margin-bottom:8px;">&#128179;</div>'
     +'<div style="font-size:13px;font-weight:700;color:#10b981;">Doladuj</div>'
     +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Kup $ i PKT</div>'
+    +'</div>'
+    +'<div onclick="openDemandShop()" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(236,72,153,0.06));border:1px solid rgba(139,92,246,0.25);border-radius:14px;padding:16px;cursor:pointer;text-align:center;grid-column:span 2;">'
+    +'<div style="font-size:32px;margin-bottom:6px;">&#128200;</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#8b5cf6;">Popyt &amp; Obłożenie</div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Zwiększ obłożenie tras • bazowo 70%</div>'
     +'</div>'
     +'</div>'
     +'<div style="background:linear-gradient(135deg,rgba(255,215,0,0.06),rgba(249,115,22,0.04));border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:14px;margin-bottom:12px;cursor:pointer;" onclick="showRewardedAdShop()">'
@@ -60,6 +60,7 @@ function openShop() {
   document.getElementById('modal-body').innerHTML=html;
   document.getElementById('modal').style.display='flex';
 }
+
 
 /* ===== SYSTEM ODBLOKOWYWANIA KRAJOW ===== */
 function getUnlockedCountries() {
