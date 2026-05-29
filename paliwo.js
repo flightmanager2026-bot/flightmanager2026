@@ -1,137 +1,130 @@
 /* ===== SYSTEM PALIWA ===== */
 
-function getFuelCostForModel(model) {
-  if(typeof AIRCRAFT_CATALOG !== 'undefined') {
-    var found = null;
-    Object.keys(AIRCRAFT_CATALOG).forEach(function(brand){
-      AIRCRAFT_CATALOG[brand].forEach(function(ac){ if(ac.model===model) found=ac; });
-    });
-    if(found) {
-      var base = Math.round(((found.seats||150)*20) + ((found.range||3000)*0.5));
-      return Math.round(base/100)*100;
-    }
-  }
-  var n=model.toLowerCase();
-  if(n.indexOf('a380')>=0) return 22000;
-  if(n.indexOf('777')>=0)  return 18000;
-  if(n.indexOf('a350')>=0||n.indexOf('787-10')>=0) return 14000;
-  if(n.indexOf('787-9')>=0||n.indexOf('a330')>=0)  return 12000;
-  if(n.indexOf('787-8')>=0) return 11000;
-  if(n.indexOf('a321')>=0) return 6000;
-  if(n.indexOf('a320')>=0||n.indexOf('737')>=0) return 5200;
-  if(n.indexOf('a220')>=0||n.indexOf('e19')>=0) return 4500;
-  if(n.indexOf('e17')>=0||n.indexOf('atr')>=0)  return 3800;
-  return 5000;
-}
+// Spalanie wg modelu (koszt na km lotu)
+var FUEL_PER_KM = {
+  'A380':      85, 'B747-8':    80, 'B747-400':  78,
+  'B777-300ER':65, 'B777-200ER':62, 'A350-1000': 58,
+  'A350-900':  55, 'B787-10':   52, 'B787-9':    48,
+  'B787-8':    45, 'A330-900':  50, 'A330-300':  48,
+  'A330-200':  44, 'A321XLR':   28, 'A321neo':   26,
+  'A321ceo':   30, 'A320neo':   22, 'A320ceo':   25,
+  'A319neo':   20, 'B737 MAX 10':25,'B737 MAX 9':23,
+  'B737 MAX 8':21, 'B737-800':  24, 'A220-300':  18,
+  'A220-100':  16, 'E195-E2':   15, 'E190-E2':   14,
+  'E175-E2':   13, 'ATR 72':    10, 'ATR 42':    8,
+};
 
-function getFuelMultiplier() { return G.fuelMultiplier || 1.0; }
-
-function getTotalFuelCost24h() {
-  if(!G.fleet||!G.fleet.length) return 0;
-  var mult = getFuelMultiplier();
-  var total = 0;
-  G.fleet.forEach(function(ac){ total += Math.round(getFuelCostForModel(ac.model)*mult); });
-  return total;
+function getFuelPerKm(model) {
+  if(FUEL_PER_KM[model]) return FUEL_PER_KM[model];
+  // Fallback po wielkości samolotu
+  var n = model.toLowerCase();
+  if(n.indexOf('380')>=0||n.indexOf('747')>=0) return 80;
+  if(n.indexOf('777')>=0||n.indexOf('350')>=0) return 60;
+  if(n.indexOf('787')>=0||n.indexOf('330')>=0) return 47;
+  if(n.indexOf('321')>=0||n.indexOf('737')>=0) return 27;
+  if(n.indexOf('320')>=0) return 22;
+  if(n.indexOf('220')>=0||n.indexOf('190')>=0||n.indexOf('195')>=0) return 16;
+  if(n.indexOf('175')>=0||n.indexOf('atr')>=0) return 11;
+  return 20;
 }
 
 function initFuel() {
   if(!G.fuel) G.fuel = {};
-  if(!G.fuel.lastPaid) G.fuel.lastPaid = 0;
-  if(!G.fuel.nextDue)  G.fuel.nextDue  = 0;
-  if(!G.fuelMultiplier) G.fuelMultiplier = 1.0;
+  if(!G.fuel.lastPaid)   G.fuel.lastPaid = 0;
+  if(!G.fuel.nextDue)    G.fuel.nextDue  = 0;
+  if(G.fuelDebt===undefined) G.fuelDebt = 0;
+  if(!G.fuelMultiplier)  G.fuelMultiplier = 1.0;
 }
 
-function updateFuelPrice() {
+// Wywołaj po każdym odlocie samolotu
+function addFuelDebt(distKm, model) {
   initFuel();
-  var old = G.fuelMultiplier || 1.0;
-  var change = (Math.random()*0.35)-0.15;
-  G.fuelMultiplier = Math.max(0.6, Math.min(2.5, Math.round((old+change)*100)/100));
-  save();
-  if(Math.abs(change)>0.1) showMsg('⛽ Cena paliwa: '+(G.fuelMultiplier*100).toFixed(0)+'% normy');
+  if(!distKm || distKm <= 0) return;
+  var costPerKm = getFuelPerKm(model);
+  var cost = Math.round(distKm * costPerKm * (G.fuelMultiplier||1.0));
+  G.fuelDebt = (G.fuelDebt||0) + cost;
+  // Aktualizuj HUD jezeli widoczny
+  var hudFuel = document.getElementById('hud-fuel-debt');
+  if(hudFuel) hudFuel.textContent = '$'+(G.fuelDebt).toLocaleString();
 }
 
-/* -- Automatyczna oplata co 24h -- */
-function checkFuelPayment() {
+// Automatyczna opłata o północy
+function scheduleMidnightFuel() {
+  var now = new Date();
+  var midnight = new Date(now);
+  midnight.setHours(24,0,0,0);
+  var msToMidnight = midnight - now;
+  setTimeout(function(){
+    collectFuelDebt();
+    setInterval(collectFuelDebt, 86400000); // co 24h
+  }, msToMidnight);
+}
+
+function collectFuelDebt() {
   initFuel();
-  var now = Date.now();
-  if(G.fuel.nextDue && now < G.fuel.nextDue) return; // Jeszcze nie czas
-  var cost = getTotalFuelCost24h();
-  if(!cost) return;
-  if(G.cash >= cost) {
-    G.cash -= cost;
-    G.fuel.lastPaid = now;
-    G.fuel.nextDue  = now + 86400000;
+  var debt = G.fuelDebt || 0;
+  if(debt <= 0) { G.fuel.lastPaid=Date.now(); G.fuel.nextDue=Date.now()+86400000; save(); return; }
+  if(G.cash >= debt) {
+    G.cash -= debt;
+    G.fuelDebt = 0;
+    G.fuel.lastPaid = Date.now();
+    G.fuel.nextDue  = Date.now() + 86400000;
     G.fuel.paidToday = true;
     G.fuelCrisis = false;
     save(); updateHUD();
-    showMsg('⛽ Paliwo ('+(G.fleet.length)+' sam): -$'+cost.toLocaleString());
+    showMsg('⛽ Paliwo pobrane o północy: -$'+debt.toLocaleString());
   } else {
-    G.fuelCrisis = true; save();
-    if(typeof showEventModal==='function') {
-      showEventModal({
-        icon:'⛽', title:'KRYZYS PALIWOWY!',
-        desc:'Brak kasy na paliwo dla '+G.fleet.length+' samolotów! Potrzebujesz $'+cost.toLocaleString()+'. Loty wstrzymane.',
-        severity:'danger',
-        adButton:true,
-        adReward:function(){
-          G.fuelCrisis=false;
-          G.fuel.lastPaid=Date.now(); G.fuel.nextDue=Date.now()+86400000; G.fuel.paidToday=true;
-          save(); updateHUD(); closeModal(); showMsg('Kryzys zażegnany!');
-        },
-        actions:[{label:'Idź do sklepu',fn:function(){closeModal();openTopUp();}}]
-      });
-    }
+    G.fuelCrisis = true;
+    save();
+    showMsg('⛽ KRYZYS! Brak kasy na paliwo ($'+debt.toLocaleString()+')!');
   }
 }
 
-/* -- Reczna oplata (raz dziennie) -- */
+// Ręczna opłata — gracz może zapłacić w dowolnej chwili
 function payFuelNow() {
   initFuel();
-  var now = Date.now();
-  var nextDue = G.fuel.nextDue || 0;
-
-  // Czy juz zaplacono dzisiaj? (jesli nextDue jest w przyszlosci)
-  if(nextDue > now) {
-    var rem = nextDue - now;
-    var h = Math.floor(rem/3600000);
-    var m = Math.floor((rem%3600000)/60000);
-    showMsg('Już opłacono! Następna opłata za '+h+'h '+m+'m');
-    return;
-  }
-
-  var cost = getTotalFuelCost24h();
-  if(!cost){ showMsg('Brak samolotów'); return; }
-  if(G.cash < cost){ showMsg('Za mało kasy! Potrzebujesz $'+cost.toLocaleString()); return; }
-  G.cash -= cost;
-  G.fuel.lastPaid = now;
-  G.fuel.nextDue  = now + 86400000;
+  var debt = G.fuelDebt || 0;
+  if(debt <= 0) { showMsg('Brak długu paliwowego!'); openFuelPanel(); return; }
+  if(G.cash < debt) { showMsg('Za mało kasy! Dług: $'+debt.toLocaleString()); openFuelPanel(); return; }
+  G.cash -= debt;
+  G.fuelDebt = 0;
+  G.fuel.lastPaid = Date.now();
   G.fuelCrisis = false;
   save(); updateHUD();
-  showMsg('✅ Paliwo opłacone: -$'+cost.toLocaleString());
+  showMsg('✅ Paliwo opłacone: -$'+debt.toLocaleString());
   openFuelPanel();
 }
 
-/* -- Panel paliwa -- */
+// Panel paliwa
 function openFuelPanel() {
   initFuel();
-  var now  = Date.now();
-  var due  = G.fuel.nextDue || 0;
-  var rem  = Math.max(0, due - now);
-  var paid = due > now; // czy juz zaplacono na ten okres
-  var h    = Math.floor(rem/3600000);
-  var m    = Math.floor((rem%3600000)/60000);
-  var s    = Math.floor((rem%60000)/1000);
-  var cost = getTotalFuelCost24h();
-  var mult = getFuelMultiplier();
+  var debt = G.fuelDebt || 0;
+  var mult = G.fuelMultiplier || 1.0;
   var pct  = Math.round(mult*100);
-  var multCol = mult>1.2?'#ef4444':mult>1.0?'#f97316':'#10b981';
+  var multCol = mult>1.3?'#ef4444':mult>1.0?'#f97316':'#10b981';
   var crisis = G.fuelCrisis;
 
-  var html = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">'
+  // Oblicz dzisiejsze zuzycie - na podstawie lotow
+  var fleetInfo = '';
+  if(G.fleet && G.fleet.length) {
+    fleetInfo = '<div style="margin-bottom:12px;">'
+      +'<div style="font-size:9px;color:#94a3b8;letter-spacing:2px;margin-bottom:8px;">SPALANIE FLOTYY</div>';
+    G.fleet.forEach(function(ac){
+      var cpk = getFuelPerKm(ac.model);
+      fleetInfo += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);">'
+        +'<span style="font-size:12px;color:#f1f5f9;">'+ac.model+' <span style="color:#94a3b8;font-size:10px;">('+ac.reg+')</span></span>'
+        +'<span style="font-size:11px;color:#f97316;font-weight:700;">$'+cpk+'/km</span>'
+        +'</div>';
+    });
+    fleetInfo += '</div>';
+  }
+
+  var html =
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">'
     +'<div style="width:48px;height:48px;background:linear-gradient(135deg,#f97316,#eab308);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;">⛽</div>'
     +'<div>'
     +'<div style="font-size:16px;font-weight:900;color:#f1f5f9;">System Paliwa</div>'
-    +'<div style="font-size:11px;color:#94a3b8;">Automatyczna opłata co 24 godziny</div>'
+    +'<div style="font-size:11px;color:#94a3b8;">Dług rośnie z każdym lotem • Auto-pobór o 00:00</div>'
     +'</div></div>';
 
   if(crisis) {
@@ -139,60 +132,48 @@ function openFuelPanel() {
       +'<div style="font-size:14px;font-weight:900;color:#ef4444;">⚠ KRYZYS PALIWOWY — loty wstrzymane</div></div>';
   }
 
-  // Licznik i koszt
+  // Aktualny dług
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">'
-    +'<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:14px;text-align:center;">'
-    +'<div style="font-size:20px;font-weight:900;color:#ef4444;">$'+cost.toLocaleString()+'</div>'
-    +'<div style="font-size:9px;color:#94a3b8;margin-top:2px;">OPŁATA / 24H</div>'
-    +'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">'+G.fleet.length+' samolotów</div>'
+    +'<div style="background:'+(debt>0?'rgba(239,68,68,0.08)':'rgba(16,185,129,0.08)')+';border:1px solid '+(debt>0?'rgba(239,68,68,0.2)':'rgba(16,185,129,0.2)')+';border-radius:12px;padding:14px;text-align:center;">'
+    +'<div style="font-size:20px;font-weight:900;color:'+(debt>0?'#ef4444':'#10b981')+';">$'+(debt).toLocaleString()+'</div>'
+    +'<div style="font-size:9px;color:#94a3b8;margin-top:2px;">AKTUALNY DŁUG</div>'
     +'</div>'
-    +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;text-align:center;" id="fuel-countdown-box">'
-    +'<div id="fuel-countdown" style="font-size:20px;font-weight:900;color:'+(paid?'#10b981':'#ef4444')+';">'
-    +(paid ? h+'h '+String(m).padStart(2,'0')+'m' : 'NALEŻNA')
-    +'</div>'
-    +'<div style="font-size:9px;color:#94a3b8;margin-top:2px;">'+(paid?'DO KOLEJNEJ OPŁATY':'OPŁAĆ TERAZ')+'</div>'
+    +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;text-align:center;">'
+    +'<div style="font-size:20px;font-weight:900;color:'+multCol+';">'+pct+'%</div>'
+    +'<div style="font-size:9px;color:#94a3b8;margin-top:2px;">CENA PALIWA</div>'
     +'</div></div>'
 
-    // Cena rynkowa
+    // Pasek ceny
     +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:12px;margin-bottom:14px;">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
     +'<div style="font-size:11px;color:#94a3b8;">Cena rynkowa paliwa</div>'
-    +'<div style="font-size:14px;font-weight:900;color:'+multCol+';">'+pct+'% normy</div></div>'
+    +'<div style="font-size:13px;font-weight:700;color:'+multCol+';">'+pct+'% normy</div></div>'
     +'<div style="height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;">'
-    +'<div style="height:100%;width:'+Math.min(100,pct/2)+'%;background:'+multCol+';border-radius:3px;transition:width 0.3s;"></div></div></div>';
+    +'<div style="height:100%;width:'+Math.min(100,pct/2.5)+'%;background:'+multCol+';border-radius:3px;"></div></div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:6px;">Zmienia się losowo • niski = taniej latać</div>'
+    +'</div>'
 
-  // Przycisk - szary jesli juz zaplacono
-  if(paid) {
-    html += '<div style="width:100%;padding:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#94a3b8;font-size:14px;font-weight:700;text-align:center;margin-bottom:8px;box-sizing:border-box;">'
-      +'✅ Opłacono — następna opłata za '+h+'h '+String(m).padStart(2,'0')+'m</div>';
+    + fleetInfo
+
+    // Jak działa
+    +'<div style="background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:12px;padding:12px;margin-bottom:14px;">'
+    +'<div style="font-size:11px;font-weight:700;color:#8b5cf6;margin-bottom:6px;">Jak działa?</div>'
+    +'<div style="font-size:11px;color:#94a3b8;line-height:1.7;">'
+    +'• Każdy lot dodaje koszt paliwa do długu<br>'
+    +'• Koszt = dystans (km) × spalanie modelu<br>'
+    +'• O 00:00 system automatycznie pobiera dług<br>'
+    +'• Możesz też zapłacić ręcznie w dowolnej chwili'
+    +'</div></div>';
+
+  // Przycisk
+  if(debt > 0) {
+    html += '<button onclick="payFuelNow()" style="width:100%;padding:14px;background:linear-gradient(135deg,#f97316,#eab308);border:none;border-radius:12px;color:#000;font-size:15px;font-weight:800;font-family:Arial,sans-serif;cursor:pointer;margin-bottom:8px;">⛽ Zapłać teraz $'+debt.toLocaleString()+'</button>';
   } else {
-    html += '<button onclick="payFuelNow()" style="width:100%;padding:14px;background:linear-gradient(135deg,#f97316,#eab308);border:none;border-radius:12px;color:#000;font-size:15px;font-weight:800;font-family:Arial,sans-serif;cursor:pointer;margin-bottom:8px;">⛽ Zapłać teraz $'+cost.toLocaleString()+'</button>';
+    html += '<div style="width:100%;padding:14px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:12px;color:#10b981;font-size:14px;font-weight:700;text-align:center;margin-bottom:8px;box-sizing:border-box;">✅ Brak długu — nie musisz nic płacić</div>';
   }
 
   html += '<button onclick="closeModal()" style="width:100%;padding:11px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#94a3b8;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;">Zamknij</button>';
 
   document.getElementById('modal-body').innerHTML = html;
   document.getElementById('modal').style.display = 'flex';
-
-  // Odliczanie w czasie rzeczywistym
-  if(paid && rem > 0) {
-    clearInterval(window._fuelCountdown);
-    window._fuelCountdown = setInterval(function(){
-      var r = Math.max(0, (G.fuel.nextDue||0) - Date.now());
-      var el = document.getElementById('fuel-countdown');
-      if(!el){ clearInterval(window._fuelCountdown); return; }
-      if(r <= 0) {
-        clearInterval(window._fuelCountdown);
-        el.textContent = 'NALEŻNA';
-        el.style.color = '#ef4444';
-        // Otwórz panel ponownie żeby pokazac przycisk
-        openFuelPanel();
-        return;
-      }
-      var hh = Math.floor(r/3600000);
-      var mm = Math.floor((r%3600000)/60000);
-      var ss = Math.floor((r%60000)/1000);
-      el.textContent = hh+'h '+String(mm).padStart(2,'0')+'m '+String(ss).padStart(2,'0')+'s';
-    }, 1000);
-  }
 }
