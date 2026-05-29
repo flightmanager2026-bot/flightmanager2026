@@ -2,30 +2,30 @@
 
 // Spalanie wg modelu (koszt na km lotu)
 var FUEL_PER_KM = {
-  'A380':      85, 'B747-8':    80, 'B747-400':  78,
-  'B777-300ER':65, 'B777-200ER':62, 'A350-1000': 58,
-  'A350-900':  55, 'B787-10':   52, 'B787-9':    48,
-  'B787-8':    45, 'A330-900':  50, 'A330-300':  48,
-  'A330-200':  44, 'A321XLR':   28, 'A321neo':   26,
-  'A321ceo':   30, 'A320neo':   22, 'A320ceo':   25,
-  'A319neo':   20, 'B737 MAX 10':25,'B737 MAX 9':23,
-  'B737 MAX 8':21, 'B737-800':  24, 'A220-300':  18,
-  'A220-100':  16, 'E195-E2':   15, 'E190-E2':   14,
-  'E175-E2':   13, 'ATR 72':    10, 'ATR 42':    8,
+  'A380':      8, 'B747-8':    8, 'B747-400':  8,
+  'B777-300ER':6, 'B777-200ER':6, 'A350-1000': 6,
+  'A350-900':  5, 'B787-10':   5, 'B787-9':    5,
+  'B787-8':    4, 'A330-900':  5, 'A330-300':  5,
+  'A330-200':  4, 'A321XLR':   3, 'A321neo':   3,
+  'A321ceo':   3, 'A320neo':   2, 'A320ceo':   2,
+  'A319neo':   2, 'B737 MAX 10':2,'B737 MAX 9':2,
+  'B737 MAX 8':2, 'B737-800':  2, 'A220-300':  2,
+  'A220-100':  1, 'E195-E2':   1, 'E190-E2':   1,
+  'E175-E2':   1, 'ATR 72':    1, 'ATR 42':    1,
 };
 
 function getFuelPerKm(model) {
   if(FUEL_PER_KM[model]) return FUEL_PER_KM[model];
   // Fallback po wielkości samolotu
   var n = model.toLowerCase();
-  if(n.indexOf('380')>=0||n.indexOf('747')>=0) return 80;
-  if(n.indexOf('777')>=0||n.indexOf('350')>=0) return 60;
-  if(n.indexOf('787')>=0||n.indexOf('330')>=0) return 47;
-  if(n.indexOf('321')>=0||n.indexOf('737')>=0) return 27;
-  if(n.indexOf('320')>=0) return 22;
-  if(n.indexOf('220')>=0||n.indexOf('190')>=0||n.indexOf('195')>=0) return 16;
-  if(n.indexOf('175')>=0||n.indexOf('atr')>=0) return 11;
-  return 20;
+  if(n.indexOf('380')>=0||n.indexOf('747')>=0) return 8;
+  if(n.indexOf('777')>=0||n.indexOf('350')>=0) return 6;
+  if(n.indexOf('787')>=0||n.indexOf('330')>=0) return 5;
+  if(n.indexOf('321')>=0||n.indexOf('737')>=0) return 3;
+  if(n.indexOf('320')>=0) return 2;
+  if(n.indexOf('220')>=0||n.indexOf('190')>=0||n.indexOf('195')>=0) return 1;
+  if(n.indexOf('175')>=0||n.indexOf('atr')>=0) return 1;
+  return 2;
 }
 
 function initFuel() {
