@@ -64,7 +64,7 @@ function renderTrasy(body) {
       +'<div style="font-size:9px;color:#94a3b8;">'+r.from+' → '+r.to+'</div>'
       +'<div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(255,255,255,0.06);color:'+sc+';">'+st+'</div>'
       +'</div>'
-      +'<div style="font-size:11px;color:#94a3b8;margin-bottom:7px;">'+(ac?ac.model+' ('+ac.reg+')':'Brak samolotu')+' • '+(r.durationMin?r.durationMin+'min':'?')+' • <span style="color:#10b981;font-weight:700;">$'+r.revenue.toLocaleString()+'</span></div>'
+      +'<div style="font-size:11px;color:#94a3b8;margin-bottom:7px;">'+(ac?ac.model+' ('+ac.reg+')':'Brak samolotu')+' • '+(r.durationMin?r.durationMin+'min':'?')+' • <span style="color:#10b981;font-weight:700;">$'+r.revenue.toLocaleString()+'</span>'+(r.lastOcc?' • <span style="color:#8b5cf6;font-weight:700;">'+r.lastOcc+'% obł.</span>':'')+'</div>'
       +'<div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;">'
       +'<div style="height:100%;width:'+prog+'%;background:linear-gradient(90deg,#8b5cf6,#06b6d4);border-radius:2px;transition:width 0.5s;"></div>'
       +'</div>'
@@ -106,14 +106,24 @@ function departSingle(el) {
   ac.status='flying';
   // Dodaj koszt paliwa do dlugu
   if(typeof addFuelDebt==='function' && r.distKm) addFuelDebt(r.distKm, ac.model);
-  var cfg=ac.config||{first:0,prem:0,biz:biz,eco:eco};
-  r.revenue=Math.round((cfg.first||0)*mins*4.0+(cfg.prem||0)*mins*3.0+(cfg.biz||biz)*mins*2.0+(cfg.eco||eco)*mins*1.6);
+  // Oblicz przychod z uwzglednieniem popytu
+  var demandResult = typeof calcRevenueWithDemand==='function'
+    ? calcRevenueWithDemand(r, ac)
+    : null;
+  if(demandResult) {
+    r.revenue = demandResult.revenue;
+    r.lastPax = demandResult.pax;
+    r.lastOcc = demandResult.occupancy;
+  } else {
+    var cfg=ac.config||{first:0,prem:0,biz:biz,eco:eco};
+    r.revenue=Math.round((cfg.first||0)*mins*4.0+(cfg.prem||0)*mins*3.0+(cfg.biz||biz)*mins*2.0+(cfg.eco||eco)*mins*1.6);
+  }
   G.cash+=r.revenue;
   G.totalFlights=(G.totalFlights||0)+1;
   if(typeof checkLevelUp==='function') checkLevelUp();
   else { var nl=Math.floor(G.totalFlights/10)+1; if(nl>(G.level||1)){G.level=nl;showMsg('🎉 POZIOM '+G.level+'!');} }
   updateHUD();
-  if(typeof logDeparture==='function') logDeparture(totalPax);
+  if(typeof logDeparture==='function') logDeparture(demandResult?demandResult.pax:totalPax);
   if(typeof updateRankingValue==='function') updateRankingValue();
   if(typeof updateMissionProgress==='function') updateMissionProgress('flights',1);
   removeFlightLayer(r.id);
