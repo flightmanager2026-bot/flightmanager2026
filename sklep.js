@@ -30,6 +30,11 @@ function openShop() {
     +'<div style="font-size:13px;font-weight:700;color:#f97316;">Cargo</div>'
     +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Wkrotce</div>'
     +'</div>'
+    +'<div onclick="openDemandShop()" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(236,72,153,0.06));border:1px solid rgba(139,92,246,0.25);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
+    +'<div style="font-size:32px;margin-bottom:8px;">&#128200;</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#8b5cf6;">Popyt</div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Obłożenie tras</div>'
+    +'</div>'
     +'<div onclick="openTopUp()" style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.04));border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
     +'<div style="font-size:32px;margin-bottom:8px;">&#128179;</div>'
     +'<div style="font-size:13px;font-weight:700;color:#10b981;">Doladuj</div>'
@@ -504,3 +509,111 @@ function doAdReward(){
 
 function resetGame(){localStorage.removeItem('sb_v3');location.reload();}
 function saveSettings(){closeModal();showMsg('Zapisano!');}
+
+/* ===== POPYT / OBLOZENIE ===== */
+function openDemandShop() {
+  if(typeof initDemand==='function') initDemand();
+  var now = Date.now();
+  var globalBoost = G.demandBoost && G.demandBoost['_global'];
+  var boostActive = globalBoost && globalBoost.expires > now;
+  var adUsedToday = G.demandAdUsed && (now - G.demandAdUsed) < 86400000;
+
+  var timeLeft = function(expires) {
+    var ms = Math.max(0, expires - now);
+    var h = Math.floor(ms/3600000);
+    var m = Math.floor((ms%3600000)/60000);
+    return h+'h '+String(m).padStart(2,'0')+'m';
+  };
+
+  var currentOcc = 70;
+  if(boostActive) currentOcc = Math.min(100, 70 + Math.round(globalBoost.pct*100));
+
+  var html =
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
+    +'<button onclick="openShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#f1f5f9;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;font-family:Arial,sans-serif;">&#8592;</button>'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:15px;font-weight:800;color:#f1f5f9;">Popyt pasażerski</div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:1px;">Ulepsz obłożenie wszystkich tras</div>'
+    +'</div></div>'
+
+    // Aktualny stan
+    +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;margin-bottom:14px;">'
+    +'<div style="font-size:11px;color:#94a3b8;margin-bottom:10px;">AKTUALNE OBŁOŻENIE TRAS</div>'
+    +'<div style="display:flex;align-items:center;gap:12px;">'
+    +'<div style="flex:1;height:10px;background:rgba(255,255,255,0.08);border-radius:5px;overflow:hidden;">'
+    +'<div style="height:100%;width:'+currentOcc+'%;background:linear-gradient(90deg,#8b5cf6,#ec4899);border-radius:5px;transition:width 0.5s;"></div>'
+    +'</div>'
+    +'<div style="font-size:20px;font-weight:900;color:#8b5cf6;min-width:50px;text-align:right;">'+currentOcc+'%</div>'
+    +'</div>'
+    +(boostActive
+      ?'<div style="font-size:11px;color:#10b981;margin-top:8px;">✓ Boost aktywny — wygasa za '+timeLeft(globalBoost.expires)+'</div>'
+      :'<div style="font-size:11px;color:#94a3b8;margin-top:8px;">Bazowe obłożenie 70% — kup boost aby zwiększyć</div>'
+    )
+    +'</div>'
+
+    // Darmowa reklama
+    +'<div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:14px;margin-bottom:10px;">'
+    +'<div style="display:flex;align-items:flex-start;gap:12px;">'
+    +'<div style="font-size:32px;flex-shrink:0;">📺</div>'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:14px;font-weight:800;color:#ffd700;">Reklama</div>'
+    +'<div style="font-size:11px;color:#94a3b8;margin-top:2px;line-height:1.5;">+10% obłożenia na 5 godzin<br>Raz dziennie bezpłatnie</div>'
+    +'<div style="margin-top:10px;">'
+    +(adUsedToday
+      ?'<div style="padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;text-align:center;font-size:12px;color:#94a3b8;">✓ Użyto dziś — reset o północy</div>'
+      :'<button onclick="useDemandAdFromShop()" style="width:100%;padding:11px;background:linear-gradient(135deg,#f97316,#eab308);border:none;border-radius:10px;color:#000;font-size:13px;font-weight:800;font-family:Arial,sans-serif;cursor:pointer;">▶ Obejrzyj reklamę — GRATIS</button>'
+    )
+    +'</div></div></div></div>'
+
+    // Płatny boost
+    +'<div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);border-radius:14px;padding:14px;margin-bottom:10px;">'
+    +'<div style="display:flex;align-items:flex-start;gap:12px;">'
+    +'<div style="font-size:32px;flex-shrink:0;">💎</div>'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:14px;font-weight:800;color:#8b5cf6;">Kampania reklamowa</div>'
+    +'<div style="font-size:11px;color:#94a3b8;margin-top:2px;line-height:1.5;">+20% obłożenia na 12 godzin<br>Dotyczy wszystkich tras jednocześnie</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">'
+    +'<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px;text-align:center;">'
+    +'<div style="font-size:10px;color:#94a3b8;margin-bottom:2px;">Koszt</div>'
+    +'<div style="font-size:16px;font-weight:900;color:'+(G.cash>=50000?'#10b981':'#ef4444')+';">$50,000</div>'
+    +'</div>'
+    +'<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px;text-align:center;">'
+    +'<div style="font-size:10px;color:#94a3b8;margin-bottom:2px;">Efekt</div>'
+    +'<div style="font-size:16px;font-weight:900;color:#8b5cf6;">+20% / 12h</div>'
+    +'</div></div>'
+    +'<button onclick="buyDemandBoostFromShop()" style="width:100%;padding:11px;margin-top:10px;background:'
+    +(G.cash>=50000?'linear-gradient(135deg,#8b5cf6,#ec4899)':'rgba(255,255,255,0.05)')
+    +';border:none;border-radius:10px;color:'+(G.cash>=50000?'#fff':'#94a3b8')+';font-size:13px;font-weight:800;font-family:Arial,sans-serif;cursor:'+(G.cash>=50000?'pointer':'not-allowed')+';font-family:Arial,sans-serif;">'
+    +(G.cash>=50000?'💎 Kup kampanię':'🔒 Za mało gotówki')
+    +'</button>'
+    +'</div></div></div>';
+
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function useDemandAdFromShop() {
+  if(typeof initDemand==='function') initDemand();
+  var now = Date.now();
+  if(G.demandAdUsed && (now - G.demandAdUsed) < 86400000) {
+    showMsg('Reklama już użyta dziś!'); return;
+  }
+  G.demandAdUsed = now;
+  if(!G.demandBoost) G.demandBoost = {};
+  G.demandBoost['_global'] = { pct: 0.10, expires: now + 18000000 };
+  save();
+  showMsg('📺 +10% obłożenia przez 5h!');
+  openDemandShop();
+}
+
+function buyDemandBoostFromShop() {
+  if(typeof initDemand==='function') initDemand();
+  var cost = 50000;
+  if(G.cash < cost) { showMsg('Za mało gotówki!'); return; }
+  G.cash -= cost;
+  if(!G.demandBoost) G.demandBoost = {};
+  G.demandBoost['_global'] = { pct: 0.20, expires: Date.now() + 43200000 };
+  save(); updateHUD();
+  showMsg('💎 +20% obłożenia przez 12h!');
+  openDemandShop();
+}
