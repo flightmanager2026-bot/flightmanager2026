@@ -104,6 +104,8 @@ function departSingle(el) {
   if(typeof canDepart==='function'&&!canDepart(totalPax)){showMsg('Terminal pełny!');return;}
   r.startTime=Date.now();
   ac.status='flying';
+  // Dodaj koszt paliwa do dlugu
+  if(typeof addFuelDebt==='function' && r.distKm) addFuelDebt(r.distKm, ac.model);
   var cfg=ac.config||{first:0,prem:0,biz:biz,eco:eco};
   r.revenue=Math.round((cfg.first||0)*mins*4.0+(cfg.prem||0)*mins*3.0+(cfg.biz||biz)*mins*2.0+(cfg.eco||eco)*mins*1.6);
   G.cash+=r.revenue;
@@ -139,6 +141,7 @@ function departAll() {
     var biz=ac.config?(ac.config.biz||0):0;
     if(typeof canDepart==='function'&&!canDepart(eco+biz)) return;
     r.startTime=Date.now(); ac.status='flying';
+    if(typeof addFuelDebt==='function'&&r.distKm) addFuelDebt(r.distKm,ac.model);
     var cfg=ac.config||{first:0,prem:0,biz:biz,eco:eco};
     r.revenue=Math.round((cfg.first||0)*mins*4.0+(cfg.prem||0)*mins*3.0+(cfg.biz||biz)*mins*2.0+(cfg.eco||eco)*mins*1.6);
     G.cash+=r.revenue; G.totalFlights=(G.totalFlights||0)+1;
