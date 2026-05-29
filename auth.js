@@ -208,6 +208,9 @@ function loadPlayerData(uid, callback) {
         if(d.fuel)                  G.fuel=d.fuel;
         if(d.fuelDebt!==undefined)  G.fuelDebt=d.fuelDebt;
         if(d.fuelMultiplier)        G.fuelMultiplier=d.fuelMultiplier;
+        if(d.demand)               G.demand=d.demand;
+        if(d.demandBoost)          G.demandBoost=d.demandBoost;
+        if(d.demandAdUsed)         G.demandAdUsed=d.demandAdUsed;
         if(!G.foundedAt&&_currentUser&&_currentUser.metadata&&_currentUser.metadata.creationTime)
           G.foundedAt=new Date(_currentUser.metadata.creationTime).getTime();
         callback(true);
@@ -250,6 +253,9 @@ function saveToCloud() {
     fuel: G.fuel||{},
     fuelDebt: G.fuelDebt||0,
     fuelMultiplier: G.fuelMultiplier||1.0,
+    demand: G.demand||{},
+    demandBoost: G.demandBoost||{},
+    demandAdUsed: G.demandAdUsed||0,
     // Ranking — lotnisko
     airportScore: apScore,
     airportUpgrades: ap&&ap.upgrades ? ap.upgrades : {},
@@ -276,6 +282,8 @@ function startGame() {
     setInterval(paySalaries,3600000);
     setInterval(tickAirportIncome,60000);
     if(typeof initFuel==='function') initFuel();
+    if(typeof initDemand==='function') initDemand();
+    if(typeof scheduleDemandReset==='function') scheduleDemandReset();
     if(typeof scheduleMidnightFuel==='function') scheduleMidnightFuel();
     if(typeof startEventSystem==='function') startEventSystem();
     if(typeof updateRankingValue==='function') updateRankingValue();
