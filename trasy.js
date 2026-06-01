@@ -116,31 +116,31 @@ function renderTrasy(body) {
       // Pula popytu - ile pasazerow zostalo
       +(function(){
         if(typeof G==='undefined'||!G.demand) return '';
+        // Pobierz lub wygeneruj pule popytu
         var pool = G.demand && G.demand[r.id];
-        if(!pool) {
-          // Brak puli - oblicz max na podstawie samolotu
-          var s = ac ? ac.seats : 150;
-          var cfg2 = ac ? (ac.config||{}) : {};
-          var e = cfg2.eco   || Math.round(s*0.80);
-          var b = cfg2.biz   || Math.round(s*0.15);
-          var p = cfg2.prem  || Math.round(s*0.04);
-          var f = cfg2.first || Math.round(s*0.01);
-          return '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;">'
-            +'<span style="font-size:9px;padding:2px 7px;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.2);border-radius:20px;color:#06b6d4;">ECO '+(e*4)+'</span>'
-            +(b?'<span style="font-size:9px;padding:2px 7px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2);border-radius:20px;color:#8b5cf6;">BIZ '+(b*4)+'</span>':'')
-            +(p?'<span style="font-size:9px;padding:2px 7px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.2);border-radius:20px;color:#f97316;">PREM '+(p*4)+'</span>':'')
-            +(f?'<span style="font-size:9px;padding:2px 7px;background:rgba(234,179,8,0.12);border:1px solid rgba(234,179,8,0.2);border-radius:20px;color:#eab308;">FIRST '+(f*4)+'</span>':'')
-            +'<span style="font-size:9px;color:#94a3b8;padding:2px 4px;">pula dzienna</span>'
-            +'</div>';
+        var freshPool = !pool; // czy pula jeszcze nie istnieje (nie bylo odlotu)
+        if(!pool && ac) {
+          var s = ac.seats||150;
+          var cfg2 = ac.config||{};
+          pool = {
+            eco:   (cfg2.eco  ||Math.round(s*0.80))*4,
+            biz:   (cfg2.biz  ||Math.round(s*0.15))*4,
+            prem:  (cfg2.prem ||Math.round(s*0.04))*4,
+            first: (cfg2.first||Math.round(s*0.01))*4
+          };
         }
+        if(!pool) return '';
         var eCol = pool.eco<=0?'#ef4444':pool.eco<20?'#f97316':'#06b6d4';
         var bCol = pool.biz<=0?'#ef4444':pool.biz<5?'#f97316':'#8b5cf6';
+        var pCol = pool.prem<=0?'#ef4444':'#f97316';
+        var fCol = pool.first<=0?'#ef4444':'#eab308';
+        var label = freshPool ? 'maks. dziś' : 'pozostało dziś';
         return '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;">'
-          +'<span style="font-size:9px;padding:2px 7px;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.2);border-radius:20px;color:'+eCol+';">ECO '+pool.eco+'</span>'
-          +(pool.biz!==undefined?'<span style="font-size:9px;padding:2px 7px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2);border-radius:20px;color:'+bCol+';">BIZ '+pool.biz+'</span>':'')
-          +((pool.prem!==undefined&&pool.prem>0)?'<span style="font-size:9px;padding:2px 7px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.2);border-radius:20px;color:'+(pool.prem<=0?'#ef4444':'#f97316')+';">PREM '+pool.prem+'</span>':'')
-          +((pool.first!==undefined&&pool.first>0)?'<span style="font-size:9px;padding:2px 7px;background:rgba(234,179,8,0.12);border:1px solid rgba(234,179,8,0.2);border-radius:20px;color:'+(pool.first<=0?'#ef4444':'#eab308')+';">FIRST '+pool.first+'</span>':'')
-          +'<span style="font-size:9px;color:#94a3b8;padding:2px 4px;">pozostało dziś</span>'
+          +'<span style="font-size:9px;padding:2px 7px;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.2);border-radius:20px;color:'+eCol+';">✈ ECO '+pool.eco+'</span>'
+          +(pool.biz>0?'<span style="font-size:9px;padding:2px 7px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2);border-radius:20px;color:'+bCol+';">💼 BIZ '+pool.biz+'</span>':'')
+          +(pool.prem>0?'<span style="font-size:9px;padding:2px 7px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.2);border-radius:20px;color:'+pCol+';">⭐ PREM '+pool.prem+'</span>':'')
+          +(pool.first>0?'<span style="font-size:9px;padding:2px 7px;background:rgba(234,179,8,0.12);border:1px solid rgba(234,179,8,0.2);border-radius:20px;color:'+fCol+';">👑 FIRST '+pool.first+'</span>':'')
+          +'<span style="font-size:9px;color:#64748b;padding:2px 4px;">'+label+'</span>'
           +'</div>';
       })()
       // Pasek obłożenia
@@ -251,8 +251,13 @@ function departAll() {
     if(typeof canDepart==='function'&&!canDepart(eco+biz)) return;
     r.startTime=Date.now(); ac.status='flying';
     if(typeof addFuelDebt==='function'&&r.distKm) addFuelDebt(r.distKm,ac.model);
-    var cfg=ac.config||{first:0,prem:0,biz:biz,eco:eco};
-    r.revenue=Math.round((cfg.first||0)*mins*4.0+(cfg.prem||0)*mins*3.0+(cfg.biz||biz)*mins*2.0+(cfg.eco||eco)*mins*1.6);
+    // Oblicz przychod z popytem
+    var _dr = typeof calcRevenueWithDemand==='function' ? calcRevenueWithDemand(r,ac) : null;
+    if(_dr){ r.revenue=_dr.revenue; r.lastPax=_dr.pax; r.lastOcc=_dr.occupancy; }
+    else {
+      var cfg=ac.config||{first:0,prem:0,biz:biz,eco:eco};
+      r.revenue=Math.round((cfg.first||0)*mins*4.0+(cfg.prem||0)*mins*3.0+(cfg.biz||biz)*mins*2.0+(cfg.eco||eco)*mins*1.6);
+    }
     G.cash+=r.revenue; G.totalFlights=(G.totalFlights||0)+1;
     if(typeof checkLevelUp==='function') checkLevelUp();
     else { var nl=Math.floor(G.totalFlights/10)+1; if(nl>(G.level||1)) G.level=nl; }
