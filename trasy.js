@@ -157,7 +157,7 @@ function renderTrasy(body) {
   });
 
   // Przycisk do panelu popytu
-  out += '<div onclick="if(typeof openDemandShop==='function')openDemandShop();" '
+  out += '<div onclick="if(typeof openDemandShop!==\'undefined\')openDemandShop();" '
     +'style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.2);border-radius:12px;cursor:pointer;margin-top:4px;">'
     +'<span style="font-size:20px;">📈</span>'
     +'<div style="flex:1;">'
