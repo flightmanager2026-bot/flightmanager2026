@@ -260,10 +260,14 @@ function refreshMarket(type) {
   showMsg('Odswiezono rynek pracy!');
 }
 
-function hireStaff(type, idx) {
+function hireStaff(type, empId) {
   initStaff();
   var market = G.jobMarket[type];
-  if(!market||idx>=market.length){showMsg('Blad: nie znaleziono kandydata!');return;}
+  if(!market){showMsg('Blad: brak rynku pracy!');return;}
+  // Szukaj po id
+  var idx = -1;
+  for(var i=0;i<market.length;i++){ if(market[i].id===empId||String(i)===String(empId)) { idx=i; break; } }
+  if(idx<0){showMsg('Blad: kandydat nie istnieje!');return;}
   var c = market[idx];
   if(!c){showMsg('Blad: kandydat nie istnieje!');return;}
   // Dodaj do zatrudnionych
@@ -278,8 +282,10 @@ function hireStaff(type, idx) {
   if(el) renderStaffType(el,type);
 }
 
-function fireStaff(type, idx) {
+function fireStaff(type, empId) {
   initStaff();
+  var idx = -1;
+  for(var i=0;i<(G.staff[type]||[]).length;i++){ if(G.staff[type][i].id===empId||String(i)===String(empId)){idx=i;break;} }
   var emp=G.staff[type][idx]; if(!emp) return;
   if(!confirm('Zwolnic '+emp.name+'?')) return;
   if(G.fleet) {
