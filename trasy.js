@@ -43,15 +43,60 @@ function renderTrasy(body) {
     var sc = flying?'#10b981':landed?'#f97316':'#94a3b8';
     var st = flying?'W LOCIE':landed?'WYLĄDOWAŁ':'NA ZIEMI';
 
+    // Oblicz popyt i przewidywany zarobek
+    var occ = 70;
+    var estRevenue = r.revenue || 0;
+    var poolInfo = '';
+    if(typeof getOccupancy==='function' && r.id) {
+      occ = Math.round(getOccupancy(r.id)*100);
+    }
+    if(ac && r.durationMin && !flying) {
+      var mins = r.durationMin;
+      var seats = ac.seats || 150;
+      var cfg = ac.config || {};
+      var eco   = cfg.eco   || Math.round(seats*0.80);
+      var biz   = cfg.biz   || Math.round(seats*0.15);
+      var prem  = cfg.prem  || Math.round(seats*0.04);
+      var first = cfg.first || Math.round(seats*0.01);
+      var occR = occ/100;
+      estRevenue = Math.round(
+        first*occR*mins*4.0 +
+        prem *occR*mins*3.0 +
+        biz  *occR*mins*2.0 +
+        eco  *occR*mins*1.6
+      );
+      var totalPax = Math.round((eco+biz+prem+first)*occR);
+      poolInfo = totalPax+' pax';
+      // Sprawdz pule popytu
+      if(typeof G.demand!=='undefined' && G.demand && G.demand[r.id]) {
+        var pool = G.demand[r.id];
+        var poolEco = pool.eco||0;
+        if(poolEco <= 0) poolInfo += ' • <span style="color:#ef4444;">Brak eco!</span>';
+      }
+    }
+
+    // Kolor obłożenia
+    var occColor = occ>=90?'#10b981':occ>=70?'#8b5cf6':'#f97316';
+    var occBar = '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">'
+      +'<div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;">'
+      +'<div style="height:100%;width:'+occ+'%;background:'+occColor+';border-radius:2px;"></div>'
+      +'</div>'
+      +'<span style="font-size:10px;font-weight:700;color:'+occColor+';min-width:32px;">'+occ+'%</span>'
+      +'</div>';
+
+    // Awaria
+    var hasIncident = ac && ac.maintenance && (ac.maintenance.incidents||[]).some(function(i){return !i.resolved;});
+
     var sideBtn = '';
     if(flying) {
       sideBtn = '<div style="flex-shrink:0;padding:8px 10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:10px;font-size:11px;color:#10b981;font-weight:700;text-align:center;min-width:60px;">'+eta+'</div>';
     } else {
-      var canGo = onGround || landed;
+      var canGo = (onGround || landed) && !hasIncident;
       sideBtn = '<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">'
         +'<button onclick="departSingle(this)" data-rid="'+r.id+'" '
         +(!canGo?'disabled ':'')
-        +'style="padding:8px 12px;background:'+(canGo?'linear-gradient(135deg,#8b5cf6,#ec4899)':'rgba(255,255,255,0.05)')+';border:none;border-radius:8px;color:'+(canGo?'#fff':'#94a3b8')+';font-size:11px;font-weight:700;font-family:Arial,sans-serif;cursor:'+(canGo?'pointer':'not-allowed')+';white-space:nowrap;">✈ Odlec</button>'
+        +'style="padding:8px 12px;background:'+(canGo?'linear-gradient(135deg,#8b5cf6,#ec4899)':'rgba(255,255,255,0.05)')+';border:none;border-radius:8px;color:'+(canGo?'#fff':'#94a3b8')+';font-size:11px;font-weight:700;font-family:Arial,sans-serif;cursor:'+(canGo?'pointer':'not-allowed')+';white-space:nowrap;">'
+        +(hasIncident?'🚨 Awaria':'✈ Odlec')+'</button>'
         +'<button onclick="cancelRouteById(this)" data-id="'+r.id+'" style="padding:6px 10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:8px;color:#ef4444;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;white-space:nowrap;">✕ Anuluj</button>'
         +'</div>';
     }
@@ -64,12 +109,33 @@ function renderTrasy(body) {
       +'<div style="font-size:9px;color:#94a3b8;">'+r.from+' → '+r.to+'</div>'
       +'<div style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(255,255,255,0.06);color:'+sc+';">'+st+'</div>'
       +'</div>'
-      +'<div style="font-size:11px;color:#94a3b8;margin-bottom:7px;">'+(ac?ac.model+' ('+ac.reg+')':'Brak samolotu')+' • '+(r.durationMin?r.durationMin+'min':'?')+' • <span style="color:#10b981;font-weight:700;">$'+r.revenue.toLocaleString()+'</span>'+(r.lastOcc?' • <span style="color:#8b5cf6;font-weight:700;">'+r.lastOcc+'% obł.</span>':'')+'</div>'
-      +'<div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;">'
+      // Info o samolocie i przychodzie
+      +'<div style="font-size:11px;color:#94a3b8;margin-bottom:6px;">'
+      +(ac?ac.model+' ('+ac.reg+')':'Brak samolotu')
+      +' • '+(r.durationMin?r.durationMin+'min':'?')
+      +' • <span style="color:#10b981;font-weight:700;">~$'+estRevenue.toLocaleString()+'</span>'
+      +(poolInfo?' • '+poolInfo:'')
+      +'</div>'
+      // Pasek obłożenia
+      + occBar
+      // Pasek postępu lotu
+      +'<div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;">'
       +'<div style="height:100%;width:'+prog+'%;background:linear-gradient(90deg,#8b5cf6,#06b6d4);border-radius:2px;transition:width 0.5s;"></div>'
       +'</div>'
       +'</div>'+sideBtn+'</div></div>';
   });
+
+  // Przycisk do panelu popytu
+  out += '<div onclick="if(typeof openDemandShop==='function')openDemandShop();" '
+    +'style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.2);border-radius:12px;cursor:pointer;margin-top:4px;">'
+    +'<span style="font-size:20px;">📈</span>'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:13px;font-weight:700;color:#8b5cf6;">Popyt pasażerski</div>'
+    +'<div style="font-size:11px;color:#94a3b8;">Bazowe obłożenie: 70% • Kup boost aby zwiększyć</div>'
+    +'</div>'
+    +'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
+    +'</div>';
+
   body.innerHTML=out;
 }
 
