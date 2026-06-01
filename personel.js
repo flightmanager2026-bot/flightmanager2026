@@ -408,3 +408,18 @@ function paySalaries() {
   Object.keys(G.staff).forEach(function(t){(G.staff[t]||[]).forEach(function(e){total+=e.salary;});});
   if(total>0){ G.cash-=total; G.lastSalaryPay=now; save(); showMsg('Pensje wyplacone: -$'+total.toLocaleString()); }
 }
+
+function assignStaffToAc(type, empId, acId) {
+  if(!acId){showMsg('Wybierz samolot!');return;}
+  initStaff();
+  var ac = G.fleet.filter(function(a){return a.id===acId;})[0];
+  if(!ac){showMsg('Nie znaleziono samolotu!');return;}
+  if(!ac.crew) ac.crew={};
+  if(!ac.crew[type]) ac.crew[type]=[];
+  if(ac.crew[type].indexOf(empId)>=0){showMsg('Już przypisany!');return;}
+  ac.crew[type].push(empId);
+  save();
+  showMsg('✓ Przypisano do '+ac.model+'!');
+  var cont=document.getElementById('personel-content');
+  if(cont) renderStaffType(cont,type);
+}
