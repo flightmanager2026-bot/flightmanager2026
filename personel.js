@@ -154,127 +154,102 @@ function renderOverview(el) {
 
 function renderStaffType(el, type) {
   initStaff();
-  var st=STAFF_TYPES[type];
-  var employed=G.staff[type]||[];
-  var market=G.jobMarket[type]||[];
-  var needed=getNeeded(type);
-  var ok=employed.length>=needed;
+  var st = STAFF_TYPES[type];
+  var employed = G.staff[type] || [];
+  var market = G.jobMarket[type] || [];
+  var needed = getNeeded(type);
+  var ok = employed.length >= needed;
 
+  // Header z info
   var html =
-    '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);'
-    +'border-radius:14px;padding:14px;margin-bottom:14px;">'
-    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">'
-    +'<div style="font-size:26px;">'+st.icon+'</div>'
+    '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:12px;">'
+    +'<div style="display:flex;align-items:center;gap:12px;">'
+    +'<div style="font-size:28px;">'+st.icon+'</div>'
     +'<div style="flex:1;">'
     +'<div style="font-size:14px;font-weight:800;color:#f1f5f9;">'+st.label+'</div>'
-    +'<div style="font-size:11px;margin-top:2px;">Zatrudnieni: '
-    +'<span style="color:'+(ok?'#10b981':'#ef4444')+';font-weight:700;">'+employed.length+'/'+needed+'</span></div>'
-    +(type==='pilot'   ?'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">do 6500km: 2 | do 12000km: 3 | dalej: 4</div>':'')
-    +(type==='steward' ?'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">1 FA na kazde 50 foteli (EASA)</div>':'')
-    +(type==='engineer'?'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">1 inzynier obsluguje do 3 samolotow</div>':'')
+    +'<div style="font-size:11px;margin-top:2px;">Zatrudnieni: <span style="color:'+(ok?'#10b981':'#ef4444')+';font-weight:700;">'+employed.length+'/'+needed+'</span>'
+    +' • Wynagrodzenie: <span style="color:#f97316;font-weight:700;">$'+employed.reduce(function(s,e){return s+e.salary;},0).toLocaleString()+'/h</span></div>'
+    +(type==='pilot'   ?'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">do 6500km: 2 pilotów | do 12000km: 3 | dalej: 4</div>':'')
+    +(type==='steward' ?'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">1 steward na każde 50 foteli</div>':'')
     +(type==='mechanic'?'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">1 mechanik na 1 samolot</div>':'')
+    +(type==='engineer'?'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">1 inżynier na 3 samoloty</div>':'')
     +'</div>'
-    +'<button onclick="refreshMarket(\''+type+'\')" style="padding:7px 10px;background:rgba(6,182,212,0.1);'
-    +'border:1px solid rgba(6,182,212,0.2);border-radius:8px;color:#06b6d4;font-size:11px;'
-    +'font-weight:700;cursor:pointer;font-family:Arial,sans-serif;flex-shrink:0;">&#8635; Odswiez</button>'
+    +'<button onclick="refreshMarket(\''+type+'\')" style="padding:7px 12px;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:8px;color:#06b6d4;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;flex-shrink:0;">↻ Odśwież</button>'
+    +'</div></div>';
+
+  // LAYOUT: 2 kolumny - dostepni | zatrudnieni
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">';
+
+  // ── LEWA: Dostępni do zatrudnienia ──────────────────────
+  html += '<div>'
+    +'<div style="font-size:9px;color:#94a3b8;letter-spacing:2px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">'
+    +'<span>DO ZATRUDNIENIA ('+market.length+')</span>'
     +'</div>';
 
-  if(G.fleet&&G.fleet.length>0) {
-    html += '<div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:10px;">'
-      +'<div style="font-size:9px;color:#94a3b8;letter-spacing:2px;margin-bottom:8px;">WYMAGANIA NA SAMOLOT</div>';
-    G.fleet.forEach(function(ac){
-      var req=getSlotsPerAc(type,ac);
-      var has=((ac.crew||{})[type]||[]).length;
-      var acOk=has>=req;
-      html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);">'
-        +'<div style="font-size:12px;color:#f1f5f9;font-weight:600;">'+ac.model+' ('+ac.reg+')</div>'
-        +'<div style="font-size:12px;font-weight:800;color:'+(acOk?'#10b981':'#ef4444')+';">'+has+'/'+req+'</div>'
+  if(!market.length) {
+    html += '<div style="padding:16px;text-align:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;">'
+      +'<div style="font-size:20px;margin-bottom:6px;">🔍</div>'
+      +'<div style="font-size:11px;color:#94a3b8;">Brak kandydatów</div>'
+      +'<div style="font-size:10px;color:#64748b;margin-top:4px;">Odśwież rynek</div>'
+      +'</div>';
+  } else {
+    market.forEach(function(emp) {
+      var stars = '';
+      for(var s=0;s<5;s++) stars += s<emp.rating
+        ?'<span style="color:#f97316;font-size:10px;">★</span>'
+        :'<span style="color:#334155;font-size:10px;">★</span>';
+      html += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:10px;margin-bottom:6px;">'
+        +'<div style="font-size:12px;font-weight:700;color:#f1f5f9;margin-bottom:2px;">'+emp.name+'</div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+        +'<div>'+stars+'</div>'
+        +'<div style="font-size:11px;color:#f97316;font-weight:700;">$'+emp.salary+'/h</div>'
+        +'</div>'
+        +(emp.speciality?'<div style="font-size:10px;color:#8b5cf6;margin-bottom:6px;">'+emp.speciality+'</div>':'')
+        +'<button onclick="hireStaff(\''+type+'\',\''+emp.id+'\');" '
+        +'style="width:100%;padding:7px;background:linear-gradient(135deg,#10b981,#06b6d4);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">+ Zatrudnij</button>'
         +'</div>';
     });
-    html += '</div>';
   }
   html += '</div>';
 
-  // Zatrudnieni
-  if(employed.length>0) {
-    html += '<div style="font-size:9px;color:#94a3b8;letter-spacing:3px;margin-bottom:10px;">ZATRUDNIENI</div>';
-    employed.forEach(function(emp, i){
-      var assignedAcs=G.fleet?G.fleet.filter(function(ac){return ac.crew&&ac.crew[type]&&ac.crew[type].indexOf(emp.id)>=0;}):[]; 
-      var isAssigned=assignedAcs.length>0;
-      var stars='';
-      for(var s=0;s<5;s++) stars+=s<emp.rating?'<span style="color:#f97316;">&#9733;</span>':'<span style="color:#2a3f5a;">&#9733;</span>';
+  // ── PRAWA: Zatrudnieni ──────────────────────────────────
+  html += '<div>'
+    +'<div style="font-size:9px;color:#94a3b8;letter-spacing:2px;margin-bottom:8px;">ZATRUDNIENI ('+employed.length+')</div>';
 
-      html +=
-        '<div style="background:'+(isAssigned?'rgba(16,185,129,0.05)':'rgba(255,255,255,0.03)')+';'
-        +'border:1px solid '+(isAssigned?'rgba(16,185,129,0.2)':'rgba(255,255,255,0.08)')+';'
-        +'border-radius:14px;padding:14px;margin-bottom:8px;">'
-        +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">'
-        +'<div style="width:42px;height:42px;border-radius:50%;flex-shrink:0;'
-        +'background:'+(isAssigned?'rgba(16,185,129,0.15)':'rgba(255,255,255,0.07)')+';'
-        +'border:2px solid '+(isAssigned?'rgba(16,185,129,0.5)':'rgba(255,255,255,0.15)')+';'
-        +'display:flex;align-items:center;justify-content:center;font-size:18px;">'+st.icon+'</div>'
-        +'<div style="flex:1;min-width:0;">'
-        +'<div style="font-size:13px;font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+emp.name+'</div>'
-        +'<div style="font-size:11px;margin-top:2px;">'+stars+'</div>'
-        +'<div style="font-size:10px;color:#94a3b8;margin-top:2px;">'
-        +'Dosw: <b style="color:#f1f5f9;">'+emp.experience+' lat</b> &nbsp;|&nbsp; '
-        +'Pensja: <b style="color:#10b981;">$'+emp.salary+'/24h</b></div>'
-        +'</div></div>'
-        +'<div style="padding:8px 10px;border-radius:9px;margin-bottom:10px;font-size:11px;font-weight:600;'
-        +'background:'+(isAssigned?'rgba(16,185,129,0.1)':'rgba(249,115,22,0.08)')+';'
-        +'border:1px solid '+(isAssigned?'rgba(16,185,129,0.25)':'rgba(249,115,22,0.2)')+';'
-        +'color:'+(isAssigned?'#10b981':'#f97316')+'">'
-        +(isAssigned
-          ?'&#10003; Przypisany do: '+assignedAcs.map(function(a){return a.model+' ('+a.reg+')';}).join(', ')
-          :'&#9888; Nieprzypisany')
-        +'</div>'
-        +'<div style="display:flex;gap:6px;">'
-        +(G.fleet&&G.fleet.length>0
-          ?'<button onclick="assignStaff(\''+type+'\',\''+emp.id+'\')" '
-            +'style="flex:1;padding:9px;border-radius:9px;font-size:11px;font-weight:700;'
-            +'cursor:pointer;font-family:Arial,sans-serif;'
-            +(isAssigned
-              ?'background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.25);color:#06b6d4;">&#8635; Zmien przypisanie'
-              :'background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff;">&#43; Przypisz')
-            +'</button>'
-          :'')
-        +'<button onclick="fireStaff(\''+type+'\','+i+')" '
-        +'style="padding:9px 14px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);'
-        +'border-radius:9px;color:#ef4444;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Zwolnij</button>'
-        +'</div></div>';
-    });
-  }
-
-  // Rynek pracy
-  html += '<div style="font-size:9px;color:#94a3b8;letter-spacing:3px;margin:16px 0 10px;">RYNEK PRACY</div>';
-  if(!market.length) {
-    html += '<div style="padding:20px;text-align:center;color:#94a3b8;font-size:12px;">Brak kandydatow - kliknij Odswiez</div>';
+  if(!employed.length) {
+    html += '<div style="padding:16px;text-align:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;">'
+      +'<div style="font-size:20px;margin-bottom:6px;">👥</div>'
+      +'<div style="font-size:11px;color:#94a3b8;">Brak pracowników</div>'
+      +'<div style="font-size:10px;color:#64748b;margin-top:4px;">Zatrudnij z lewej kolumny</div>'
+      +'</div>';
   } else {
-    market.forEach(function(c,i){
-      var stars='';
-      for(var s=0;s<5;s++) stars+=s<c.rating?'<span style="color:#f97316;">&#9733;</span>':'<span style="color:#2a3f5a;">&#9733;</span>';
-      html +=
-        '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);'
-        +'border-radius:14px;padding:14px;margin-bottom:8px;">'
-        +'<div style="display:flex;align-items:center;gap:12px;">'
-        +'<div style="width:42px;height:42px;border-radius:50%;flex-shrink:0;'
-        +'background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.25);'
-        +'display:flex;align-items:center;justify-content:center;font-size:18px;">'+st.icon+'</div>'
-        +'<div style="flex:1;min-width:0;">'
-        +'<div style="font-size:13px;font-weight:700;color:#f1f5f9;">'+c.name+'</div>'
-        +'<div style="font-size:11px;margin-top:3px;">'+stars+' <span style="color:#94a3b8;font-size:10px;">'+c.experience+' lat dosw.</span></div>'
-        +'<div style="font-size:12px;font-weight:700;color:#10b981;margin-top:2px;">$'+c.salary+' / 24h</div>'
+    employed.forEach(function(emp) {
+      var stars = '';
+      for(var s=0;s<5;s++) stars += s<emp.rating
+        ?'<span style="color:#f97316;font-size:10px;">★</span>'
+        :'<span style="color:#334155;font-size:10px;">★</span>';
+      var assignedAcs = G.fleet ? G.fleet.filter(function(ac){
+        return ac.crew && ac.crew[type] && ac.crew[type].indexOf(emp.id)>=0;
+      }) : [];
+      html += '<div style="background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:12px;padding:10px;margin-bottom:6px;">'
+        +'<div style="font-size:12px;font-weight:700;color:#f1f5f9;margin-bottom:2px;">'+emp.name+'</div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'
+        +'<div>'+stars+'</div>'
+        +'<div style="font-size:11px;color:#f97316;font-weight:700;">$'+emp.salary+'/h</div>'
         +'</div>'
-        +'<button onclick="hireStaff(\''+type+'\','+i+')" '
-        +'style="padding:10px 16px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;'
-        +'border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;'
-        +'font-family:Arial,sans-serif;white-space:nowrap;flex-shrink:0;'
-        +'box-shadow:0 3px 10px rgba(6,182,212,0.25);">Zatrudnij</button>'
-        +'</div></div>';
+        +(assignedAcs.length?'<div style="font-size:10px;color:#06b6d4;margin-bottom:6px;">'+assignedAcs[0].model+'</div>':'<div style="font-size:10px;color:#64748b;margin-bottom:6px;">Nieprzypisany</div>')
+        +'<button onclick="fireStaff(\''+type+'\',\''+emp.id+'\');" '
+        +'style="width:100%;padding:5px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;color:#ef4444;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Zwolnij</button>'
+        +'</div>';
     });
   }
+  html += '</div>';
+
+  html += '</div>'; // koniec grida
+
   el.innerHTML = html;
 }
+
 
 function refreshMarket(type) {
   initStaff();
