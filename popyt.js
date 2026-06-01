@@ -5,19 +5,24 @@
 
 function initDemand() {
   if(!G.demand) G.demand = {};
-  if(!G.demandBoost) G.demandBoost = {}; // {routeId: {pct, expires}}
-  if(!G.demandAdUsed) G.demandAdUsed = 0; // timestamp ostatniej darmowej reklamy
+  if(!G.demandBoost) G.demandBoost = {};
+  if(!G.demandAdUsed) G.demandAdUsed = 0;
 }
+
+// Wywolaj initDemand od razu przy zaladowaniu pliku
+initDemand();
 
 // Bazowe obłożenie dla trasy (70% + boosty)
 function getOccupancy(routeId) {
   initDemand();
   var base = 0.70;
+  if(!G.demandBoost) G.demandBoost = {};
+  // Boost per trasa
   var boost = G.demandBoost[routeId];
   if(boost && boost.expires > Date.now()) {
     base = Math.min(1.0, base + boost.pct);
   }
-  // Globalny boost (reklama)
+  // Globalny boost (reklama lub kampania)
   var globalBoost = G.demandBoost['_global'];
   if(globalBoost && globalBoost.expires > Date.now()) {
     base = Math.min(1.0, base + globalBoost.pct);
