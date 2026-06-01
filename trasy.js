@@ -94,6 +94,9 @@ function departSingle(el) {
   }
   r.duration = (r.durationMin||40)*60000;
   if(ac.status==='maintenance'){showMsg('✋ '+ac.model+' jest w konserwacji!');return;}
+  // Sprawdz nienaprawione awarie
+  var _hasIncident = ac.maintenance && (ac.maintenance.incidents||[]).some(function(i){return !i.resolved;});
+  if(_hasIncident){showMsg('🚨 '+ac.model+' ma nienaprawioną awarię! Idź do Serwisu.');return;}
   if(typeof needsMaintenance==='function'&&needsMaintenance(ac)){if(!confirm('Samolot wymaga konserwacji! Czy na pewno?'))return;}
   if(typeof canAircraftDepart==='function'){var cc=canAircraftDepart(ac);if(!cc.ok){showMsg('✋ '+cc.reason);return;}}
   if(G.fuelCrisis){showMsg('⛽ Kryzys paliwowy! Opłać paliwo najpierw.');return;}
@@ -141,6 +144,9 @@ function departAll() {
     if(!ac||ac.status==='flying') return;
     if(ac.status==='maintenance'){skipped.push(ac.model+' (serwis)');return;}
     if(typeof needsMaintenance==='function'&&needsMaintenance(ac)){skipped.push(ac.model+' (wymaga serwisu)');return;}
+    // Sprawdz awarie - samolot z nienaprawiona awaria nie moze odleciec
+    var hasIncident = ac.maintenance && (ac.maintenance.incidents||[]).some(function(i){return !i.resolved;});
+    if(hasIncident){skipped.push(ac.model+' (awaria!)');return;}
     if(typeof canAircraftDepart==='function'){var cc=canAircraftDepart(ac);if(!cc.ok){skipped.push(ac.model);return;}}
     if(G.fuelCrisis){showMsg('⛽ Kryzys paliwowy!');return;}
     if(ac.status==='landed'){var t;t=r.from;r.from=r.to;r.to=t;t=r.fromLat;r.fromLat=r.toLat;r.toLat=t;t=r.fromLng;r.fromLng=r.toLng;r.toLng=t;}
