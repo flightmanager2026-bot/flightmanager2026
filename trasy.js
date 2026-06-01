@@ -44,12 +44,9 @@ function renderTrasy(body) {
     var st = flying?'W LOCIE':landed?'WYLĄDOWAŁ':'NA ZIEMI';
 
     // Oblicz popyt i przewidywany zarobek
-    var occ = 70;
+    var occ = typeof getOccupancy==='function' ? Math.round(getOccupancy(r.id)*100) : 70;
     var estRevenue = r.revenue || 0;
     var poolInfo = '';
-    if(typeof getOccupancy==='function' && r.id) {
-      occ = Math.round(getOccupancy(r.id)*100);
-    }
     if(ac && r.durationMin && !flying) {
       var mins = r.durationMin;
       var seats = ac.seats || 150;
@@ -118,7 +115,6 @@ function renderTrasy(body) {
       +'</div>'
       // Pula popytu - ile pasazerow zostalo
       +(function(){
-        if(flying) return '';
         if(typeof G==='undefined'||!G.demand) return '';
         var pool = G.demand && G.demand[r.id];
         if(!pool) {
