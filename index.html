@@ -2,6 +2,12 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
+  <meta name="description" content="FlightManager 2026 – przeglądarkowa gra symulator linii lotniczej. Zarządzaj flotą, trasami, personelem i rozbudowuj swoje lotnisko. Graj za darmo!">
+  <meta name="keywords" content="gra lotnicza, symulator linii lotniczej, zarządzanie flotą, gra przeglądarkowa, FlightManager 2026">
+  <meta property="og:title" content="FlightManager 2026 – Symulator Linii Lotniczej">
+  <meta property="og:description" content="Zarządzaj własną linią lotniczą w przeglądarce. Kupuj samoloty, otwieraj trasy, zatrudniaj załogę i rywalizuj z innymi graczami w globalnym rankingu.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://flightmanager2026.pl">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -714,5 +720,153 @@ function setMusicVol(v) {
   localStorage.setItem('fm_music_vol', String(vol));
 }
 </script>
+
+<!-- ===== LANDING PAGE (widoczna dla Google przed zalogowaniem) ===== -->
+<div id="landingPage" style="display:none;position:fixed;inset:0;z-index:600;background:#0a0a0a;overflow-y:auto;font-family:Arial,sans-serif;">
+  <div style="max-width:800px;margin:0 auto;padding:24px 20px;">
+
+    <!-- Header -->
+    <div style="text-align:center;padding:40px 0 32px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:6px;color:rgba(139,92,246,0.7);margin-bottom:8px;">PRZEGLĄDARKOWA GRA STRATEGICZNA</div>
+      <h1 style="font-size:32px;font-weight:900;color:#fff;letter-spacing:3px;margin:0 0 4px;">FLIGHT</h1>
+      <h1 style="font-size:32px;font-weight:900;background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:3px;margin:0 0 16px;">MANAGER 2026</h1>
+      <p style="font-size:16px;color:#94a3b8;max-width:500px;margin:0 auto 24px;line-height:1.6;">Zbuduj własną linię lotniczą od zera. Zarządzaj flotą, trasami i personelem w czasie rzeczywistym.</p>
+      <button onclick="document.getElementById('landingPage').style.display='none';" style="padding:14px 32px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:800;cursor:pointer;font-family:Arial,sans-serif;box-shadow:0 8px 24px rgba(139,92,246,0.4);">🎮 Graj teraz — za darmo</button>
+    </div>
+
+    <!-- Features -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(139,92,246,0.2);border-radius:14px;padding:16px;">
+        <div style="font-size:28px;margin-bottom:8px;">✈️</div>
+        <h2 style="font-size:14px;font-weight:800;color:#f1f5f9;margin:0 0 6px;">Zarządzaj flotą</h2>
+        <p style="font-size:12px;color:#94a3b8;margin:0;line-height:1.5;">Kupuj samoloty od Airbusa, Boeinga i Embraera. Ponad 50 modeli do odblokowania — od ATR-72 po A380.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(6,182,212,0.2);border-radius:14px;padding:16px;">
+        <div style="font-size:28px;margin-bottom:8px;">🗺️</div>
+        <h2 style="font-size:14px;font-weight:800;color:#f1f5f9;margin:0 0 6px;">Otwieraj trasy</h2>
+        <p style="font-size:12px;color:#94a3b8;margin:0;line-height:1.5;">Lataj do ponad 200 lotnisk na całym świecie. Odblokuj nowe kraje wraz ze wzrostem poziomu linii.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:16px;">
+        <div style="font-size:28px;margin-bottom:8px;">🏆</div>
+        <h2 style="font-size:14px;font-weight:800;color:#f1f5f9;margin:0 0 6px;">Ranking globalny</h2>
+        <p style="font-size:12px;color:#94a3b8;margin:0;line-height:1.5;">Rywalizuj z innymi graczami w 4 kategoriach: wartość floty, rozbudowa lotniska, liczba tras i pasażerowie.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(249,115,22,0.2);border-radius:14px;padding:16px;">
+        <div style="font-size:28px;margin-bottom:8px;">🏗️</div>
+        <h2 style="font-size:14px;font-weight:800;color:#f1f5f9;margin:0 0 6px;">Rozbuduj lotnisko</h2>
+        <p style="font-size:12px;color:#94a3b8;margin:0;line-height:1.5;">Ulepszaj terminal, hangary i pasy startowe. Otwieraj sklepy lotniskowe generujące pasywny dochód.</p>
+      </div>
+    </div>
+
+    <!-- Opis dla AdSense -->
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;margin-bottom:24px;">
+      <h2 style="font-size:16px;font-weight:800;color:#f1f5f9;margin:0 0 12px;">O grze FlightManager 2026</h2>
+      <p style="font-size:13px;color:#94a3b8;line-height:1.8;margin:0 0 12px;">
+        FlightManager 2026 to darmowa przeglądarkowa gra symulacyjna, w której wcielasz się w prezesa linii lotniczej. 
+        Twoja przygoda zaczyna się od wyboru bazy i pierwszego samolotu. Stopniowo rozbudowujesz flotę, 
+        otwierasz nowe trasy i zatrudniasz personel — pilotów, stewardów i mechaników.
+      </p>
+      <p style="font-size:13px;color:#94a3b8;line-height:1.8;margin:0 0 12px;">
+        Gra oferuje realistyczny system ekonomiczny z kosztami paliwa, konserwacją samolotów, 
+        wynagrodzeniami załogi i popytem pasażerskim. Każda trasa generuje przychód zależny od liczby pasażerów, 
+        klasy miejsc i czasu lotu. System rankingowy pozwala rywalizować z graczami z całego świata.
+      </p>
+      <p style="font-size:13px;color:#94a3b8;line-height:1.8;margin:0;">
+        Gra jest dostępna bezpłatnie w przeglądarce na urządzeniach mobilnych i desktopowych. 
+        Nie wymaga instalacji ani pobrania. Postępy są zapisywane w chmurze i dostępne z każdego urządzenia po zalogowaniu.
+      </p>
+    </div>
+
+    <!-- CTA + linki -->
+    <div style="text-align:center;padding-bottom:32px;">
+      <button onclick="document.getElementById('landingPage').style.display='none';" style="padding:14px 40px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:800;cursor:pointer;font-family:Arial,sans-serif;margin-bottom:20px;">🚀 Zacznij grać teraz</button>
+      <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;">
+        <a href="/privacy" style="font-size:11px;color:#64748b;text-decoration:none;">Polityka prywatności</a>
+        <a href="/about" style="font-size:11px;color:#64748b;text-decoration:none;">O grze</a>
+        <a href="mailto:kontakt@flightmanager2026.pl" style="font-size:11px;color:#64748b;text-decoration:none;">Kontakt</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PRIVACY POLICY ===== -->
+<div id="privacyPage" style="display:none;position:fixed;inset:0;z-index:700;background:#0a0a0a;overflow-y:auto;font-family:Arial,sans-serif;">
+  <div style="max-width:700px;margin:0 auto;padding:24px 20px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="document.getElementById('privacyPage').style.display='none';" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#f1f5f9;cursor:pointer;font-size:17px;padding:6px 14px;border-radius:8px;font-family:Arial,sans-serif;">←</button>
+      <h1 style="font-size:20px;font-weight:900;color:#f1f5f9;margin:0;">Polityka Prywatności</h1>
+    </div>
+    <div style="font-size:13px;color:#94a3b8;line-height:1.9;">
+      <p><strong style="color:#f1f5f9;">Data ostatniej aktualizacji:</strong> 1 czerwca 2026</p>
+      <h2 style="color:#f1f5f9;font-size:15px;margin-top:20px;">1. Administrator danych</h2>
+      <p>Administratorem danych osobowych jest właściciel serwisu FlightManager 2026 dostępnego pod adresem flightmanager2026.pl.</p>
+      <h2 style="color:#f1f5f9;font-size:15px;margin-top:20px;">2. Jakie dane zbieramy</h2>
+      <p>Zbieramy następujące dane: adres e-mail (przy rejestracji), dane logowania przez Google (imię, email, zdjęcie profilowe), dane postępu w grze (flota, trasy, punkty, statystyki), adres IP i dane urządzenia.</p>
+      <h2 style="color:#f1f5f9;font-size:15px;margin-top:20px;">3. Cel przetwarzania</h2>
+      <p>Dane są przetwarzane w celu: umożliwienia logowania i zapisywania postępów w grze, wyświetlania globalnego rankingu graczy, obsługi płatności (Stripe), wyświetlania reklam (Google AdSense).</p>
+      <h2 style="color:#f1f5f9;font-size:15px;margin-top:20px;">4. Reklamy Google AdSense</h2>
+      <p>Serwis używa Google AdSense do wyświetlania reklam. Google może używać plików cookie do wyświetlania reklam opartych na wcześniejszych wizytach. Możesz zrezygnować z reklam spersonalizowanych na stronie <a href="https://adssettings.google.com" style="color:#8b5cf6;">adssettings.google.com</a>.</p>
+      <h2 style="color:#f1f5f9;font-size:15px;margin-top:20px;">5. Pliki cookie</h2>
+      <p>Serwis używa plików cookie do przechowywania sesji logowania, preferencji gry oraz celów analitycznych i reklamowych (Google Analytics, Google AdSense, Firebase).</p>
+      <h2 style="color:#f1f5f9;font-size:15px;margin-top:20px;">6. Prawa użytkownika</h2>
+      <p>Masz prawo do dostępu, sprostowania i usunięcia swoich danych. Aby usunąć konto, skontaktuj się z nami pod adresem: kontakt@flightmanager2026.pl</p>
+      <h2 style="color:#f1f5f9;font-size:15px;margin-top:20px;">7. Kontakt</h2>
+      <p>W sprawach dotyczących ochrony danych osobowych prosimy o kontakt: <a href="mailto:kontakt@flightmanager2026.pl" style="color:#8b5cf6;">kontakt@flightmanager2026.pl</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ABOUT PAGE ===== -->
+<div id="aboutPage" style="display:none;position:fixed;inset:0;z-index:700;background:#0a0a0a;overflow-y:auto;font-family:Arial,sans-serif;">
+  <div style="max-width:700px;margin:0 auto;padding:24px 20px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="document.getElementById('aboutPage').style.display='none';" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#f1f5f9;cursor:pointer;font-size:17px;padding:6px 14px;border-radius:8px;font-family:Arial,sans-serif;">←</button>
+      <h1 style="font-size:20px;font-weight:900;color:#f1f5f9;margin:0;">O grze</h1>
+    </div>
+    <div style="font-size:13px;color:#94a3b8;line-height:1.9;">
+      <h2 style="color:#f1f5f9;font-size:15px;margin-top:0;">FlightManager 2026</h2>
+      <p>FlightManager 2026 to przeglądarkowa gra symulacyjna stworzona z pasji do lotnictwa. Gra pozwala na budowanie własnej linii lotniczej od podstaw — od zakupu pierwszego samolotu po stworzenie globalnej siatki połączeń.</p>
+      <p>Gra jest w ciągłym rozwoju. Nowe funkcje są dodawane regularnie, w tym nowe modele samolotów, lotniska, systemy ekonomiczne i tryby rozgrywki.</p>
+      <h2 style="color:#f1f5f9;font-size:15px;margin-top:20px;">Funkcje gry</h2>
+      <ul style="padding-left:20px;">
+        <li>Ponad 50 modeli samolotów od Airbusa, Boeinga, Embraera i innych producentów</li>
+        <li>Ponad 200 lotnisk na całym świecie</li>
+        <li>System poziomów i odblokowywania nowych krajów</li>
+        <li>Globalny ranking w 4 kategoriach</li>
+        <li>System konserwacji i awarii samolotów</li>
+        <li>Zarządzanie personelem (piloci, stewardzi, mechanicy)</li>
+        <li>System popytu pasażerskiego i obłożenia tras</li>
+        <li>Rozbudowa lotniska bazowego</li>
+        <li>Zapis postępów w chmurze (Firebase)</li>
+      </ul>
+      <h2 style="color:#f1f5f9;font-size:15px;margin-top:20px;">Kontakt</h2>
+      <p>Masz pytania, sugestie lub znalazłeś błąd? Napisz do nas: <a href="mailto:kontakt@flightmanager2026.pl" style="color:#8b5cf6;">kontakt@flightmanager2026.pl</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+// Pokaż landing page dla nowych odwiedzających (nie zalogowanych)
+// Ukryj po kliknięciu lub gdy Firebase wykryje zalogowanego użytkownika
+window._showLandingIfNeeded = function() {
+  var seen = localStorage.getItem('fm_landing_seen');
+  if(!seen) {
+    document.getElementById('landingPage').style.display = 'block';
+    localStorage.setItem('fm_landing_seen', '1');
+  }
+};
+// Routing dla /privacy i /about
+(function(){
+  var path = window.location.pathname;
+  if(path === '/privacy') {
+    document.getElementById('privacyPage').style.display = 'block';
+  } else if(path === '/about') {
+    document.getElementById('aboutPage').style.display = 'block';
+  } else {
+    window._showLandingIfNeeded();
+  }
+})();
+</script>
+
 </body>
 </html>
