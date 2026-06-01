@@ -116,6 +116,37 @@ function renderTrasy(body) {
       +' • <span style="color:#10b981;font-weight:700;">~$'+estRevenue.toLocaleString()+'</span>'
       +(poolInfo?' • '+poolInfo:'')
       +'</div>'
+      // Pula popytu - ile pasazerow zostalo
+      +(function(){
+        if(flying) return '';
+        if(typeof G==='undefined'||!G.demand) return '';
+        var pool = G.demand && G.demand[r.id];
+        if(!pool) {
+          // Brak puli - oblicz max na podstawie samolotu
+          var s = ac ? ac.seats : 150;
+          var cfg2 = ac ? (ac.config||{}) : {};
+          var e = cfg2.eco   || Math.round(s*0.80);
+          var b = cfg2.biz   || Math.round(s*0.15);
+          var p = cfg2.prem  || Math.round(s*0.04);
+          var f = cfg2.first || Math.round(s*0.01);
+          return '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;">'
+            +'<span style="font-size:9px;padding:2px 7px;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.2);border-radius:20px;color:#06b6d4;">ECO '+(e*4)+'</span>'
+            +(b?'<span style="font-size:9px;padding:2px 7px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2);border-radius:20px;color:#8b5cf6;">BIZ '+(b*4)+'</span>':'')
+            +(p?'<span style="font-size:9px;padding:2px 7px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.2);border-radius:20px;color:#f97316;">PREM '+(p*4)+'</span>':'')
+            +(f?'<span style="font-size:9px;padding:2px 7px;background:rgba(234,179,8,0.12);border:1px solid rgba(234,179,8,0.2);border-radius:20px;color:#eab308;">FIRST '+(f*4)+'</span>':'')
+            +'<span style="font-size:9px;color:#94a3b8;padding:2px 4px;">pula dzienna</span>'
+            +'</div>';
+        }
+        var eCol = pool.eco<=0?'#ef4444':pool.eco<20?'#f97316':'#06b6d4';
+        var bCol = pool.biz<=0?'#ef4444':pool.biz<5?'#f97316':'#8b5cf6';
+        return '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;">'
+          +'<span style="font-size:9px;padding:2px 7px;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.2);border-radius:20px;color:'+eCol+';">ECO '+pool.eco+'</span>'
+          +(pool.biz!==undefined?'<span style="font-size:9px;padding:2px 7px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2);border-radius:20px;color:'+bCol+';">BIZ '+pool.biz+'</span>':'')
+          +((pool.prem!==undefined&&pool.prem>0)?'<span style="font-size:9px;padding:2px 7px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.2);border-radius:20px;color:'+(pool.prem<=0?'#ef4444':'#f97316')+';">PREM '+pool.prem+'</span>':'')
+          +((pool.first!==undefined&&pool.first>0)?'<span style="font-size:9px;padding:2px 7px;background:rgba(234,179,8,0.12);border:1px solid rgba(234,179,8,0.2);border-radius:20px;color:'+(pool.first<=0?'#ef4444':'#eab308')+';">FIRST '+pool.first+'</span>':'')
+          +'<span style="font-size:9px;color:#94a3b8;padding:2px 4px;">pozostało dziś</span>'
+          +'</div>';
+      })()
       // Pasek obłożenia
       + occBar
       // Pasek postępu lotu
