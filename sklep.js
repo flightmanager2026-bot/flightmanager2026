@@ -205,6 +205,8 @@ function openSlotShop() {
     var available = info.airports.filter(function(ap){
       return G.slots.indexOf(ap.icao)<0 && !(G.homeAirport&&G.homeAirport.icao===ap.icao);
     }).length;
+    // Ukryj kraj jesli wszystkie sloty kupione
+    if(available === 0 && isUnlocked) return;
     var cost = getSlotCost(c);
     var flag = '&#127758;';
     if(typeof WORLD_CITIES!=='undefined'&&WORLD_CITIES&&WORLD_CITIES[c]) flag = WORLD_CITIES[c].flag || '&#127758;';
