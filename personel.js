@@ -9,7 +9,7 @@ var STAFF_TYPES = {
 
 var FIRST_NAMES_M = ['Adam','Piotr','Marek','Tomasz','Pawel','Michal','Andrzej','Grzegorz','Rafal','Lukasz'];
 var FIRST_NAMES_F = ['Anna','Maria','Katarzyna','Agnieszka','Monika','Karolina','Magdalena','Joanna','Natalia','Aleksandra'];
-var LAST_NAMES    = ['Kowalski','Nowak','Wisniewski','Dabrowski','Lewandowski','Wojcik','Kaminski','Kowalczyk','Zielinski','Szymanski'];
+var LAST_NAMES    = ['Kowalski','Nowak','Wisniewski','Dabrowski','Lewandowski','Wojcik','Kaminski','Kowalczyk','Zielinski','Szymanski','Skoczyński','Polan','Turek','Nałęcz','Kluczek','Perekuńczyk','Ilczuk','Łapiński','Domarski','Gierczak','Tomaszewski','Wróbel','Mazur','Krawczyk','Piotrowska','Jankowski','Wiśniewska','Dąbrowska','Michalska','Nowakowska'];
 
 function randomName(type) {
   var isFemale = type==='steward' || Math.random()<0.3;
