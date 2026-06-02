@@ -38,7 +38,9 @@ function renderFlotaMain(body) {
     'Airbus A380-800':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/A380-removebg-preview.png'
   };
   var BRAND_LOGOS = {
-    'Boeing':'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/logo.boeing.png'
+    'Boeing':  'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/logo.boeing.png',
+    'Airbus':  'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/AIRBUS_Blue.png',
+    'Embraer': 'https://raw.githubusercontent.com/flightmanager2026-bot/flightmanager2026/main/img/embraer-vector-logo-removebg-preview.png'
   };
   var out = '';
   Object.keys(manufacturers).forEach(function(brand) {
@@ -50,7 +52,7 @@ function renderFlotaMain(body) {
     out += '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;" data-b="'+brand+'" onclick="showBrandModal(this.dataset.b)">'
       +(logoSrc
         ?'<div style="width:90px;height:48px;background:'+logoBg+';border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:6px;box-sizing:border-box;"><img src="'+logoSrc+'" style="max-width:78px;max-height:36px;object-fit:contain;"></div>'
-        :'<div style="width:90px;height:48px;background:#0f0f1a;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#94a3b8;">'+brand.substring(0,3).toUpperCase()+'</div>'
+        :'<div style="width:52px;height:52px;border-radius:12px;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.25);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">✈</div>'
       )
       +'<div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#f1f5f9;margin-bottom:4px;">'
       +(brand==='Airbus'?'<img src="img/AIRBUS_Blue.png" style="height:14px;margin-right:6px;vertical-align:middle;">':brand==='Embraer'?'<img src="img/embraer-vector-logo-removebg-preview.png" style="height:14px;margin-right:6px;vertical-align:middle;">':'')
