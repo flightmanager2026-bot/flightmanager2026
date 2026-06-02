@@ -35,10 +35,15 @@ function openShop() {
     +'<div style="font-size:13px;font-weight:700;color:#10b981;">Doladuj</div>'
     +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Kup $ i PKT</div>'
     +'</div>'
-    +'<div onclick="openDemandShop()" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(236,72,153,0.06));border:1px solid rgba(139,92,246,0.25);border-radius:14px;padding:16px;cursor:pointer;text-align:center;grid-column:span 2;">'
+    +'<div onclick="openDemandShop()" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(236,72,153,0.06));border:1px solid rgba(139,92,246,0.25);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
     +'<div style="font-size:32px;margin-bottom:6px;">&#128200;</div>'
-    +'<div style="font-size:13px;font-weight:700;color:#8b5cf6;">Popyt &amp; Obłożenie</div>'
-    +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Zwiększ obłożenie tras • bazowo 70%</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#8b5cf6;">Popyt</div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Obłożenie tras</div>'
+    +'</div>'
+    +'<div onclick="openUsedMarket()" style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(6,182,212,0.06));border:1px solid rgba(16,185,129,0.25);border-radius:14px;padding:16px;cursor:pointer;text-align:center;">'
+    +'<div style="font-size:32px;margin-bottom:6px;">&#9992;</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#10b981;">Rynek Używanych</div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:3px;">Kup/sprzedaj samoloty</div>'
     +'</div>'
     +'</div>'
     +'<div style="background:linear-gradient(135deg,rgba(255,215,0,0.06),rgba(249,115,22,0.04));border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:14px;margin-bottom:12px;cursor:pointer;" onclick="showRewardedAdShop()">'
@@ -338,7 +343,7 @@ function buyCargoLicence() {
 function openNewAircraftShop() {
   var brands = Object.keys(AIRCRAFT_CATALOG);
   var LOGOS = {'Boeing':'img/logo.boeing.png','Airbus':'img/AIRBUS_Blue.png','Embraer':'img/embraer-vector-logo-removebg-preview.png'};
-  var LOGO_BG = {'Airbus':'#001f5b','Boeing':'#fff','Embraer':'#111'};
+  var LOGO_BG = {'Airbus':'#001f5b','Boeing':'#fff','Embraer':'#111','Bombardier':'#0a1628','ATR':'#003087','Suchoj':'#0a0a0a','McDonnell Douglas':'#0a1628','Fokker':'#0a0a0a','British Aerospace':'#0a0a0a','Antonow':'#0a0a0a','DHC':'#0a1628','COMAC':'#0a0a0a'};
   var BRAND_COLOR = {
     'Boeing':'#1f5ea8','Airbus':'#003087','Embraer':'#00a651',
     'Bombardier':'#d4372c','ATR':'#4a90e2','Suchoj':'#c0392b',
@@ -391,7 +396,7 @@ function openNewAircraftShop() {
 function openManufacturer(brand) {
   var aircraft = AIRCRAFT_CATALOG[brand] || [];
   var LOGOS = {'Boeing':'img/logo.boeing.png','Airbus':'img/AIRBUS_Blue.png','Embraer':'img/embraer-vector-logo-removebg-preview.png'};
-  var LOGO_BG = {'Airbus':'#001f5b','Boeing':'#fff','Embraer':'#111'};
+  var LOGO_BG = {'Airbus':'#001f5b','Boeing':'#fff','Embraer':'#111','Bombardier':'#0a1628','ATR':'#003087','Suchoj':'#0a0a0a','McDonnell Douglas':'#0a1628','Fokker':'#0a0a0a','British Aerospace':'#0a0a0a','Antonow':'#0a0a0a','DHC':'#0a1628','COMAC':'#0a0a0a'};
   var BRAND_COLOR = {
     'Boeing':'#1f5ea8','Airbus':'#003087','Embraer':'#00a651',
     'Bombardier':'#d4372c','ATR':'#4a90e2','Suchoj':'#c0392b',
@@ -617,4 +622,192 @@ function buyDemandBoostFromShop() {
   save(); updateHUD();
   showMsg('💎 +20% obłożenia przez 12h!');
   openDemandShop();
+}
+
+/* ===== RYNEK UZYWANYCH SAMOLOTOW ===== */
+
+function openUsedMarket() {
+  if(!G.usedMarket) G.usedMarket = [];
+  // Wczytaj oferty z Firebase
+  var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
+    +'<button onclick="openShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#f1f5f9;cursor:pointer;font-size:17px;padding:4px 11px;border-radius:8px;font-family:Arial,sans-serif;">&#8592;</button>'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:15px;font-weight:800;color:#f1f5f9;">✈ Rynek Używanych</div>'
+    +'<div style="font-size:10px;color:#94a3b8;margin-top:1px;">Sprzedaj lub kup samolot od innych graczy</div>'
+    +'</div></div>'
+
+    // Twoje samoloty do sprzedazy
+    +'<div style="font-size:9px;color:#94a3b8;letter-spacing:2px;margin-bottom:8px;">SPRZEDAJ SWÓJ SAMOLOT</div>'
+    +'<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:12px;margin-bottom:14px;">';
+
+  if(!G.fleet.length) {
+    html += '<div style="font-size:12px;color:#94a3b8;text-align:center;padding:10px;">Brak samolotów do sprzedaży</div>';
+  } else {
+    html += '<div style="font-size:11px;color:#94a3b8;margin-bottom:10px;">Wybierz samolot i ustaw cenę:</div>'
+      +'<select id="sell-ac-select" style="width:100%;padding:8px;background:#0a0a0a;border:1px solid rgba(139,92,246,0.3);border-radius:8px;color:#f1f5f9;font-size:12px;font-family:Arial,sans-serif;margin-bottom:8px;box-sizing:border-box;">'
+      +'<option value="">-- Wybierz samolot --</option>';
+    G.fleet.forEach(function(ac){
+      if(ac.status==='flying') return;
+      var val = getUsedValue(ac);
+      html += '<option value="'+ac.id+'">'+ac.model+' ('+ac.reg+') — wycena $'+val.toLocaleString()+'</option>';
+    });
+    html += '</select>'
+      +'<div style="display:flex;gap:8px;margin-bottom:8px;">'
+      +'<input id="sell-price" type="number" placeholder="Twoja cena ($)" style="flex:1;padding:8px;background:#0a0a0a;border:1px solid rgba(139,92,246,0.3);border-radius:8px;color:#f1f5f9;font-size:12px;font-family:Arial,sans-serif;box-sizing:border-box;">'
+      +'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
+      +'<button onclick="sellAircraftNow()" style="padding:10px;background:linear-gradient(135deg,#10b981,#06b6d4);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">💰 Sprzedaj teraz<br><span style="font-size:10px;font-weight:400;opacity:0.8;">Natychmiastowa wypłata</span></button>'
+      +'<button onclick="listAircraftForSale()" style="padding:10px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">🏪 Wystaw na rynek<br><span style="font-size:10px;font-weight:400;opacity:0.8;">Inni gracze kupią</span></button>'
+      +'</div>';
+  }
+  html += '</div>';
+
+  // Oferty innych graczy
+  html += '<div style="font-size:9px;color:#94a3b8;letter-spacing:2px;margin-bottom:8px;">OFERTY INNYCH GRACZY</div>';
+
+  if(_fbDb) {
+    html += '<div id="used-market-list" style="min-height:60px;"><div style="padding:20px;text-align:center;color:#94a3b8;font-size:12px;">Ładowanie...</div></div>';
+    document.getElementById('modal-body').innerHTML = html;
+    document.getElementById('modal').style.display = 'flex';
+
+    _fbDb.collection('usedMarket').where('status','==','active').orderBy('listedAt','desc').limit(20).get()
+      .then(function(snap){
+        var list = document.getElementById('used-market-list');
+        if(!list) return;
+        if(snap.empty){ list.innerHTML='<div style="padding:20px;text-align:center;color:#94a3b8;font-size:12px;">Brak ofert na rynku</div>'; return; }
+        var out = '';
+        snap.forEach(function(doc){
+          var d = doc.data();
+          var isOwn = _currentUser && d.sellerId===_currentUser.uid;
+          out += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:12px;margin-bottom:8px;">'
+            +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+            +'<div>'
+            +'<div style="font-size:13px;font-weight:700;color:#f1f5f9;">'+d.model+'</div>'
+            +'<div style="font-size:10px;color:#94a3b8;">'+d.reg+' • '+d.sellerName+' • Stan: '+Math.round(d.condition||100)+'%</div>'
+            +'</div>'
+            +'<div style="text-align:right;">'
+            +'<div style="font-size:14px;font-weight:900;color:#10b981;">$'+Number(d.price).toLocaleString()+'</div>'
+            +(isOwn
+              ?'<button onclick="cancelListing(\"'+doc.id+'\")" style="font-size:10px;padding:4px 10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:6px;color:#ef4444;cursor:pointer;font-family:Arial,sans-serif;">Wycofaj</button>'
+              :'<button onclick="buyUsedAircraft(\"'+doc.id+'\")" style="font-size:11px;padding:6px 14px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Kup</button>'
+            )
+            +'</div></div></div>';
+        });
+        list.innerHTML = out;
+      }).catch(function(){ });
+    return;
+  }
+
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function getUsedValue(ac) {
+  var basePrice = 50000000;
+  Object.keys(AIRCRAFT_CATALOG).forEach(function(brand){
+    AIRCRAFT_CATALOG[brand].forEach(function(a){ if(a.model===ac.model) basePrice=a.price; });
+  });
+  var cond = ac.maintenance ? (ac.maintenance.condition||100) : 100;
+  return Math.round(basePrice * (cond/100) * 0.65);
+}
+
+function sellAircraftNow() {
+  var sel = document.getElementById('sell-ac-select');
+  if(!sel||!sel.value){showMsg('Wybierz samolot!');return;}
+  var ac = G.fleet.filter(function(a){return a.id===sel.value;})[0];
+  if(!ac){showMsg('Nie znaleziono samolotu!');return;}
+  if(ac.status==='flying'){showMsg('Samolot jest w locie!');return;}
+  var val = getUsedValue(ac);
+  if(!confirm('Sprzedać '+ac.model+' za $'+val.toLocaleString()+'? (65% wartości rynkowej)')) return;
+  G.cash += val;
+  G.fleet = G.fleet.filter(function(a){return a.id!==ac.id;});
+  // Usun trasy przypisane do tego samolotu
+  G.routes = G.routes.filter(function(r){return r.acId!==ac.id;});
+  save(); updateHUD();
+  showMsg('✓ Sprzedano '+ac.model+' za $'+val.toLocaleString()+'!');
+  openUsedMarket();
+}
+
+function listAircraftForSale() {
+  if(!_currentUser||!_fbDb){showMsg('Musisz być zalogowany!');return;}
+  var sel = document.getElementById('sell-ac-select');
+  var priceEl = document.getElementById('sell-price');
+  if(!sel||!sel.value){showMsg('Wybierz samolot!');return;}
+  var price = parseInt(priceEl?priceEl.value:0);
+  if(!price||price<10000){showMsg('Podaj cenę (min $10,000)!');return;}
+  var ac = G.fleet.filter(function(a){return a.id===sel.value;})[0];
+  if(!ac){showMsg('Nie znaleziono samolotu!');return;}
+  if(ac.status==='flying'){showMsg('Samolot jest w locie!');return;}
+  var cond = ac.maintenance?(ac.maintenance.condition||100):100;
+  _fbDb.collection('usedMarket').add({
+    sellerId: _currentUser.uid,
+    sellerName: G.airline?G.airline.name:'Unknown',
+    acId: ac.id,
+    model: ac.model,
+    reg: ac.reg,
+    price: price,
+    condition: cond,
+    seats: ac.seats,
+    range: ac.range||5000,
+    config: ac.config||{},
+    status: 'active',
+    listedAt: Date.now()
+  }).then(function(){
+    // Usun samolot z floty i oznacz jako wystawiony
+    G.fleet = G.fleet.filter(function(a){return a.id!==ac.id;});
+    G.routes = G.routes.filter(function(r){return r.acId!==ac.id;});
+    save(); updateHUD();
+    showMsg('✓ '+ac.model+' wystawiony na rynek za $'+price.toLocaleString()+'!');
+    openUsedMarket();
+  }).catch(function(e){showMsg('Błąd: '+e.message);});
+}
+
+function buyUsedAircraft(docId) {
+  if(!_currentUser||!_fbDb){showMsg('Musisz być zalogowany!');return;}
+  _fbDb.collection('usedMarket').doc(docId).get().then(function(doc){
+    if(!doc.exists){showMsg('Oferta już niedostępna!');return;}
+    var d = doc.data();
+    if(d.sellerId===_currentUser.uid){showMsg('To Twój samolot!');return;}
+    if(G.cash<d.price){showMsg('Za mało gotówki! Potrzebujesz $'+Number(d.price).toLocaleString());return;}
+    var hangarCap = typeof getHangarCapacity==='function'?getHangarCapacity():10;
+    if(G.fleet.length>=hangarCap){showMsg('Hangar pełny!');return;}
+    if(!confirm('Kupić '+d.model+' za $'+Number(d.price).toLocaleString()+'?')) return;
+    G.cash -= d.price;
+    var newAc = {
+      id:'ac_'+Date.now(),model:d.model,reg:G.airline.iata+'-'+String(G.fleet.length+1).padStart(3,'0'),
+      seats:d.seats,range:d.range||5000,status:'ground',routeId:null,
+      config:d.config||{eco:d.seats,biz:0,total:d.seats},
+      maintenance:{condition:d.condition||100,flightHours:0,incidents:[],inMaintenance:false}
+    };
+    G.fleet.push(newAc);
+    // Oznacz oferte jako sprzedana
+    _fbDb.collection('usedMarket').doc(docId).update({status:'sold',soldAt:Date.now(),buyerId:_currentUser.uid});
+    // Wyslij kase sprzedajacemu przez Cloud Function (uproszczone - przez Firestore)
+    _fbDb.collection('pendingPayments').add({toUid:d.sellerId,amount:d.price,reason:'usedSale',model:d.model,at:Date.now()});
+    save(); updateHUD();
+    showMsg('✓ Kupiono '+d.model+'!');
+    openUsedMarket();
+  }).catch(function(e){showMsg('Błąd: '+e.message);});
+}
+
+function cancelListing(docId) {
+  if(!_currentUser||!_fbDb) return;
+  if(!confirm('Wycofać ofertę?')) return;
+  _fbDb.collection('usedMarket').doc(docId).get().then(function(doc){
+    if(!doc.exists) return;
+    var d = doc.data();
+    if(d.sellerId!==_currentUser.uid){showMsg('To nie Twoja oferta!');return;}
+    // Zwroc samolot do floty
+    var newAc = {
+      id:'ac_'+Date.now(),model:d.model,reg:d.reg,
+      seats:d.seats,range:d.range||5000,status:'ground',routeId:null,
+      config:d.config||{eco:d.seats,biz:0,total:d.seats},
+      maintenance:{condition:d.condition||100,flightHours:0,incidents:[],inMaintenance:false}
+    };
+    G.fleet.push(newAc);
+    _fbDb.collection('usedMarket').doc(docId).update({status:'cancelled'});
+    save(); updateHUD();
+    showMsg('Oferta wycofana, samolot wrócił do hangaru');
+    openUsedMarket();
+  });
 }
