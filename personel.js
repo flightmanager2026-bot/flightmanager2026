@@ -232,24 +232,30 @@ function renderStaffType(el, type) {
       });
       var fleet = G.fleet||[];
 
-      // Zbuduj ladny picker samolotow (jeden pilot = jeden samolot)
+      // Przycisk przepisz - pokazuje liste po kliknieciu
       var currentAc = assignedAcs.length ? assignedAcs[0] : null;
-      var dd = '<div style="margin-bottom:4px;">'
-        +'<div style="font-size:9px;color:#94a3b8;letter-spacing:1px;margin-bottom:4px;">PRZEPISZ DO SAMOLOTU</div>'
-        +'<div style="display:flex;flex-direction:column;gap:3px;max-height:120px;overflow-y:auto;">';
-      fleet.forEach(function(ac){
-        var isAssigned = currentAc && currentAc.id===ac.id;
-        dd += '<div onclick="assignStaffToAc(this)" data-type="'+type+'" data-empid="'+emp.id+'" data-acid="'+ac.id+'" '
-          +'style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border-radius:7px;cursor:'+(isAssigned?'default':'pointer')+';'
-          +'background:'+(isAssigned?'rgba(139,92,246,0.15)':'rgba(255,255,255,0.04)')+';'
-          +'border:1px solid '+(isAssigned?'rgba(139,92,246,0.4)':'rgba(255,255,255,0.07)')+';'
-          +(isAssigned?'pointer-events:none;':'')
-          +'">'
-          +'<span style="font-size:10px;color:'+(isAssigned?'#8b5cf6':'#f1f5f9')+';font-weight:'+(isAssigned?'700':'400')+';">'+ac.model+' <span style="color:#64748b;">('+ac.reg+')</span></span>'
-          +(isAssigned?'<span style="font-size:9px;color:#8b5cf6;font-weight:700;">✓ Przypisany</span>':'<span style="font-size:9px;color:#06b6d4;">Przypisz</span>')
-          +'</div>';
+      // Samoloty bez przypisanego pracownika tego typu
+      var freeFleet = fleet.filter(function(ac){
+        return !ac.crew || !ac.crew[type] || ac.crew[type].length===0;
       });
-      dd += '</div></div>';
+      var pickerId = 'picker-'+emp.id;
+      var dd = '<button onclick="var p=document.getElementById(\''+pickerId+'\');p.style.display=p.style.display===\'none\'?\'block\':\'none\';" '
+        +'style="width:100%;padding:7px;background:linear-gradient(135deg,#8b5cf6,#06b6d4);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;margin-bottom:4px;">'
+        +(currentAc?'↔ Przepisz do innego':'✈ Przypisz do samolotu')+'</button>'
+        +'<div id="'+pickerId+'" style="display:none;background:rgba(0,0,0,0.3);border:1px solid rgba(139,92,246,0.2);border-radius:10px;padding:6px;margin-bottom:4px;">';
+      if(!freeFleet.length){
+        dd += '<div style="font-size:10px;color:#94a3b8;padding:6px;text-align:center;">Brak wolnych samolotów</div>';
+      } else {
+        freeFleet.forEach(function(ac){
+          dd += '<div onclick="assignStaffToAc(this)" data-type="'+type+'" data-empid="'+emp.id+'" data-acid="'+ac.id+'" '
+            +'style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:7px;cursor:pointer;'
+            +'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);margin-bottom:3px;">'
+            +'<span style="font-size:11px;color:#f1f5f9;">'+ac.model+' <span style="color:#64748b;font-size:10px;">('+ac.reg+')</span></span>'
+            +'<span style="font-size:10px;color:#10b981;font-weight:700;">Przypisz</span>'
+            +'</div>';
+        });
+      }
+      dd += '</div>';
 
       html += '<div style="background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:12px;padding:10px;margin-bottom:6px;">'
         +'<div style="font-size:12px;font-weight:700;color:#f1f5f9;margin-bottom:2px;">'+emp.name+'</div>'
