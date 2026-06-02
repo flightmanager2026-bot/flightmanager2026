@@ -232,16 +232,24 @@ function renderStaffType(el, type) {
       });
       var fleet = G.fleet||[];
 
-      // Zbuduj dropdown
-      var dd = '<select id="asgn-'+emp.id+'" style="width:100%;padding:6px;background:#0a0a0a;border:1px solid rgba(139,92,246,0.3);border-radius:8px;color:#f1f5f9;font-size:10px;font-family:Arial,sans-serif;margin-bottom:4px;box-sizing:border-box;">'
-        +'<option value="">-- Wybierz samolot --</option>';
+      // Zbuduj ladny picker samolotow (jeden pilot = jeden samolot)
+      var currentAc = assignedAcs.length ? assignedAcs[0] : null;
+      var dd = '<div style="margin-bottom:4px;">'
+        +'<div style="font-size:9px;color:#94a3b8;letter-spacing:1px;margin-bottom:4px;">PRZEPISZ DO SAMOLOTU</div>'
+        +'<div style="display:flex;flex-direction:column;gap:3px;max-height:120px;overflow-y:auto;">';
       fleet.forEach(function(ac){
-        var taken = ac.crew && ac.crew[type] && ac.crew[type].indexOf(emp.id)>=0;
-        dd += '<option value="'+ac.id+'"'+(taken?' disabled':'')+'>'+ac.model+' ('+ac.reg+')'+(taken?' ✓':'')+'</option>';
+        var isAssigned = currentAc && currentAc.id===ac.id;
+        dd += '<div onclick="assignStaffToAc(this)" data-type="'+type+'" data-empid="'+emp.id+'" data-acid="'+ac.id+'" '
+          +'style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border-radius:7px;cursor:'+(isAssigned?'default':'pointer')+';'
+          +'background:'+(isAssigned?'rgba(139,92,246,0.15)':'rgba(255,255,255,0.04)')+';'
+          +'border:1px solid '+(isAssigned?'rgba(139,92,246,0.4)':'rgba(255,255,255,0.07)')+';'
+          +(isAssigned?'pointer-events:none;':'')
+          +'">'
+          +'<span style="font-size:10px;color:'+(isAssigned?'#8b5cf6':'#f1f5f9')+';font-weight:'+(isAssigned?'700':'400')+';">'+ac.model+' <span style="color:#64748b;">('+ac.reg+')</span></span>'
+          +(isAssigned?'<span style="font-size:9px;color:#8b5cf6;font-weight:700;">✓ Przypisany</span>':'<span style="font-size:9px;color:#06b6d4;">Przypisz</span>')
+          +'</div>';
       });
-      dd += '</select>'
-        +'<button onclick="assignStaffToAc(this)" data-type="'+type+'" data-empid="'+emp.id+'" data-selid="asgn-'+emp.id+'" '
-        +'style="width:100%;padding:7px;background:linear-gradient(135deg,#8b5cf6,#06b6d4);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;margin-bottom:4px;">✈ Przypisz do samolotu</button>';
+      dd += '</div></div>';
 
       html += '<div style="background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:12px;padding:10px;margin-bottom:6px;">'
         +'<div style="font-size:12px;font-weight:700;color:#f1f5f9;margin-bottom:2px;">'+emp.name+'</div>'
@@ -428,18 +436,23 @@ function paySalaries() {
 function assignStaffToAc(el) {
   var type = el.dataset.type;
   var empId = el.dataset.empid;
-  var selId = el.dataset.selid;
-  var acId = document.getElementById(selId) ? document.getElementById(selId).value : '';
+  var acId = el.dataset.acid;
   if(!acId){showMsg('Wybierz samolot!');return;}
   initStaff();
+  // Odepnij od poprzedniego samolotu (jeden pracownik = jeden samolot)
+  G.fleet.forEach(function(ac){
+    if(ac.crew && ac.crew[type]){
+      ac.crew[type] = ac.crew[type].filter(function(id){return id!==empId;});
+    }
+  });
+  // Przypisz do nowego
   var ac = G.fleet.filter(function(a){return a.id===acId;})[0];
   if(!ac){showMsg('Nie znaleziono samolotu!');return;}
   if(!ac.crew) ac.crew={};
   if(!ac.crew[type]) ac.crew[type]=[];
-  if(ac.crew[type].indexOf(empId)>=0){showMsg('Już przypisany!');return;}
   ac.crew[type].push(empId);
   save();
-  showMsg('✓ Przypisano do '+ac.model+'!');
+  showMsg('✓ '+empId.substring(0,8)+'... przypisany do '+ac.model+'!');
   var cont=document.getElementById('personel-content');
   if(cont) renderStaffType(cont,type);
 }
