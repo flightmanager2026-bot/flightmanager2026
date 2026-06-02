@@ -1,7 +1,7 @@
 function openBrandFleetByEl(el){ var brand=el.getAttribute("data-brand"); if(brand) openBrandFleet(brand); }
 
 /* -- FLOTA -- */
-var BRAND_BG = {'Boeing':'#fff','Airbus':'#001f5b','Embraer':'#111'};
+var BRAND_BG = {'Boeing':'#fff','Airbus':'#fff','Embraer':'#fff'};
 var _flotaTab='samoloty';
 
 function renderFlotaMain(body) {
