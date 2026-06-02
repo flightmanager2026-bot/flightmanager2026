@@ -220,7 +220,6 @@ function renderStaffType(el, type) {
     html += '<div style="padding:16px;text-align:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;">'
       +'<div style="font-size:20px;margin-bottom:6px;">👥</div>'
       +'<div style="font-size:11px;color:#94a3b8;">Brak pracowników</div>'
-      +'<div style="font-size:10px;color:#64748b;margin-top:4px;">Zatrudnij z lewej kolumny</div>'
       +'</div>';
   } else {
     employed.forEach(function(emp) {
@@ -228,17 +227,34 @@ function renderStaffType(el, type) {
       for(var s=0;s<5;s++) stars += s<emp.rating
         ?'<span style="color:#f97316;font-size:10px;">★</span>'
         :'<span style="color:#334155;font-size:10px;">★</span>';
-      var assignedAcs = G.fleet ? G.fleet.filter(function(ac){
+      var assignedAcs = (G.fleet||[]).filter(function(ac){
         return ac.crew && ac.crew[type] && ac.crew[type].indexOf(emp.id)>=0;
-      }) : [];
+      });
+      var fleet = G.fleet||[];
+
+      // Zbuduj dropdown
+      var dd = '<select id="asgn-'+emp.id+'" style="width:100%;padding:6px;background:#0a0a0a;border:1px solid rgba(139,92,246,0.3);border-radius:8px;color:#f1f5f9;font-size:10px;font-family:Arial,sans-serif;margin-bottom:4px;box-sizing:border-box;">'
+        +'<option value="">-- Wybierz samolot --</option>';
+      fleet.forEach(function(ac){
+        var taken = ac.crew && ac.crew[type] && ac.crew[type].indexOf(emp.id)>=0;
+        dd += '<option value="'+ac.id+'"'+(taken?' disabled':'')+'>'+ac.model+' ('+ac.reg+')'+(taken?' ✓':'')+'</option>';
+      });
+      dd += '</select>'
+        +'<button onclick="assignStaffToAc(this)" data-type="'+type+'" data-empid="'+emp.id+'" data-selid="asgn-'+emp.id+'" '
+        +'style="width:100%;padding:7px;background:linear-gradient(135deg,#8b5cf6,#06b6d4);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;margin-bottom:4px;">✈ Przypisz do samolotu</button>';
+
       html += '<div style="background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:12px;padding:10px;margin-bottom:6px;">'
         +'<div style="font-size:12px;font-weight:700;color:#f1f5f9;margin-bottom:2px;">'+emp.name+'</div>'
-        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
         +'<div>'+stars+'</div>'
         +'<div style="font-size:11px;color:#f97316;font-weight:700;">$'+emp.salary+'/h</div>'
         +'</div>'
-        +(assignedAcs.length?'<div style="font-size:10px;color:#06b6d4;margin-bottom:6px;">'+assignedAcs[0].model+'</div>':'<div style="font-size:10px;color:#64748b;margin-bottom:6px;">Nieprzypisany</div>')
-        +'<button onclick="fireStaff(\''+type+'\',\''+emp.id+'\');" '
+        +(assignedAcs.length
+          ?'<div style="font-size:10px;color:#06b6d4;font-weight:700;margin-bottom:6px;">✈ '+assignedAcs.map(function(a){return a.model;}).join(', ')+'</div>'
+          :'<div style="font-size:10px;color:#64748b;margin-bottom:6px;">Nieprzypisany</div>'
+        )
+        +(fleet.length ? dd : '')
+        +'<button onclick="doFireStaff(this)" data-type="'+type+'" data-empid="'+emp.id+'" '
         +'style="width:100%;padding:5px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;color:#ef4444;font-size:10px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">Zwolnij</button>'
         +'</div>';
     });
@@ -409,7 +425,11 @@ function paySalaries() {
   if(total>0){ G.cash-=total; G.lastSalaryPay=now; save(); showMsg('Pensje wyplacone: -$'+total.toLocaleString()); }
 }
 
-function assignStaffToAc(type, empId, acId) {
+function assignStaffToAc(el) {
+  var type = el.dataset.type;
+  var empId = el.dataset.empid;
+  var selId = el.dataset.selid;
+  var acId = document.getElementById(selId) ? document.getElementById(selId).value : '';
   if(!acId){showMsg('Wybierz samolot!');return;}
   initStaff();
   var ac = G.fleet.filter(function(a){return a.id===acId;})[0];
@@ -422,4 +442,10 @@ function assignStaffToAc(type, empId, acId) {
   showMsg('✓ Przypisano do '+ac.model+'!');
   var cont=document.getElementById('personel-content');
   if(cont) renderStaffType(cont,type);
+}
+
+function doFireStaff(el) {
+  var type = el.dataset.type;
+  var empId = el.dataset.empid;
+  fireStaff(type, empId);
 }
