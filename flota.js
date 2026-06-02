@@ -44,10 +44,13 @@ function renderFlotaMain(body) {
     var planes = manufacturers[brand];
     var flying = planes.filter(function(a){return a.status==='flying';}).length;
     var ground = planes.filter(function(a){return a.status!=='flying';}).length;
-    var imgSrc = BRAND_LOGOS[brand] || null;
-    if(!imgSrc) planes.forEach(function(ac){ if(!imgSrc && AC_IMAGES[ac.model]) imgSrc=AC_IMAGES[ac.model]; });
+    var logoSrc = BRAND_LOGOS[brand] || null;
+    var logoBg  = BRAND_BG[brand] || '#0f0f1a';
     out += '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;" data-b="'+brand+'" onclick="showBrandModal(this.dataset.b)">'
-      +(imgSrc?'<img src="'+imgSrc+'" style="width:90px;height:48px;object-fit:contain;background:#000;border-radius:8px;flex-shrink:0;">':'<div style="width:90px;height:48px;background:#0f0f1a;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;">&#9992;</div>')
+      +(logoSrc
+        ?'<div style="width:90px;height:48px;background:'+logoBg+';border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:6px;box-sizing:border-box;"><img src="'+logoSrc+'" style="max-width:78px;max-height:36px;object-fit:contain;"></div>'
+        :'<div style="width:90px;height:48px;background:#0f0f1a;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#94a3b8;">'+brand.substring(0,3).toUpperCase()+'</div>'
+      )
       +'<div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#f1f5f9;margin-bottom:4px;">'
       +(brand==='Airbus'?'<img src="img/AIRBUS_Blue.png" style="height:14px;margin-right:6px;vertical-align:middle;">':brand==='Embraer'?'<img src="img/embraer-vector-logo-removebg-preview.png" style="height:14px;margin-right:6px;vertical-align:middle;">':'')
       +brand+'</div>'
