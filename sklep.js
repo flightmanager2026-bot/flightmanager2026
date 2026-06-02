@@ -343,7 +343,7 @@ function buyCargoLicence() {
 function openNewAircraftShop() {
   var brands = Object.keys(AIRCRAFT_CATALOG);
   var LOGOS = {'Boeing':'img/logo.boeing.png','Airbus':'img/AIRBUS_Blue.png','Embraer':'img/embraer-vector-logo-removebg-preview.png'};
-  var LOGO_BG = {'Airbus':'#001f5b','Boeing':'#fff','Embraer':'#111','Bombardier':'#0a1628','ATR':'#003087','Suchoj':'#0a0a0a','McDonnell Douglas':'#0a1628','Fokker':'#0a0a0a','British Aerospace':'#0a0a0a','Antonow':'#0a0a0a','DHC':'#0a1628','COMAC':'#0a0a0a'};
+  var LOGO_BG = {'Airbus':'#fff','Boeing':'#fff','Embraer':'#fff','Bombardier':'#fff','ATR':'#fff','Suchoj':'#fff','McDonnell Douglas':'#fff','Fokker':'#fff','British Aerospace':'#fff','Antonow':'#fff','DHC':'#fff','COMAC':'#fff'};
   var BRAND_COLOR = {
     'Boeing':'#1f5ea8','Airbus':'#003087','Embraer':'#00a651',
     'Bombardier':'#d4372c','ATR':'#4a90e2','Suchoj':'#c0392b',
@@ -396,7 +396,7 @@ function openNewAircraftShop() {
 function openManufacturer(brand) {
   var aircraft = AIRCRAFT_CATALOG[brand] || [];
   var LOGOS = {'Boeing':'img/logo.boeing.png','Airbus':'img/AIRBUS_Blue.png','Embraer':'img/embraer-vector-logo-removebg-preview.png'};
-  var LOGO_BG = {'Airbus':'#001f5b','Boeing':'#fff','Embraer':'#111','Bombardier':'#0a1628','ATR':'#003087','Suchoj':'#0a0a0a','McDonnell Douglas':'#0a1628','Fokker':'#0a0a0a','British Aerospace':'#0a0a0a','Antonow':'#0a0a0a','DHC':'#0a1628','COMAC':'#0a0a0a'};
+  var LOGO_BG = {'Airbus':'#fff','Boeing':'#fff','Embraer':'#fff','Bombardier':'#fff','ATR':'#fff','Suchoj':'#fff','McDonnell Douglas':'#fff','Fokker':'#fff','British Aerospace':'#fff','Antonow':'#fff','DHC':'#fff','COMAC':'#fff'};
   var BRAND_COLOR = {
     'Boeing':'#1f5ea8','Airbus':'#003087','Embraer':'#00a651',
     'Bombardier':'#d4372c','ATR':'#4a90e2','Suchoj':'#c0392b',
