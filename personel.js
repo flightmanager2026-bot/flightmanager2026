@@ -236,12 +236,22 @@ function renderStaffType(el, type) {
       var currentAc = assignedAcs.length ? assignedAcs[0] : null;
       // Samoloty bez przypisanego pracownika tego typu
       var freeFleet = fleet.filter(function(ac){
-        return !ac.crew || !ac.crew[type] || ac.crew[type].length===0;
+        // Nie pokazuj jesli ten pracownik juz jest przypisany do tego samolotu
+        if(ac.crew && ac.crew[type] && ac.crew[type].indexOf(emp.id)>=0) return false;
+        // Ile wymagane
+        var required = 1;
+        if(type==='pilot')    { var dist=ac.range||5000; required=dist>12000?4:dist>6500?3:2; }
+        else if(type==='steward')  { required=Math.ceil((ac.seats||150)/50); }
+        else if(type==='mechanic') { required=1; }
+        else if(type==='engineer') { required=1; }
+        // Ile juz przypisanych (innych pracownikow)
+        var assigned = ac.crew && ac.crew[type] ? ac.crew[type].length : 0;
+        return assigned < required;
       });
       var pickerId = 'picker-'+emp.id;
       var dd = '<button onclick="var p=document.getElementById(\''+pickerId+'\');p.style.display=p.style.display===\'none\'?\'block\':\'none\';" '
         +'style="width:100%;padding:7px;background:linear-gradient(135deg,#8b5cf6,#06b6d4);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;margin-bottom:4px;">'
-        +(currentAc?'↔ Przepisz do innego':'✈ Przypisz do samolotu')+'</button>'
+        +(assignedAcs.length?'✈ Przypisany do '+assignedAcs.length+' sam. — dodaj kolejny':'✈ Przypisz do samolotu')+'</button>'
         +'<div id="'+pickerId+'" style="display:none;background:rgba(0,0,0,0.3);border:1px solid rgba(139,92,246,0.2);border-radius:10px;padding:6px;margin-bottom:4px;">';
       if(!freeFleet.length){
         dd += '<div style="font-size:10px;color:#94a3b8;padding:6px;text-align:center;">Brak wolnych samolotów</div>';
@@ -264,7 +274,7 @@ function renderStaffType(el, type) {
         +'<div style="font-size:11px;color:#f97316;font-weight:700;">$'+emp.salary+'/h</div>'
         +'</div>'
         +(assignedAcs.length
-          ?'<div style="font-size:10px;color:#06b6d4;font-weight:700;margin-bottom:6px;">✈ '+assignedAcs.map(function(a){return a.model;}).join(', ')+'</div>'
+          ?'<div style="font-size:10px;color:#06b6d4;font-weight:700;margin-bottom:6px;">✈ '+assignedAcs.map(function(a){return a.model+' ('+a.reg+')'}).join(', ')+'</div>'
           :'<div style="font-size:10px;color:#64748b;margin-bottom:6px;">Nieprzypisany</div>'
         )
         +(fleet.length ? dd : '')
@@ -445,13 +455,7 @@ function assignStaffToAc(el) {
   var acId = el.dataset.acid;
   if(!acId){showMsg('Wybierz samolot!');return;}
   initStaff();
-  // Odepnij od poprzedniego samolotu (jeden pracownik = jeden samolot)
-  G.fleet.forEach(function(ac){
-    if(ac.crew && ac.crew[type]){
-      ac.crew[type] = ac.crew[type].filter(function(id){return id!==empId;});
-    }
-  });
-  // Przypisz do nowego
+  // Przypisz do samolotu (pracownik moze byc w wielu samolotach)
   var ac = G.fleet.filter(function(a){return a.id===acId;})[0];
   if(!ac){showMsg('Nie znaleziono samolotu!');return;}
   if(!ac.crew) ac.crew={};
